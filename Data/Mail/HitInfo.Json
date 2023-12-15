@@ -1,0 +1,17 @@
+[
+    {
+        "OpName":"ReciveAll",
+        "ClickPos":[473,539],
+        "ClickRange":[45,18]
+    },
+    {
+        "OpName":"Personal",
+        "ClickPos":[332,133],
+        "ClickRange":[30,12]
+    },
+    {
+        "OpName":"Confirm",
+        "ClickPos":[482,433],
+        "ClickRange":[80,16]
+    }
+]

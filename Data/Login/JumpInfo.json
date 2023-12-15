@@ -1,5 +1,7 @@
+[
     {
         "NextStateName":"CharacterSelect",
         "ClickPos":[666,333],
         "ClickRange":[40, 30]
     }
+]

@@ -1,0 +1,12 @@
+[
+    {
+        "NextStateName":"MaterialEnter1",
+        "ClickPos":[589,433],
+        "ClickRange":[80,20]
+    },
+    {
+        "NextStateName":"MaterialsMain",
+        "ClickPos":[373,433],
+        "ClickRange":[80,20]
+    }
+]

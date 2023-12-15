@@ -1,0 +1,12 @@
+[
+    {
+        "NextStateName":"MaterialEnter0",
+        "ClickPos":[372,520],
+        "ClickRange":[80,15]
+    },
+    {
+        "NextStateName":"MaterialAutoFighting",
+        "ClickPos":[590,520],
+        "ClickRange":[80,15]
+    }
+]

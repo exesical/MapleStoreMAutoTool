@@ -14,6 +14,7 @@ class DoScreenHit(object):
         self.GaussDistribution = []
 
         for i in range(len(mx)):
+            #gen hit random data from gauss but make jitter 
             if mx[i] < 0 and my[i] > 0:
                 fx = mx[i] * 1.373
                 fy = my[i] * 1.303
@@ -47,7 +48,7 @@ class DoScreenHit(object):
     def HitPosition(self, HitPos, HitRange):
         randompos_f = self.GetRandomHitPosition(HitPos, HitRange);
         randompos_x = int(randompos_f[0])
-        randompos_y = int(randompos_f[1])
+        randompos_y = int(randompos_f[1] - 33)
         long_position = MAKELONG(randompos_x, randompos_y)
         SendMessage(self.HandleNumber, WM_ACTIVATE, WA_ACTIVE, 0)
         SendMessage(self.HandleNumber, WM_LBUTTONDOWN, 0, long_position)  # press

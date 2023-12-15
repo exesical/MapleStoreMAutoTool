@@ -1,0 +1,17 @@
+[
+    {
+        "NextStateName":"Wander",
+        "ClickPos":[926,56],
+        "ClickRange":[10,10]
+    },
+    {
+        "NextStateName":"GuildInfo",
+        "ClickPos":[646,259],
+        "ClickRange":[30,25]
+    },
+    {
+        "NextStateName":"GameModeDefault",
+        "ClickPos":[860,257],
+        "ClickRange":[60,25]
+    }
+]
