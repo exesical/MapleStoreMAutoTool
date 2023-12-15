@@ -1,0 +1,12 @@
+[
+    {
+        "NextStateName":"CharacterSelect",
+        "ClickPos":[273,516],
+        "ClickRange":[60, 20]
+    },
+    {
+        "NextStateName":"SystemMenuOpening",
+        "ClickPos":[774,79],
+        "ClickRange":[10, 10]
+    }
+]

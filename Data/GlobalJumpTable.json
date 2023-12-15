@@ -1,0 +1,66 @@
+[
+	{
+		"TargetStateName":"MaterialAutoFighting",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "MaterialsMain"],
+			["MaterialsMain", "MaterialEnter0"],
+			["MaterialEnter0", "MaterialEnter1"],
+			["MaterialEnter1", "MaterialAutoFighting"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"]
+		]
+	},
+	{
+		"TargetStateName":"GuildInfo",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GuildInfo"],
+			["GameModeDefault", "SystemMenuOpening"],
+			["MaterialsMain", "SystemMenuOpening"],
+			["MaterialEnter0", "MaterialsMain"],
+			["MaterialEnter1", "MaterialsMain"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["MaterialAutoFighting", "Wander"],
+			["Mail", "SystemMenuOpening"]
+		]
+	},
+	{
+		"TargetStateName":"Mail",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "Mail"],
+			["GameModeDefault", "SystemMenuOpening"],
+			["MaterialsMain", "SystemMenuOpening"],
+			["MaterialEnter0", "MaterialsMain"],
+			["MaterialEnter1", "MaterialsMain"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["MaterialAutoFighting", "Wander"],
+			["GuildInfo", "SystemMenuOpening"]
+		]
+	},
+	{
+		"TargetStateName":"CharacterSelect",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "ChangeCharacter"],
+			["Mail", "SystemMenuOpening"],
+			["GameModeDefault", "SystemMenuOpening"],
+			["MaterialsMain", "SystemMenuOpening"],
+			["MaterialEnter0", "MaterialsMain"],
+			["MaterialEnter1", "MaterialsMain"],
+			["ChangeCharacter", "CharacterSelect"],
+			["MaterialAutoFighting", "Wander"],
+			["GuildInfo", "SystemMenuOpening"]
+		]
+	}
+]
