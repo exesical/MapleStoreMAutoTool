@@ -14,7 +14,7 @@ class DoScreenHit(object):
         self.GaussDistribution = []
 
         for i in range(len(mx)):
-            #gen hit random data from gauss but make jitter 
+            #gen hit random data from gauss but add some jitters
             if mx[i] < 0 and my[i] > 0:
                 fx = mx[i] * 1.373
                 fy = my[i] * 1.303
@@ -52,7 +52,7 @@ class DoScreenHit(object):
         long_position = MAKELONG(randompos_x, randompos_y)
         SendMessage(self.HandleNumber, WM_ACTIVATE, WA_ACTIVE, 0)
         SendMessage(self.HandleNumber, WM_LBUTTONDOWN, 0, long_position)  # press
-        sleep((np.random.randint(5, 15)) / 100)  # keep random time
+        sleep((np.random.randint(5, 10)) / 100)  # keep random time
         SendMessage(self.HandleNumber, WM_LBUTTONUP, 0, long_position)  # release
 
     def GetRandomHitPosition(self, HitPos, HitRange):
@@ -64,8 +64,8 @@ class DoScreenHit(object):
 #test
 if __name__ == '__main__':
     hit = DoScreenHit(0)
-    px = [];
-    py = [];
+    px = []
+    py = []
     for i in range(1000):
         rp = hit.GetRandomHitPosition([0,0],[100,50])
         px.append(rp[0])

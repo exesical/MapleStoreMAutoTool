@@ -3,6 +3,8 @@ from re import search
 from win32gui import GetWindowText, FindWindow, FindWindowEx, GetWindowRect, GetForegroundWindow
 import os
 import json
+from time import sleep
+from FrozenPath import frozen
 
 if __name__ == '__main__':
     hwd_title = "雷电模拟器"
@@ -28,7 +30,7 @@ if __name__ == '__main__':
         #global jump table means 
         #TODO, global jump table can be gen by each states' jump table
         GlobalJumpTable = {}
-        GlobalJumpTablePath = os.path.dirname(__file__) + "\\Data\\GlobalJumpTable.json" 
+        GlobalJumpTablePath = frozen.app_path() + "\\Data\\GlobalJumpTable.json" 
         GlobalJumpTableJson = json.load(open(GlobalJumpTablePath, 'r', encoding='utf-8'))
         for i in range(len(GlobalJumpTableJson)):
             TargetJumeTable = {}
@@ -40,7 +42,7 @@ if __name__ == '__main__':
 
 
 
-        TaskFilePath = os.path.dirname(__file__) + "\\Data\\TaskList.json" 
+        TaskFilePath = frozen.app_path() + "\\Data\\TaskList.json" 
         TaskJson = json.load(open(TaskFilePath, 'r', encoding='utf-8'))
         InitState = StateTable[TaskJson[0]]
         if InitState.IsUnderState() == False:
@@ -50,8 +52,9 @@ if __name__ == '__main__':
         LoadingState = StateTable["Loading"]
         LoginState = StateTable["Login"]
         CurrentState = InitState
-        for i in range(17):
-            CurrentState.SelectCharacter(i)
+        for i in range(18):
+            #CurrentState.SelectCharacter(i)
+            MSmState_CharacterSelect.CurrentSelectedCharacterIndex = i
             TaskLen = len(TaskJson)
             for StateIndex in range(TaskLen):
                 TargetStateName = TaskJson[StateIndex]
@@ -60,10 +63,10 @@ if __name__ == '__main__':
                     #prepare state
                     #mostly do close ads or select to main character
                     prepareres = CurrentState.PrepareState()
-                    if prepareres == False:
+                    if prepareres == False and StateIndex != TaskLen - 1:
                         #when state init is failed, go to character select and start next character's task
                         StateIndex = TaskLen - 1
-                        continue
+                        break
                     #find next jump
                     NextStateName = GlobalJumpTable[TargetStateName][CurrentState.Name]
                     NextState = StateTable[NextStateName]
@@ -81,11 +84,11 @@ if __name__ == '__main__':
                             if LoginState.IsUnderState():
                                 #means miss connection
                                 CurrentState = LoginState
-                                continue
+                                break
                             if CurrentState.IsUnderState():
                                 #can not jump to next state in otherwise, go to next character task
                                 StateIndex = TaskLen -1
-                                continue
+                                break
 
                     elif res == 1:
                         exit(1)

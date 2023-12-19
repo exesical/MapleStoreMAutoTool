@@ -1,16 +1,21 @@
 [
     {
-        "OpName":"CloseDailyManager",
+        "OpName":"CloseAd0",
         "ClickPos":[919,84],
         "ClickRange":[10,10]
     },
     {
-        "OpName":"CloseGoldenAppleAd",
+        "OpName":"CloseAd1",
         "ClickPos":[861,85],
         "ClickRange":[10,10]
     },
     {
-        "OpName":"CloseVipCardAd",
+        "OpName":"CloseAd2",
+        "ClickPos":[793,111],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"CloseAd3",
         "ClickPos":[857,88],
         "ClickRange":[10,10]
     }

@@ -30,6 +30,9 @@
     <Compile Include="DoScreenHit.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FrozenPath.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="MSmAuto.py" />
     <Compile Include="MSmState.py">
       <SubType>Code</SubType>

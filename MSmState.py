@@ -13,6 +13,8 @@ from win32con import SRCCOPY
 from time import sleep
 import numpy as np
 from numpy import frombuffer, uint8, array
+from FrozenPath import frozen
+
 
 class MSmState(object):
     """description of class"""
@@ -26,7 +28,7 @@ class MSmState(object):
         self.HandleNumber = HandleNumber
         self.HitHandle = DoScreenHit(HandleNumber)
         self.Name = StateName
-        Path_cur = os.path.dirname(__file__) + "\\Data\\" + StateName
+        Path_cur = frozen.app_path() + "\\Data\\" + StateName
         Path_Identification = Path_cur + "\\Identification\\" 
         IdImagePath = []
         self.IdImageSize = {}
@@ -69,7 +71,10 @@ class MSmState(object):
     def GetPicPos(self, InPic, MatchingThreshold = 0.8):
         res = cv2.matchTemplate(self.ScreenShotImage, InPic, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        return min_loc
+        if max_val >= MatchingThreshold:
+            return max_loc
+        else:
+            return None
 
     def IsPicMatching(self, InPic, MatchingThreshold = 0.8):
 
@@ -82,7 +87,9 @@ class MSmState(object):
 
         res = cv2.matchTemplate(self.ScreenShotImage, InPic, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        
         if max_val >= MatchingThreshold:
+            #print("Picture matching successed, p the max value = %.3f")
             return True
         return False
 
@@ -149,9 +156,11 @@ class MSmState(object):
 
 
 class MSmState_CharacterSelect(MSmState):
+
+    CurrentSelectedCharacterIndex = 0
     def __init__(self, StateName, HandleNumber):
         super().__init__(StateName, HandleNumber)
-        Path_cur = os.path.dirname(__file__) + "\\Data\\" + StateName
+        Path_cur = frozen.app_path() + "\\Data\\" + StateName
         IsMainCharacterIdImagePath = Path_cur + "\\IsMainCharacterSelected.png"
         self.IsMainCharacterIdImage = cv2.imdecode(fromfile(IsMainCharacterIdImagePath, dtype=uint8), -1)
         self.IsMainCharacterIdImage = cv2.cvtColor(self.IsMainCharacterIdImage, cv2.COLOR_BGR2GRAY);
@@ -164,19 +173,8 @@ class MSmState_CharacterSelect(MSmState):
     def TrySelecteMainCharacter(self):
         HitInfo_SelectCharacter0 = self.HitInfo["SelectCharacter0"]
         self.DoHit(HitInfo_SelectCharacter0[0],HitInfo_SelectCharacter0[1])
-        #self.RefreshScreenShot()
+        self.RefreshScreenShot()
         return self.IsPicMatching(self.IsMainCharacterIdImage)
-            
-
-    def SelectCharacter(self, CharacterIndex):
-        HitInfo_NextCharacterPage = self.HitInfo["NextCharacterPage"];
-        self.PrepareState()
-        c_page = int(CharacterIndex / 7)
-        c_index = CharacterIndex % 7
-        for i in range(c_page):
-            self.DoHit(HitInfo_NextCharacterPage[0],HitInfo_NextCharacterPage[1])
-        HitInfo_CharacterN = self.HitInfo["SelectCharacter" + str(c_index)]
-        self.DoHit(HitInfo_CharacterN[0],HitInfo_CharacterN[1]);
 
     def PrepareState(self):
         MaxIter = 30
@@ -185,6 +183,15 @@ class MSmState_CharacterSelect(MSmState):
         while(self.TrySelecteMainCharacter() == False and iter < 30):
             iter = iter+1
             self.DoHit(HitInfo_NextCharacterPage[0],HitInfo_NextCharacterPage[1])
+        c_page = int(MSmState_CharacterSelect.CurrentSelectedCharacterIndex / 7)
+        c_index = MSmState_CharacterSelect.CurrentSelectedCharacterIndex % 7
+        for i in range(c_page):
+            self.DoHit(HitInfo_NextCharacterPage[0],HitInfo_NextCharacterPage[1])
+            sleep(0.5)
+        HitInfo_CharacterN = self.HitInfo["SelectCharacter" + str(c_index)]
+        for i in range(np.random.randint(2,4)):
+            self.DoHit(HitInfo_CharacterN[0],HitInfo_CharacterN[1]);
+        
         if iter < 30:
             return True
         else:
@@ -199,7 +206,7 @@ class MSmState_ChangeCharacter(MSmState):
 class MSmState_GameModeDefault(MSmState):
     def __init__(self, StateName, HandleNumber):
         super().__init__(StateName, HandleNumber)
-        Path_cur = os.path.dirname(__file__) + "\\Data\\" + StateName
+        Path_cur = frozen.app_path() + "\\Data\\" + StateName
         MaterialEnterIdentifyPath = Path_cur + "\\MaterialEnterIdentify.png"
         self.MaterialEnterIdImage = cv2.imdecode(fromfile(MaterialEnterIdentifyPath, dtype=uint8), -1)
         self.MaterialEnterIdImage = cv2.cvtColor(self.MaterialEnterIdImage, cv2.COLOR_BGR2GRAY);
@@ -221,7 +228,7 @@ class MSmState_GuildInfo(MSmState):
     def PrepareState(self):
         sleep(3)
         HitInfo_ReciveGift = self.HitInfo["ReciveGift"]
-        for i in range(random.randint(2,5)):
+        for i in range(np.random.randint(2,5)):
             self.DoHit(HitInfo_ReciveGift[0], HitInfo_ReciveGift[1])
         sleep(2)
         return True
@@ -239,18 +246,21 @@ class MSmState_Mail(MSmState):
         super().__init__(StateName, HandleNumber)
     def PrepareState(self):
         sleep(1)
-        self.DoHit(self.HitInfo["Personal"][0],self.HitInfo["Personal"][1])
-        sleep(1)
-        self.DoHit(self.HitInfo["ReciveAll"][0],self.HitInfo["ReciveAll"][1])
-        sleep(1)
-        self.DoHit(self.HitInfo["Confirm"][0],self.HitInfo["Confirm"][1])
+        for i in range(np.random.randint(2,4)):
+            self.DoHit(self.HitInfo["Personal"][0],self.HitInfo["Personal"][1])
+        sleep(2)
+        for i in range(np.random.randint(2,4)):
+            self.DoHit(self.HitInfo["ReciveAll"][0],self.HitInfo["ReciveAll"][1])
+        sleep(2)
+        for i in range(np.random.randint(2,4)):
+            self.DoHit(self.HitInfo["Confirm"][0],self.HitInfo["Confirm"][1])
         sleep(1)
         return True
 
 class MSmState_MaterialAutoFighting(MSmState):
     def __init__(self, StateName, HandleNumber):
         super().__init__(StateName, HandleNumber)
-        Path_cur = os.path.dirname(__file__) + "\\Data\\" + StateName
+        Path_cur = frozen.app_path() + "\\Data\\" + StateName
         MaterialGiveUpPath = Path_cur + "\\MaterialGiveUp.png"
         self.MaterialGiveUpIdImage = cv2.imdecode(fromfile(MaterialGiveUpPath, dtype=uint8), -1)
         self.MaterialGiveUpIdImage = cv2.cvtColor(self.MaterialGiveUpIdImage, cv2.COLOR_BGR2GRAY)
@@ -272,7 +282,7 @@ class MSmState_MaterialEnter0(MSmState):
         super().__init__(StateName, HandleNumber)
 
     def PrepareState(self):
-        for i in range(random.randint(3,6)):
+        for i in range(np.random.randint(5,7)):
             self.DoHit(self.HitInfo["AddTimes"][0],self.HitInfo["AddTimes"][1])
         return True
 
@@ -291,34 +301,33 @@ class MSmState_SystemMenuOpening(MSmState):
 class MSmState_Wander(MSmState):
     def __init__(self, StateName, HandleNumber):
         super().__init__(StateName, HandleNumber)
-        Path_cur = os.path.dirname(__file__) + "\\Data\\" + StateName
-        CloseDailyManagerPath = Path_cur + "\\CloseDailyManager.png"
-        self.CloseDailyManagerIdImage = cv2.imdecode(fromfile(CloseDailyManagerPath, dtype=uint8), -1)
-        self.CloseDailyManagerIdImage = cv2.cvtColor(self.CloseDailyManagerIdImage, cv2.COLOR_BGR2GRAY)
-        CloseGoldenAppleAdPath = Path_cur + "\\CloseGoldenAppleAd.png"
-        self.CloseGoldenAppleAdIdImage = cv2.imdecode(fromfile(CloseGoldenAppleAdPath, dtype=uint8), -1)
-        self.CloseGoldenAppleAdIdImage = cv2.cvtColor(self.CloseGoldenAppleAdIdImage, cv2.COLOR_BGR2GRAY)
-        CloseVipCardAdPath = Path_cur + "\\CloseVipCardAd.png"
-        self.CloseVipCardAdIdImage = cv2.imdecode(fromfile(CloseVipCardAdPath, dtype=uint8), -1)
-        self.CloseVipCardAdIdImage = cv2.cvtColor(self.CloseVipCardAdIdImage, cv2.COLOR_BGR2GRAY)
+        Path_cur = frozen.app_path() + "\\Data\\" + StateName
+        self.AdImages = []
+        for i in range(4):
+            AdFilePath =  Path_cur + "\\Ad" + str(i)+ ".png"
+            self.AdImages.append(cv2.imdecode(fromfile(AdFilePath, dtype=uint8), -1))
+            self.AdImages[i] = cv2.cvtColor(self.AdImages[i], cv2.COLOR_BGR2GRAY)
+
+
 
     def PrepareState(self):
+        AdCloseMask = []
+        HasAdExist = False
         self.RefreshScreenShot()
-        Has_GoldenAppleAd = self.IsPicMatching(self.CloseGoldenAppleAdIdImage)
-        Has_VipCardAd = self.IsPicMatching(self.CloseVipCardAdIdImage)
-        Has_DailyManager = self.IsPicMatching(self.CloseDailyManagerIdImage)
-        while Has_GoldenAppleAd or Has_VipCardAd or Has_DailyManager:
-            if(Has_GoldenAppleAd):
-                self.DoHit(self.HitInfo["CloseGoldenAppleAd"][0],self.HitInfo["CloseGoldenAppleAd"][1])
-                sleep(0.5)
-            if(Has_VipCardAd):
-                self.DoHit(self.HitInfo["CloseVipCardAd"][0],self.HitInfo["CloseVipCardAd"][1]) 
-                sleep(0.5)
-            if(Has_DailyManager):
-                self.DoHit(self.HitInfo["CloseDailyManager"][0],self.HitInfo["CloseDailyManager"][1]) 
-                sleep(0.5)
+        for i in range(4):
+            AdCloseMask.append( self.IsPicMatching(self.AdImages[i]))
+            if(AdCloseMask[i]):
+                HasAdExist = True
+
+        while HasAdExist:
+            for i in range(4):
+                if AdCloseMask[i]:
+                    self.DoHit(self.HitInfo["CloseAd" + str(i)][0],self.HitInfo["CloseAd" + str(i)][1])
+                    HasAdExist = False
+                    sleep(0.5)
             self.RefreshScreenShot()
-            Has_GoldenAppleAd = self.IsPicMatching(self.CloseGoldenAppleAdIdImage)
-            Has_VipCardAd = self.IsPicMatching(self.CloseVipCardAdIdImage)
-            Has_DailyManager = self.IsPicMatching(self.CloseDailyManagerIdImage)
+            for i in range(4):
+                AdCloseMask[i] = self.IsPicMatching(self.AdImages[i])
+                if(AdCloseMask[i]):
+                    HasAdExist = True
         return True
