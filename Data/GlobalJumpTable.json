@@ -1,5 +1,189 @@
 [
 	{
+		"TargetStateName":"Wulin",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "Wulin"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"Weekly",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "Weekly"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"Tangyun",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "Tangyun"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"Pirate",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "Pirate"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"NitePyramid",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "NitePyramid"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"Evolution",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "Evolution"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"Dimension",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "Dimension"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"Elite",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "Elite"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
 		"TargetStateName":"MaterialAutoFighting",
 		"TargetTable":[
 			["Login", "CharacterSelect"],
@@ -12,7 +196,17 @@
 			["MaterialEnter1", "MaterialAutoFighting"],
 			["ChangeCharacter", "SystemMenuOpening"],
 			["GuildInfo", "SystemMenuOpening"],
-			["Mail", "SystemMenuOpening"]
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
 		]
 	},
 	{
@@ -60,7 +254,17 @@
 			["MaterialEnter1", "MaterialsMain"],
 			["ChangeCharacter", "CharacterSelect"],
 			["MaterialAutoFighting", "Wander"],
-			["GuildInfo", "SystemMenuOpening"]
+			["Elite", "Wander"],
+			["GuildInfo", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"]
 		]
 	}
 ]

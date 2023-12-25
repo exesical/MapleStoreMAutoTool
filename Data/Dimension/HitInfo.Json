@@ -1,0 +1,37 @@
+[
+    {
+        "OpName":"CreateRoom",
+        "ClickPos":[624,532],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"AddTimes",
+        "ClickPos":[589,364],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"Comfirm",
+        "ClickPos":[589,434],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"FindTeam",
+        "ClickPos":[152,257],
+        "ClickRange":[40,14]
+    },
+    {
+        "OpName":"Start",
+        "ClickPos":[104,197],
+        "ClickRange":[80,14]
+    },
+    {
+        "OpName":"CreateTeam",
+        "ClickPos":[480,462],
+        "ClickRange":[80,18]
+    },
+    {
+        "OpName":"Exit",
+        "ClickPos":[302,430],
+        "ClickRange":[80,18]
+    }
+]

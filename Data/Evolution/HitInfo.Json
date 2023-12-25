@@ -1,0 +1,32 @@
+[
+    {
+        "OpName":"AutoSetKernal",
+        "ClickPos":[624,532],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"Enter",
+        "ClickPos":[840,532],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"AddTimes",
+        "ClickPos":[589,364],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"Comfirm",
+        "ClickPos":[589,434],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"Enter2",
+        "ClickPos":[590,522],
+        "ClickRange":[40,14]
+    },
+    {
+        "OpName":"Exit",
+        "ClickPos":[293,454],
+        "ClickRange":[80,18]
+    }
+]

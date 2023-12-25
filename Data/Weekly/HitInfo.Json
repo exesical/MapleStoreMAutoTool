@@ -1,0 +1,22 @@
+[
+    {
+        "OpName":"Enter",
+        "ClickPos":[840,530],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"AddTimes",
+        "ClickPos":[589,364],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"Comfirm",
+        "ClickPos":[589,434],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"Exit",
+        "ClickPos":[295,454],
+        "ClickRange":[80,18]
+    }
+]

@@ -1,0 +1,37 @@
+[
+    {
+        "OpName":"SelectFood",
+        "ClickPos":[733,204],
+        "ClickRange":[30,30]
+    },
+    {
+        "OpName":"Enter",
+        "ClickPos":[840,531],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"Enter2",
+        "ClickPos":[481,517],
+        "ClickRange":[80,20]
+    },
+    {
+        "OpName":"Select0",
+        "ClickPos":[398,395],
+        "ClickRange":[30,30]
+    },
+        {
+        "OpName":"Select1",
+        "ClickPos":[561,399],
+        "ClickRange":[30,30]
+    },
+    {
+        "OpName":"Select2",
+        "ClickPos":[645,399],
+        "ClickRange":[30,30]
+    },
+    {
+        "OpName":"Exit",
+        "ClickPos":[293,454],
+        "ClickRange":[80,18]
+    }
+]

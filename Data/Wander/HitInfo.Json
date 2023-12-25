@@ -18,5 +18,10 @@
         "OpName":"CloseAd3",
         "ClickPos":[857,88],
         "ClickRange":[10,10]
+    },
+    {
+        "OpName":"CloseAd4",
+        "ClickPos":[862,86],
+        "ClickRange":[10,10]
     }
 ]

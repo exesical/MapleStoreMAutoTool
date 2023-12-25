@@ -1,0 +1,17 @@
+[
+    {
+        "OpName":"Enter",
+        "ClickPos":[863,534],
+        "ClickRange":[60,20]
+    },
+    {
+        "OpName":"Enter1",
+        "ClickPos":[481,497],
+        "ClickRange":[80,18]
+    },
+    {
+        "OpName":"Exit",
+        "ClickPos":[388,515],
+        "ClickRange":[80,18]
+    }
+]
