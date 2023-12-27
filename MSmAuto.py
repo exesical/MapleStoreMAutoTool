@@ -66,6 +66,7 @@ if __name__ == '__main__':
         StateTable["Tangyun"]              = MSmState_Tangyun("Tangyun")
         StateTable["Weekly"]               = MSmState_Weekly("Weekly")
         StateTable["Wulin"]                = MSmState_Wulin("Wulin")
+        StateTable["PostProcess"]          = MSmState_PostProcess("PostProcess")
 
         #global jump table means 
         #TODO, global jump table can be gen by each states' jump table

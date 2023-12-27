@@ -3,5 +3,10 @@
         "NextStateName":"SystemMenuOpening",
         "ClickPos":[930,62],
         "ClickRange":[10,10]
+    },
+    {
+        "NextStateName":"PostProcess",
+        "ClickPos":[512,419],
+        "ClickRange":[50,50]
     }
 ]

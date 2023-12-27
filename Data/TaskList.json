@@ -3,5 +3,6 @@
 	"GuildInfo",
 	"Mail",
 	"MaterialAutoFighting",
+	"PostProcess",
 	"CharacterSelect"
 ]

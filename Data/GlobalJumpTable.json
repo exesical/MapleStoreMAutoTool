@@ -264,6 +264,32 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["PostProcess", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"PostProcess",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["Wander", "PostProcess"],
+			["SystemMenuOpening", "Wander"],
+			["Mail", "SystemMenuOpening"],
+			["GameModeDefault", "SystemMenuOpening"],
+			["MaterialsMain", "SystemMenuOpening"],
+			["MaterialEnter0", "MaterialsMain"],
+			["MaterialEnter1", "MaterialsMain"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			
+			["GuildInfo", "SystemMenuOpening"],
+			["MaterialAutoFighting", "Wander"],
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["Evolution", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
 			["Wulin", "Wander"]
 		]
 	}
