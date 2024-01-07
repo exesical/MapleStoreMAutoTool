@@ -94,7 +94,7 @@ if __name__ == '__main__':
         LoadingState = StateTable["Loading"]
         LoginState = StateTable["Login"]
         CurrentState = InitState
-        for i in range(StartCharacterIndex, 18):
+        for i in range(StartCharacterIndex, 100):
             if i == 0:
                 TaskCur = TaskJsonMain
             else:

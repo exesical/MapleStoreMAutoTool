@@ -418,19 +418,16 @@ class MSmState_TeamCommon(MSmState):
         self.ExitIdImage = self.ReadPic("ExitIdImage")
 
     def Processing(self):
-        #Elite Main
+        #Main
         self.TryInnerJump("CreateRoom", self.AddTimesIdImage)
-
         #Add times
-        self.DoAddTimes()
-        
+        self.DoAddTimes()  
         #Try enter waiting room
         self.TryInnerJump("Comfirm", self.WaitingRoomIdImage)
-
         #In Room
         self.TryInnerJump("FindTeam", self.FindTeamIdImage)
         self.TryInnerJump("CreateTeam", self.WaitingTeamIdImage)
-        #waiting 30s for finding team, 
+        #waiting 300s for finding team, 
         self.RefreshScreenShot()
         bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
         Iter = 0
@@ -439,8 +436,8 @@ class MSmState_TeamCommon(MSmState):
             self.RefreshScreenShot()
             bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
             Iter = Iter + 1
-
-        self.TryLeaveJump("Start",self.WaitingTeamIdImage)  
+        if Iter >= 300 and bStillInRoom == True:
+            self.TryLeaveJump("Start",self.WaitingTeamIdImage)  
         self.WaitingForAutoFightingFinished()
         self.TryLeaveJump("Exit", self.ExitIdImage)
         return True
