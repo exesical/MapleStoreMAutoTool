@@ -192,7 +192,13 @@ class MSmState(object):
             self.DoHitByName(HitName);
             sleep(1)
             self.RefreshScreenShot();
-            bSuccess = self.IsPicMatching(CheckPic)
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
 
     def TryLeaveJump(self, HitName, CheckPic):
         self.DoHitByName(HitName);
@@ -203,11 +209,20 @@ class MSmState(object):
             self.DoHitByName(HitName);
             sleep(1)
             self.RefreshScreenShot();
-            bSuccess = self.IsPicMatching(CheckPic)
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
 
     def DoAddTimes(self):
         for i in range(np.random.randint(5,7)):
             self.DoHitByName("AddTimes")
+
+    def CloseAuction(self):
+        return
 
     def WaitingForAutoFightingFinished(self):
         self.RefreshScreenShot()
@@ -215,6 +230,7 @@ class MSmState(object):
         while bAutoFightingFinished == False:
             sleep(5)
             self.RefreshScreenShot()
+            self.CloseAuction()
             bAutoFightingFinished = self.IsPicMatching(self.ExitIdImage);
 
 
@@ -387,6 +403,7 @@ class MSmState_Wander(MSmState):
                 self.AdImages[len(self.AdImages) - 1] = cv2.cvtColor(self.AdImages[len(self.AdImages) - 1], cv2.COLOR_BGR2GRAY)
 
     def Processing(self):
+        sleep(1)
         AdCloseMask = []
         HasAdExist = False
         self.RefreshScreenShot()
@@ -426,6 +443,7 @@ class MSmState_TeamCommon(MSmState):
         self.TryInnerJump("Comfirm", self.WaitingRoomIdImage)
         #In Room
         self.TryInnerJump("FindTeam", self.FindTeamIdImage)
+        sleep(1)
         self.TryInnerJump("CreateTeam", self.WaitingTeamIdImage)
         #waiting 300s for finding team, 
         self.RefreshScreenShot()
@@ -450,6 +468,12 @@ class MSmState_Elite(MSmState_TeamCommon):
 class MSmState_Pirate(MSmState_TeamCommon):
     def __init__(self, StateName):
         super().__init__(StateName)
+        self.AuctionIdPic = self.ReadPic("AuctionIdPic")
+
+    def CloseAuction(self):
+        if self.IsPicMatching(self.AuctionIdPic):
+            self.DoHitByName("CloseAuction")
+            sleep(1)
 
 class MSmState_NitePyramid(MSmState_TeamCommon):
     def __init__(self, StateName):
@@ -546,37 +570,37 @@ class MSmState_PostProcess(MSmState):
         self.TryInnerJump("SendPopularity",self.SendPopularityIdImage)
         sleep(1)
         self.DoHitByName("SelectFreeGift")
-        sleep(0.5)
+        sleep(1)
         self.DoHitByName("Comfirm")
         sleep(1)
         self.DoHitByName("NotRemind")
-        sleep(0.5)
+        sleep(1)
         self.DoHitByName("CloseSelectFreeGift")
         sleep(1)
         self.TryLeaveJump("CloseDaily",self.WeChatFriendsIdImage)
-        sleep(0.5)
+        sleep(1)
         self.TryInnerJump("Daily",self.DailyIdImage)
-        sleep(0.5)
-        for i in range(np.random.randint(1,2)):
-            self.DoHitByName("DailyReciveAll")
-        sleep(1)
-        for i in range(np.random.randint(1,2)):
-            self.DoHitByName("DailyComfirm")
         sleep(1)
         for i in range(np.random.randint(1,2)):
             self.DoHitByName("DailyReciveAll")
-        sleep(1)
+        sleep(2)
         for i in range(np.random.randint(1,2)):
             self.DoHitByName("DailyComfirm")
-        sleep(1)
+        sleep(2)
+        for i in range(np.random.randint(1,2)):
+            self.DoHitByName("DailyReciveAll")
+        sleep(2)
+        for i in range(np.random.randint(1,2)):
+            self.DoHitByName("DailyComfirm")
+        sleep(2)
         self.TryLeaveJump("CloseDaily",self.DailyIdImage)
         sleep(0.5)
         self.TryLeaveJump("AutoFighting",self.DailyIdImage)
-        sleep(0.5)
+        sleep(1)
         self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)
-        sleep(0.5)
+        sleep(1)
         for i in range(np.random.randint(1,2)):
             self.DoHitByName("UseFreeTime")
-        sleep(0.5)
+        sleep(1)
         self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
         return True

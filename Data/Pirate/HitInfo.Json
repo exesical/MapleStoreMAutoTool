@@ -33,5 +33,10 @@
         "OpName":"Exit",
         "ClickPos":[293,537],
         "ClickRange":[80,18]
+    },
+    {
+        "OpName":"CloseAuction",
+        "ClickPos":[691,78],
+        "ClickRange":[10,10]
     }
 ]
