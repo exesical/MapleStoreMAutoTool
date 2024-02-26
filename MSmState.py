@@ -581,18 +581,20 @@ class MSmState_PostProcess(MSmState):
         sleep(1)
         self.TryInnerJump("Daily",self.DailyIdImage)
         sleep(1)
-        for i in range(np.random.randint(1,2)):
+        for i in range(np.random.randint(2,4)):
             self.DoHitByName("DailyReciveAll")
-        sleep(2)
-        for i in range(np.random.randint(1,2)):
-            self.DoHitByName("DailyComfirm")
-        sleep(2)
-        for i in range(np.random.randint(1,2)):
+        sleep(1)
+
+        self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+        sleep(1)
+
+        for i in range(np.random.randint(2,4)):
             self.DoHitByName("DailyReciveAll")
-        sleep(2)
-        for i in range(np.random.randint(1,2)):
-            self.DoHitByName("DailyComfirm")
-        sleep(2)
+        sleep(1)
+
+        self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+        sleep(1)
+
         self.TryLeaveJump("CloseDaily",self.DailyIdImage)
         sleep(0.5)
         self.TryLeaveJump("AutoFighting",self.DailyIdImage)
