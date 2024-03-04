@@ -625,15 +625,25 @@ class MSmState_PostProcess(MSmState):
 
 
         #goto wechat
-        GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage)
-        if Pos is not None:
-            GotoWeChatHitPos = [GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+32]
-            self.TryLeaveJumpByPos(GotoWeChatHitPos,self.DailyIdImage)
+        GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
+        if GotoWeChatHitPos is not None:
+            print("Find Goto WeChat")
+            GotoWeChatHitInfo = [[GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+65],[10,10]]
+            self.TryLeaveJumpByPos(GotoWeChatHitInfo,self.DailyIdImage)
             sleep(0.5)
             #now is under state system menu open
+            self.TryInnerJump("CloseGotoWeChat",self.SysOpeningIdImage)
+            sleep(0.5)
             self.TryInnerJump("Daily",self.DailyIdImage)
             sleep(0.5)
 
+
+        for i in range(np.random.randint(2,4)):
+            self.DoHitByName("DailyReciveAll")
+        sleep(1)
+
+        self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+        sleep(1)
 
         for i in range(np.random.randint(2,4)):
             self.DoHitByName("DailyReciveAll")
