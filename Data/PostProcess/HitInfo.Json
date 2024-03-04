@@ -73,6 +73,11 @@
         "OpName":"CloseDaily",
         "ClickPos":[934,63],
         "ClickRange":[10,10]
+    },
+    {
+        "OpName":"CloseGotoWeChat",
+        "ClickPos":[868,555],
+        "ClickRange":[10,10]
     }
 
 ]

@@ -127,7 +127,7 @@ class MSmState(object):
             HitRange = self.JumpInfo[TargetState.Name][1]
             #make sure leave current state
             #try 30 times
-            MaxOpTimes = 30
+            MaxOpTimes = 300
             OpTimes = 0
             
             while(self.IsUnderState() and OpTimes != MaxOpTimes ):
@@ -137,7 +137,7 @@ class MSmState(object):
                     print("Jump success by reaching taget state " + TargetState.Name)
                     sleep(WaitingTime)
                     return 0
-            if OpTimes < 30:
+            if OpTimes < 300:
                 print("Jump success by leaving current state "+ self.Name)
                 return 0
             else:
@@ -183,6 +183,23 @@ class MSmState(object):
         img = cv2.imdecode(fromfile(Path_cur + "\\" + PicName + ".png", dtype=uint8), -1)
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY);
 
+    def TryInnerJumpByPos(self, HitPos, CheckPic):
+        self.DoHit(HitPos[0],HitPos[1])
+        sleep(1)
+        self.RefreshScreenShot();
+        bSuccess = self.IsPicMatching(CheckPic)
+        while bSuccess == False:
+            self.DoHit(HitPos[0],HitPos[1])
+            sleep(1)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+
     def TryInnerJump(self, HitName, CheckPic):
         self.DoHitByName(HitName);
         sleep(1)
@@ -199,6 +216,23 @@ class MSmState(object):
             sleep(0.3)
             self.RefreshScreenShot();
             bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+
+    def TryLeaveJumpByPos(self, HitPos, CheckPic):
+        self.DoHit(HitPos[0],HitPos[1])
+        sleep(1)
+        self.RefreshScreenShot();
+        bSuccess = self.IsPicMatching(CheckPic)
+        while bSuccess == True:
+            self.DoHit(HitPos[0],HitPos[1])
+            sleep(1)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
 
     def TryLeaveJump(self, HitName, CheckPic):
         self.DoHitByName(HitName);
@@ -559,6 +593,7 @@ class MSmState_PostProcess(MSmState):
         self.SysOpeningIdImage = self.ReadPic("SysOpeningIdImage")
         self.WeChatFriendsIdImage = self.ReadPic("WeChatFriendsIdImage")
         self.DailyComfirmIdImage = self.ReadPic("DailyComfirmIdImage")
+        self.GotoWeChatIdImage = self.ReadPic("GotoWeChatIdImage")
 
     def Processing(self):
         self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
@@ -587,6 +622,18 @@ class MSmState_PostProcess(MSmState):
 
         self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
         sleep(1)
+
+
+        #goto wechat
+        GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage)
+        if Pos is not None:
+            GotoWeChatHitPos = [GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+32]
+            self.TryLeaveJumpByPos(GotoWeChatHitPos,self.DailyIdImage)
+            sleep(0.5)
+            #now is under state system menu open
+            self.TryInnerJump("Daily",self.DailyIdImage)
+            sleep(0.5)
+
 
         for i in range(np.random.randint(2,4)):
             self.DoHitByName("DailyReciveAll")
