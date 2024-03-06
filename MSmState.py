@@ -129,10 +129,13 @@ class MSmState(object):
             #try 30 times
             MaxOpTimes = 300
             OpTimes = 0
-            
+            sleeptime = 1
+            if(self.Name == "SystemMenuOpening" and TargetState.Name == "GameModeDefault"):
+                sleeptime = 3
+
             while(self.IsUnderState() and OpTimes != MaxOpTimes ):
                 self.DoHit(HitPos, HitRange)
-                sleep(1)
+                sleep(sleeptime)
                 if TargetState.IsUnderState():
                     print("Jump success by reaching taget state " + TargetState.Name)
                     sleep(WaitingTime)
@@ -636,14 +639,11 @@ class MSmState_PostProcess(MSmState):
             sleep(0.5)
             self.TryInnerJump("Daily",self.DailyIdImage)
             sleep(0.5)
-
-
-        for i in range(np.random.randint(2,4)):
-            self.DoHitByName("DailyReciveAll")
-        sleep(1)
-
-        self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
-        sleep(1)
+            for i in range(np.random.randint(2,4)):
+                self.DoHitByName("DailyReciveAll")
+            sleep(1)
+            self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+            sleep(1)
 
         for i in range(np.random.randint(2,4)):
             self.DoHitByName("DailyReciveAll")
