@@ -481,7 +481,7 @@ class MSmState_TeamCommon(MSmState):
         #In Room
         self.TryInnerJump("FindTeam", self.FindTeamIdImage)
         sleep(1)
-        self.TryInnerJump("CreateTeam", self.WaitingTeamIdImage)
+        self.TryLeaveJump("CreateTeam", self.FindTeamIdImage)
         #waiting 300s for finding team, 
         self.RefreshScreenShot()
         bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
