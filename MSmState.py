@@ -597,46 +597,37 @@ class MSmState_PostProcess(MSmState):
         self.WeChatFriendsIdImage = self.ReadPic("WeChatFriendsIdImage")
         self.DailyComfirmIdImage = self.ReadPic("DailyComfirmIdImage")
         self.GotoWeChatIdImage = self.ReadPic("GotoWeChatIdImage")
+        self.NotRemindIdImage = self.ReadPic("NotRemindIdImage")
 
     def Processing(self):
         self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
-        sleep(0.5)
         self.TryInnerJump("Communication",self.FriendsIdImage)
-        sleep(0.5)
         self.TryInnerJump("WeChatFriends",self.WeChatFriendsIdImage)
-        sleep(0.5)
         self.TryInnerJump("SendPopularity",self.SendPopularityIdImage)
         sleep(1)
         self.DoHitByName("SelectFreeGift")
         sleep(1)
         self.DoHitByName("Comfirm")
-        sleep(1)
-        self.DoHitByName("NotRemind")
-        sleep(1)
-        self.DoHitByName("CloseSelectFreeGift")
-        sleep(1)
+        sleep(0.5)
+        self.TryLeaveJump("NotRemind",self.NotRemindIdImage)
+        self.TryLeaveJump("CloseSelectFreeGift",self.SendPopularityIdImage)
         self.TryLeaveJump("CloseDaily",self.WeChatFriendsIdImage)
-        sleep(1)
         self.TryInnerJump("Daily",self.DailyIdImage)
-        sleep(1)
+        sleep(0.5)
         for i in range(np.random.randint(2,4)):
             self.DoHitByName("DailyReciveAll")
         sleep(1)
 
         self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
         sleep(1)
-
-
         #goto wechat
         GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
         if GotoWeChatHitPos is not None:
             print("Find Goto WeChat")
             GotoWeChatHitInfo = [[GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+65],[10,10]]
             self.TryLeaveJumpByPos(GotoWeChatHitInfo,self.DailyIdImage)
-            sleep(0.5)
             #now is under state system menu open
             self.TryInnerJump("CloseGotoWeChat",self.SysOpeningIdImage)
-            sleep(0.5)
             self.TryInnerJump("Daily",self.DailyIdImage)
             sleep(0.5)
             for i in range(np.random.randint(2,4)):
@@ -648,18 +639,12 @@ class MSmState_PostProcess(MSmState):
         for i in range(np.random.randint(2,4)):
             self.DoHitByName("DailyReciveAll")
         sleep(1)
-
         self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
-        sleep(1)
-
         self.TryLeaveJump("CloseDaily",self.DailyIdImage)
-        sleep(0.5)
         self.TryLeaveJump("AutoFighting",self.DailyIdImage)
-        sleep(1)
         self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)
         sleep(1)
         for i in range(np.random.randint(1,2)):
             self.DoHitByName("UseFreeTime")
-        sleep(1)
         self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
         return True
