@@ -78,6 +78,36 @@
         "OpName":"CloseGotoWeChat",
         "ClickPos":[868,555],
         "ClickRange":[10,10]
+    },
+    {
+        "OpName":"GotoGetTradeGoods",
+        "ClickPos":[323,524],
+        "ClickRange":[50,10]
+    },
+    {
+        "OpName":"GotoGetTradeGoodsEnter",
+        "ClickPos":[834,515],
+        "ClickRange":[60,18]
+    },
+    {
+        "OpName":"CloseGoodsPackage",
+        "ClickPos":[479,166],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"LeaveGetTradeGoods",
+        "ClickPos":[927,247],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"LeaveGetTradeGoods2",
+        "ClickPos":[592,433],
+        "ClickRange":[60,18]
+    },
+    {
+        "OpName":"GetGoodsResultConfirm",
+        "ClickPos":[481,460],
+        "ClickRange":[60,18]
     }
 
 ]

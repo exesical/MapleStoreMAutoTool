@@ -598,6 +598,12 @@ class MSmState_PostProcess(MSmState):
         self.DailyComfirmIdImage = self.ReadPic("DailyComfirmIdImage")
         self.GotoWeChatIdImage = self.ReadPic("GotoWeChatIdImage")
         self.NotRemindIdImage = self.ReadPic("NotRemindIdImage")
+        self.TradeEnterIdImage = self.ReadPic("TradeEnterIdImage")
+        self.GotoGetTradeGoodsIdImage = self.ReadPic("GotoGetTradeGoodsIdImage")
+        self.GotoGetTradeGoodsEnterIdImage = self.ReadPic("GotoGetTradeGoodsEnterIdImage")
+        self.GoodsPackageOpenIdImage = self.ReadPic("GoodsPackageOpenIdImage")
+        self.LeaveGetTradeGoodsIdImage = self.ReadPic("LeaveGetTradeGoodsIdImage")
+        self.GetGoodsResultConfirmIdImage = self.ReadPic("GetGoodsResultConfirmIdImage")
 
     def Processing(self):
         self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
@@ -612,6 +618,23 @@ class MSmState_PostProcess(MSmState):
         self.TryLeaveJump("NotRemind",self.NotRemindIdImage)
         self.TryLeaveJump("CloseSelectFreeGift",self.SendPopularityIdImage)
         self.TryLeaveJump("CloseDaily",self.WeChatFriendsIdImage)
+
+        bGotoTrade = False;
+        GotoTradePos = self.GetPicPos(self.TradeEnterIdImage, 0.9)
+        if GotoTradePos is not None:
+            GotoTradePosHitInfo = [[GotoTradePos[0] + 20, GotoTradePos[1]+55],[10,10]]
+            self.TryInnerJumpByPos(GotoTradePosHitInfo, self.GotoGetTradeGoodsIdImage)
+            self.TryLeaveJump("GotoGetTradeGoods", self.GotoGetTradeGoodsIdImage)
+            self.TryLeaveJump("GotoGetTradeGoodsEnter", self.GotoGetTradeGoodsEnterIdImage)
+            self.TryLeaveJump("CloseGoodsPackage", self.GoodsPackageOpenIdImage)
+            self.TryInnerJump("LeaveGetTradeGoods", self.LeaveGetTradeGoodsIdImage)
+            self.TryLeaveJump("LeaveGetTradeGoods2", self.LeaveGetTradeGoodsIdImage)
+            self.TryLeaveJump("GetGoodsResultConfirm", self.LeaveGetTradeGoodsIdImage)
+            bGotoTrade = True;
+            sleep(0.3)
+
+        self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+
         self.TryInnerJump("Daily",self.DailyIdImage)
         sleep(0.5)
         for i in range(np.random.randint(2,4)):
@@ -622,7 +645,7 @@ class MSmState_PostProcess(MSmState):
         sleep(1)
         #goto wechat
         GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
-        if GotoWeChatHitPos is not None:
+        if GotoWeChatHitPos is not None and bGotoTrade == False:
             print("Find Goto WeChat")
             GotoWeChatHitInfo = [[GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+65],[10,10]]
             self.TryLeaveJumpByPos(GotoWeChatHitInfo,self.DailyIdImage)

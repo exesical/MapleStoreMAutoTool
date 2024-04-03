@@ -33,14 +33,19 @@ if __name__ == '__main__':
     today = datetime.date.today()
     StartCharacterIndex = 0
 
-    StartCharacterIndexFileName  = frozen.app_path() +"\\" + today.strftime('%y&m%d');
+    StartCharacterIndexFileName  = frozen.app_path() +"\\" + today.strftime('RecordFile%y%m%d');
     if os.path.exists(StartCharacterIndexFileName):
         StartCharacterIndexFile = open(StartCharacterIndexFileName, "r")
         for line in StartCharacterIndexFile:
             StartCharacterIndex = int(line.strip())
         StartCharacterIndexFile.close()
 
-
+    for cur_dir, sub_dir, included_file in walk(frozen.app_path()):
+            if included_file:
+                for file in included_file:
+                    if search(r'RecordFile', file) or search(r'&m', file):
+                        if not search(today.strftime('RecordFile%y%m%d'), file):
+                            os.remove(file)
 
     if MSmState.HandleNumber_Main != 0:
         StateTable = {}
