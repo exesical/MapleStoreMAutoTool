@@ -186,6 +186,15 @@ class MSmState(object):
         img = cv2.imdecode(fromfile(Path_cur + "\\" + PicName + ".png", dtype=uint8), -1)
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY);
 
+    def WaitUntil(self, CheckPic):
+        sleep(1)
+        self.RefreshScreenShot();
+        bSuccess = self.IsPicMatching(CheckPic)
+        while bSuccess == False:
+            sleep(1)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+
     def TryInnerJumpByPos(self, HitPos, CheckPic):
         self.DoHit(HitPos[0],HitPos[1])
         sleep(1)
@@ -604,6 +613,7 @@ class MSmState_PostProcess(MSmState):
         self.GoodsPackageOpenIdImage = self.ReadPic("GoodsPackageOpenIdImage")
         self.LeaveGetTradeGoodsIdImage = self.ReadPic("LeaveGetTradeGoodsIdImage")
         self.GetGoodsResultConfirmIdImage = self.ReadPic("GetGoodsResultConfirmIdImage")
+        self.GoodsPackageClosedIdImage = self.ReadPic("GoodsPackageClosedIdImage")
 
     def Processing(self):
         self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
@@ -626,6 +636,8 @@ class MSmState_PostProcess(MSmState):
             self.TryInnerJumpByPos(GotoTradePosHitInfo, self.GotoGetTradeGoodsIdImage)
             self.TryLeaveJump("GotoGetTradeGoods", self.GotoGetTradeGoodsIdImage)
             self.TryLeaveJump("GotoGetTradeGoodsEnter", self.GotoGetTradeGoodsEnterIdImage)
+            sleep(0.5)
+            self.WaitUntil(self.GoodsPackageOpenIdImage)
             self.TryLeaveJump("CloseGoodsPackage", self.GoodsPackageOpenIdImage)
             self.TryInnerJump("LeaveGetTradeGoods", self.LeaveGetTradeGoodsIdImage)
             self.TryLeaveJump("LeaveGetTradeGoods2", self.LeaveGetTradeGoodsIdImage)
