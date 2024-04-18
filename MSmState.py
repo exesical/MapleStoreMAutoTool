@@ -263,6 +263,23 @@ class MSmState(object):
             self.RefreshScreenShot();
             bSuccess = bSuccess and self.IsPicMatching(CheckPic)
 
+    def TryLeaveJump2(self, HitName, CheckPic, CheckPic2):
+        self.DoHitByName(HitName);
+        sleep(1)
+        self.RefreshScreenShot();
+        bSuccess = (self.IsPicMatching(CheckPic) or self.IsPicMatching(CheckPic2))
+        while bSuccess == True:
+            self.DoHitByName(HitName);
+            sleep(1)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and (self.IsPicMatching(CheckPic) or self.IsPicMatching(CheckPic2))
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and (self.IsPicMatching(CheckPic) or self.IsPicMatching(CheckPic2))
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and (self.IsPicMatching(CheckPic) or self.IsPicMatching(CheckPic2))
+
     def DoAddTimes(self):
         for i in range(np.random.randint(5,7)):
             self.DoHitByName("AddTimes")
@@ -635,19 +652,25 @@ class MSmState_PostProcess(MSmState):
             GotoTradePosHitInfo = [[GotoTradePos[0] + 20, GotoTradePos[1]+55],[10,10]]
             self.TryInnerJumpByPos(GotoTradePosHitInfo, self.GotoGetTradeGoodsIdImage)
             self.TryLeaveJump("GotoGetTradeGoods", self.GotoGetTradeGoodsIdImage)
-            self.TryLeaveJump("GotoGetTradeGoodsEnter", self.GotoGetTradeGoodsEnterIdImage)
-            sleep(0.5)
-            self.WaitUntil(self.GoodsPackageOpenIdImage)
-            self.TryLeaveJump("CloseGoodsPackage", self.GoodsPackageOpenIdImage)
-            self.TryInnerJump("LeaveGetTradeGoods", self.LeaveGetTradeGoodsIdImage)
-            self.TryLeaveJump("LeaveGetTradeGoods2", self.LeaveGetTradeGoodsIdImage)
-            sleep(0.5)
-            self.WaitUntil(self.GetGoodsResultConfirmIdImage)
-            self.TryLeaveJump("GetGoodsResultConfirm", self.GetGoodsResultConfirmIdImage)
-            bGotoTrade = True;
-            sleep(0.3)
+            EnterTradePos = self.GetPicPos(self.GotoGetTradeGoodsEnterIdImage,0.9)
+            if EnterTradePos is not None:
+                self.TryLeaveJump("GotoGetTradeGoodsEnter", self.GotoGetTradeGoodsEnterIdImage)
+                sleep(0.5)
+                self.WaitUntil(self.GoodsPackageOpenIdImage)
+                self.TryLeaveJump("CloseGoodsPackage", self.GoodsPackageOpenIdImage)
+                #self.TryInnerJump("CloseGoodsPackage", self.GoodsPackageClosedIdImage)
 
-        self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+                self.TryInnerJump("LeaveGetTradeGoods", self.LeaveGetTradeGoodsIdImage)
+                self.TryLeaveJump("LeaveGetTradeGoods2", self.LeaveGetTradeGoodsIdImage)
+                sleep(0.5)
+                self.WaitUntil(self.GetGoodsResultConfirmIdImage)
+                self.TryLeaveJump("GetGoodsResultConfirm", self.GetGoodsResultConfirmIdImage)
+                
+                bGotoTrade = True;
+                sleep(0.3)
+                self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            else:
+                self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
 
         self.TryInnerJump("Daily",self.DailyIdImage)
         sleep(0.5)
