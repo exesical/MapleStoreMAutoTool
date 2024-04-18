@@ -641,7 +641,9 @@ class MSmState_PostProcess(MSmState):
             self.TryLeaveJump("CloseGoodsPackage", self.GoodsPackageOpenIdImage)
             self.TryInnerJump("LeaveGetTradeGoods", self.LeaveGetTradeGoodsIdImage)
             self.TryLeaveJump("LeaveGetTradeGoods2", self.LeaveGetTradeGoodsIdImage)
-            self.TryLeaveJump("GetGoodsResultConfirm", self.LeaveGetTradeGoodsIdImage)
+            sleep(0.5)
+            self.WaitUntil(self.GetGoodsResultConfirmIdImage)
+            self.TryLeaveJump("GetGoodsResultConfirm", self.GetGoodsResultConfirmIdImage)
             bGotoTrade = True;
             sleep(0.3)
 
