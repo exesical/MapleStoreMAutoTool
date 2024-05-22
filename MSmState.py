@@ -281,6 +281,7 @@ class MSmState(object):
             bSuccess = bSuccess and (self.IsPicMatching(CheckPic) or self.IsPicMatching(CheckPic2))
 
     def DoAddTimes(self):
+        return
         for i in range(np.random.randint(5,7)):
             self.DoHitByName("AddTimes")
 
@@ -347,7 +348,7 @@ class MSmState_GameModeDefault(MSmState):
         self.PirateEnterIdImage = self.ReadPic("PirateEnterIdImage")
         self.NitePyramidEnterIdImage = self.ReadPic("NitePyramidEnterIdImage")
         self.WeeklyEnterIdImage = self.ReadPic("WeeklyEnterIdImage")
-        self.EvolutionEnterIdImage = self.ReadPic("EvolutionEnterIdImage")
+        self.MonsterParkEnterIdImage = self.ReadPic("MonsterParkEnterIdImage")
         self.WulinEnterIdImage = self.ReadPic("WulinEnterIdImage")
         self.DimensionEnterIdImage = self.ReadPic("DimensionEnterIdImage")
 
@@ -376,7 +377,7 @@ class MSmState_GameModeDefault(MSmState):
         self.AddEnter("Weekly", self.WeeklyEnterIdImage)        
         self.AddEnter("Wulin", self.WulinEnterIdImage)        
         self.AddEnter("Dimension", self.DimensionEnterIdImage)        
-        self.AddEnter("Evolution", self.EvolutionEnterIdImage)        
+        self.AddEnter("MonsterPark", self.MonsterParkEnterIdImage)        
 
         return True
 
@@ -404,6 +405,9 @@ class MSmState_Mail(MSmState):
         super().__init__(StateName)
     def Processing(self):
         sleep(1)
+        for i in range(np.random.randint(2,4)):
+            self.DoHitByName("Confirm")
+        sleep(2)
         for i in range(np.random.randint(2,4)):
             self.DoHitByName("Personal")
         sleep(2)
@@ -434,6 +438,7 @@ class MSmState_MaterialAutoFighting(MSmState):
             if self.IsPicMatching(self.MaterialExitIdImage):
                 return True
             sleep(5)
+        #self.TryLeaveJump("Leave",self.MaterialExitIdImage)
 
 class MSmState_MaterialEnter0(MSmState):
     def __init__(self, StateName):
@@ -546,19 +551,22 @@ class MSmState_Dimension(MSmState_TeamCommon):
     def __init__(self, StateName):
         super().__init__(StateName)
 
-class MSmState_Evolution(MSmState):
+class MSmState_MonsterPark(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
         self.AddTimesIdImage = self.ReadPic("AddTimesIdImage")
-        self.EnterEvolutionIdImage = self.ReadPic("EnterEvolutionIdImage")
+        self.EnterMonsterParkIdImage = self.ReadPic("EnterMonsterParkIdImage")
+        self.GetMoreIdImage = self.ReadPic("GetMoreIdImage")
         self.ExitIdImage = self.ReadPic("ExitIdImage")
 
     def Processing(self):
-        self.TryInnerJump("Enter", self.AddTimesIdImage)
+        self.TryInnerJump("Enter0", self.AddTimesIdImage)
         self.DoAddTimes()   
-        self.TryInnerJump("Comfirm", self.EnterEvolutionIdImage)
-        self.TryLeaveJump("Enter2", self.EnterEvolutionIdImage)
+        self.TryInnerJump("Comfirm0", self.EnterMonsterParkIdImage)
+        self.TryLeaveJump("Enter1", self.EnterMonsterParkIdImage)
         self.WaitingForAutoFightingFinished()
+        self.TryInnerJump("Spend",self.GetMoreIdImage)
+        self.TryLeaveJump("SpendComfirm",self.GetMoreIdImage)
         self.TryLeaveJump("Exit", self.ExitIdImage)
         return True
 
@@ -682,7 +690,7 @@ class MSmState_PostProcess(MSmState):
         sleep(1)
         #goto wechat
         GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
-        if GotoWeChatHitPos is not None and bGotoTrade == False:
+        if GotoWeChatHitPos is not None:
             print("Find Goto WeChat")
             GotoWeChatHitInfo = [[GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+65],[10,10]]
             self.TryLeaveJumpByPos(GotoWeChatHitInfo,self.DailyIdImage)

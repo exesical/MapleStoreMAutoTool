@@ -13,7 +13,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -36,7 +36,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -59,7 +59,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -82,7 +82,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -105,7 +105,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -115,20 +115,20 @@
 		]
 	},
 	{
-		"TargetStateName":"Evolution",
+		"TargetStateName":"MonsterPark",
 		"TargetTable":[
 			["Login", "CharacterSelect"],
 			["CharacterSelect", "Wander"],
 			["Wander", "SystemMenuOpening"],
 			["SystemMenuOpening", "GameModeDefault"],
-			["GameModeDefault", "Evolution"],
+			["GameModeDefault", "MonsterPark"],
 			["ChangeCharacter", "SystemMenuOpening"],
 			["GuildInfo", "SystemMenuOpening"],
 			["Mail", "SystemMenuOpening"],
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -151,7 +151,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -174,7 +174,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -200,7 +200,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -259,7 +259,7 @@
 
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
@@ -285,7 +285,7 @@
 			["MaterialAutoFighting", "Wander"],
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
-			["Evolution", "Wander"],
+			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],

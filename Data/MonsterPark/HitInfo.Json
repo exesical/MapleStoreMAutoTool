@@ -1,0 +1,37 @@
+[
+    {
+        "OpName":"Enter0",
+        "ClickPos":[856,532],
+        "ClickRange":[40,20]
+    },
+    {
+        "OpName":"AddTimes",
+        "ClickPos":[589,364],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"Comfirm0",
+        "ClickPos":[589,434],
+        "ClickRange":[60,20]
+    },
+    {
+        "OpName":"Enter1",
+        "ClickPos":[590,515],
+        "ClickRange":[40,14]
+    },
+    {
+        "OpName":"Spend",
+        "ClickPos":[639,419],
+        "ClickRange":[60,18]
+    },
+    {
+        "OpName":"SpendComfirm",
+        "ClickPos":[493,432],
+        "ClickRange":[60,18]
+    },
+    {
+        "OpName":"Exit",
+        "ClickPos":[287,518],
+        "ClickRange":[70,18]
+    }
+]

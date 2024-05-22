@@ -67,7 +67,7 @@ if __name__ == '__main__':
         StateTable["Pirate"]               = MSmState_Pirate("Pirate")
         StateTable["NitePyramid"]          = MSmState_NitePyramid("NitePyramid")
         StateTable["Dimension"]            = MSmState_Dimension("Dimension")
-        StateTable["Evolution"]            = MSmState_Evolution("Evolution")
+        StateTable["MonsterPark"]          = MSmState_MonsterPark("MonsterPark")
         StateTable["Tangyun"]              = MSmState_Tangyun("Tangyun")
         StateTable["Weekly"]               = MSmState_Weekly("Weekly")
         StateTable["Wulin"]                = MSmState_Wulin("Wulin")
@@ -91,6 +91,7 @@ if __name__ == '__main__':
         TaskFilePath = frozen.app_path() + "\\Data\\TaskList.json" 
         TaskJson = json.load(open(TaskFilePath, 'r', encoding='utf-8'))
         TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TaskListMain.json", 'r', encoding='utf-8'))
+        TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TaskListFive.json", 'r', encoding='utf-8'))
         InitState = StateTable["CharacterSelect"] 
         if InitState.IsUnderState() == False:
             print("Please move to character select widget and restart this script")
@@ -102,6 +103,8 @@ if __name__ == '__main__':
         for i in range(StartCharacterIndex, 100):
             if i == 0:
                 TaskCur = TaskJsonMain
+            elif i <= 5:
+                TaskCur = TaskJsonFive
             else:
                 TaskCur = TaskJson
             #CurrentState.SelectCharacter(i)

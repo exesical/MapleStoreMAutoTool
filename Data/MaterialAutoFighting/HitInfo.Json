@@ -3,5 +3,10 @@
         "OpName":"GiveUp",
         "ClickPos":[297,515],
         "ClickRange":[60,17]
+    },
+    {
+        "OpName":"Leave",
+        "ClickPos":[297,454],
+        "ClickRange":[60,17]
     }
 ]
