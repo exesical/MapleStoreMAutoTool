@@ -357,7 +357,7 @@ class MSmState_GameModeDefault(MSmState):
         if Pos is None:
             print("Cannot find "+ ModeName + " Enter")
         else:
-            self.JumpInfo[ModeName] = [[Pos[0]+ 75, Pos[1]+ 65],[30, 30]]
+            self.JumpInfo[ModeName] = [[Pos[0]+ 75, Pos[1]+ 80],[15, 15]]
 
     def Processing(self):
         #reload jump info
