@@ -1,11 +1,4 @@
 from MSmState import *
-#   MSmState,MSmState_CharacterSelect\
-#    ,MSmState_ChangeCharacter,MSmState_GameModeDefault,\
-#   MSmState_GuildInfo, MSmState_Loading, MSmState_Login,\
-#  MSmState_Mail, MSmState_MaterialAutoFighting, MSmState_MaterialEnter0,\
-# MSmState_MaterialEnter1, MSmState_MaterialsMain, MSmState_SystemMenuOpening,\
-#MSmState_Wander, MSmState_Elite,MSmState_Pirate,MSmState_NitePyramid,MSmState_Dimension,\
-#MSmState_Evolution,MSmState_Tangyun,MSmState_Weekly,MSmState_Wulin
 from re import search
 from win32gui import GetWindowText, FindWindow, FindWindowEx, GetWindowRect, GetForegroundWindow
 import os
@@ -18,11 +11,14 @@ import datetime
 
 if __name__ == '__main__':
 
+    bExpeditionMode = False;
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
         if search(r'MainWindowsCapture',args):
             MSmState.bUseMainWindowCapture = True
+        if search(r'Expedition',args):
+            bExpeditionMode = True
 
     IsMainCharacter = False
     hwd_title = "雷电模拟器"
@@ -32,13 +28,21 @@ if __name__ == '__main__':
         print("Warning: HandleNumber_Main is equal to HandleNumber_Render, considier run with -MainWindowsCapture")
     today = datetime.date.today()
     StartCharacterIndex = 0
-
-    StartCharacterIndexFileName  = frozen.app_path() +"\\" + today.strftime('RecordFile%y%m%d');
-    if os.path.exists(StartCharacterIndexFileName):
-        StartCharacterIndexFile = open(StartCharacterIndexFileName, "r")
-        for line in StartCharacterIndexFile:
-            StartCharacterIndex = int(line.strip())
-        StartCharacterIndexFile.close()
+    
+    if bExpeditionMode == True:
+        StartCharacterIndexFileName  = frozen.app_path() +"\\" + today.strftime('ExRecordFile%y%m%d');
+        if os.path.exists(StartCharacterIndexFileName):
+            StartCharacterIndexFile = open(StartCharacterIndexFileName, "r")
+            for line in StartCharacterIndexFile:
+                StartCharacterIndex = int(line.strip())
+            StartCharacterIndexFile.close()
+    else:
+        StartCharacterIndexFileName  = frozen.app_path() +"\\" + today.strftime('RecordFile%y%m%d');
+        if os.path.exists(StartCharacterIndexFileName):
+            StartCharacterIndexFile = open(StartCharacterIndexFileName, "r")
+            for line in StartCharacterIndexFile:
+                StartCharacterIndex = int(line.strip())
+            StartCharacterIndexFile.close()
 
     for cur_dir, sub_dir, included_file in walk(frozen.app_path()):
             if included_file:
@@ -72,6 +76,7 @@ if __name__ == '__main__':
         StateTable["Weekly"]               = MSmState_Weekly("Weekly")
         StateTable["Wulin"]                = MSmState_Wulin("Wulin")
         StateTable["PostProcess"]          = MSmState_PostProcess("PostProcess")
+        StateTable["Expedition"]           = MSmState_Expedition("Expedition")
 
         #global jump table means 
         #TODO, global jump table can be gen by each states' jump table
@@ -86,11 +91,12 @@ if __name__ == '__main__':
                 TargetJumeTable[targettable[j][0]] = targettable[j][1]
             GlobalJumpTable[targetstatename] = TargetJumeTable
 
-
-
+        
+        TaskJsonExpedition = json.load(open(frozen.app_path() + "\\Data\\TaskListExpedition.json", 'r', encoding='utf-8'))
         TaskFilePath = frozen.app_path() + "\\Data\\TaskList.json" 
         TaskJson = json.load(open(TaskFilePath, 'r', encoding='utf-8'))
         TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TaskListMain.json", 'r', encoding='utf-8'))
+        
         TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TaskListFive.json", 'r', encoding='utf-8'))
         InitState = StateTable["CharacterSelect"] 
         if InitState.IsUnderState() == False:
@@ -101,7 +107,9 @@ if __name__ == '__main__':
         LoginState = StateTable["Login"]
         CurrentState = InitState
         for i in range(StartCharacterIndex, 100):
-            if i == 0:
+            if bExpeditionMode == True:
+                TaskCur = TaskJsonExpedition
+            elif i == 0:
                 TaskCur = TaskJsonMain
             elif i <= 5:
                 TaskCur = TaskJsonFive

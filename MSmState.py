@@ -14,7 +14,7 @@ from time import sleep
 import numpy as np
 from numpy import frombuffer, uint8, array
 from FrozenPath import frozen
-
+import random
 
 
 class MSmState(object):
@@ -351,6 +351,7 @@ class MSmState_GameModeDefault(MSmState):
         self.MonsterParkEnterIdImage = self.ReadPic("MonsterParkEnterIdImage")
         self.WulinEnterIdImage = self.ReadPic("WulinEnterIdImage")
         self.DimensionEnterIdImage = self.ReadPic("DimensionEnterIdImage")
+        self.ExpeditionEnterIdImage = self.ReadPic("ExpeditionEnterIdImage")
 
     def AddEnter(self, ModeName, IdPic):
         Pos = self.GetPicPos(IdPic)
@@ -378,6 +379,7 @@ class MSmState_GameModeDefault(MSmState):
         self.AddEnter("Wulin", self.WulinEnterIdImage)        
         self.AddEnter("Dimension", self.DimensionEnterIdImage)        
         self.AddEnter("MonsterPark", self.MonsterParkEnterIdImage)        
+        self.AddEnter("Expedition", self.ExpeditionEnterIdImage)        
 
         return True
 
@@ -529,6 +531,76 @@ class MSmState_TeamCommon(MSmState):
         return True
 
 
+class MSmState_Expedition(MSmState):
+    def __init__(self, StateName):
+        super().__init__(StateName)
+        self.SelectBoss = []
+        self.SelectHard = []
+        for i in range(0,4):
+            self.SelectBoss.append(self.ReadPic("SelectBoss" + str(i)))
+            self.SelectHard.append(self.ReadPic("SelectHard" + str(i)))
+        self.FindCreateTeamWidget = self.ReadPic("FindCreateTeamWidget")   
+        self.FindSpoils = self.ReadPic("FindSpoils")   
+        self.PrepareRoom = self.ReadPic("PrepareRoom")   
+        self.CreateRoom = self.ReadPic("CreateRoom")   
+        self.ExpeditionMain = self.ReadPic("ExpeditionMain")   
+        self.FightingRoom = self.ReadPic("FightingRoom")   
+        self.LeaveWidget = self.ReadPic("LeaveWidget")   
+        self.SetLimitation = self.ReadPic("SetLimitation")   
+        
+    def WaitingForFightingFinished(self):
+        self.RefreshScreenShot()
+        bAutoFightingFinished = self.IsPicMatching(self.FindSpoils);
+        self.DoHit([873,456],[10,10])
+        while bAutoFightingFinished == False:
+            sleep(random.normalvariate(1,0.5))
+            self.RefreshScreenShot()
+            bAutoFightingFinished = self.IsPicMatching(self.FindSpoils);
+            self.DoHit([873,456],[10,10])
+
+    def ProcessInternal(self, index):    
+        bCanEnter = self.IsPicMatching(self.CreateRoom);
+        if bCanEnter == True:
+            #the first time
+            self.TryInnerJump("CreateRoom",self.PrepareRoom)
+            self.TryInnerJump("FindTeam",self.FindCreateTeamWidget)
+            self.TryInnerJump("SetLimitation",self.SetLimitation)
+            self.TryLeaveJump("CreateTeam",self.FindCreateTeamWidget)
+            self.WaitingForFightingFinished()
+            
+            self.TryLeaveJump("SpoilsComfirm",self.FindSpoils)
+            self.TryInnerJump("Exit",self.LeaveWidget)  
+            self.TryInnerJump("LeaveToMain",self.ExpeditionMain)
+            sleep(3)
+            #leave to main widget to do the second time
+            self.TryInnerJump("SelectBoss" + str(index),self.SelectBoss[index])
+            self.TryInnerJump("SelectHardMode",self.SelectHard[index])
+            bCanEnter = self.IsPicMatching(self.CreateRoom);
+            if bCanEnter == True:
+                self.TryInnerJump("CreateRoom",self.PrepareRoom)
+                self.TryInnerJump("FindTeam",self.FindCreateTeamWidget)
+                self.TryInnerJump("SetLimitation",self.SetLimitation)
+                self.TryLeaveJump("CreateTeam",self.FindCreateTeamWidget)
+                self.WaitingForFightingFinished()
+            
+                self.TryLeaveJump("SpoilsComfirm",self.FindSpoils)
+                self.TryInnerJump("Exit",self.LeaveWidget) 
+                if index < 3:
+                    self.TryInnerJump("LeaveToMain",self.ExpeditionMain)
+                    sleep(3)
+                else:
+                    self.TryLeaveJump("Leave",self.LeaveWidget)
+            
+
+    def Processing(self):
+        for i in range(0,4):
+            self.TryInnerJump("SelectBoss" + str(i),self.SelectBoss[i])
+            self.TryInnerJump("SelectHardMode",self.SelectHard[i])
+            self.ProcessInternal(i)
+
+        return True
+
+
 class MSmState_Elite(MSmState_TeamCommon):
     def __init__(self, StateName):
         super().__init__(StateName)   
@@ -566,6 +638,7 @@ class MSmState_MonsterPark(MSmState):
         self.TryLeaveJump("Enter1", self.EnterMonsterParkIdImage)
         self.WaitingForAutoFightingFinished()
         self.TryInnerJump("Spend",self.GetMoreIdImage)
+        sleep(3)
         self.TryLeaveJump("SpendComfirm",self.GetMoreIdImage)
         self.TryLeaveJump("Exit", self.ExitIdImage)
         return True

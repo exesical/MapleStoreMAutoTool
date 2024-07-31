@@ -184,6 +184,29 @@
 		]
 	},
 	{
+		"TargetStateName":"Expedition",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "Expedition"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Expedition", "Wander"],
+			["Dimension", "Wander"],
+			["MonsterPark", "Wander"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
 		"TargetStateName":"MaterialAutoFighting",
 		"TargetTable":[
 			["Login", "CharacterSelect"],
@@ -258,6 +281,7 @@
 			["GuildInfo", "SystemMenuOpening"],
 
 			["Elite", "Wander"],
+			["Expedition", "Wander"],
 			["Dimension", "Wander"],
 			["MonsterPark", "Wander"],
 			["NitePyramid", "Wander"],
