@@ -553,7 +553,7 @@ class MSmState_Expedition(MSmState):
         bAutoFightingFinished = self.IsPicMatching(self.FindSpoils);
         self.DoHit([873,456],[10,10])
         while bAutoFightingFinished == False:
-            sleep(random.normalvariate(1,0.5))
+            sleep(random.random()+0.5)
             self.RefreshScreenShot()
             bAutoFightingFinished = self.IsPicMatching(self.FindSpoils);
             self.DoHit([873,456],[10,10])
