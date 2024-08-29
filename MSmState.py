@@ -16,6 +16,7 @@ from numpy import frombuffer, uint8, array
 from FrozenPath import frozen
 import random
 
+GHasGottenAll = False
 
 class MSmState(object):
     """description of class"""
@@ -81,8 +82,8 @@ class MSmState(object):
         print("Now is not under state - "+ self.Name)
         return False
 
-    def GetPicPos(self, InPic, MatchingThreshold = 0.8):
-        res = cv2.matchTemplate(self.ScreenShotImage, InPic, cv2.TM_CCOEFF_NORMED)
+    def GetPicPos(self, InPic, MatchingThreshold = 0.8,method = cv2.TM_CCOEFF_NORMED):
+        res = cv2.matchTemplate(self.ScreenShotImage, InPic, method)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
         if max_val >= MatchingThreshold:
             return max_loc
@@ -453,6 +454,16 @@ class MSmState_MaterialEnter0(MSmState):
 class MSmState_MaterialEnter1(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
+        # self.HasGottenAll = self.ReadPic("HasGottenAll")
+    
+    def Processing(self):
+        # self.HitHandle.MouseWheelMove([733,333],[20,20],5)
+        # sleep(3)
+        # self.RefreshScreenShot()
+        # bHasGottenAll = self.IsPicMatching(self.HasGottenAll)
+        # if(bHasGottenAll):
+        #     GHasGottenAll = True
+        return True
 
 class MSmState_MaterialsMain(MSmState):
     def __init__(self, StateName):
@@ -552,11 +563,17 @@ class MSmState_Expedition(MSmState):
         self.RefreshScreenShot()
         bAutoFightingFinished = self.IsPicMatching(self.FindSpoils);
         self.DoHit([873,456],[10,10])
-        while bAutoFightingFinished == False:
+        sleep(0.1)
+        self.DoHit([821,530],[10,10])
+        IterCount = 0
+        while bAutoFightingFinished == False and IterCount < 180:
             sleep(random.random()+0.5)
+            self.DoHit([873,456],[10,10])
+            sleep(0.1)
+            self.DoHit([821,530],[10,10])
             self.RefreshScreenShot()
             bAutoFightingFinished = self.IsPicMatching(self.FindSpoils);
-            self.DoHit([873,456],[10,10])
+            IterCount = IterCount + 1
 
     def ProcessInternal(self, index):    
         bCanEnter = self.IsPicMatching(self.CreateRoom);
@@ -717,14 +734,18 @@ class MSmState_PostProcess(MSmState):
         self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
         self.TryInnerJump("Communication",self.FriendsIdImage)
         self.TryInnerJump("WeChatFriends",self.WeChatFriendsIdImage)
-        self.TryInnerJump("SendPopularity",self.SendPopularityIdImage)
-        sleep(1)
-        self.DoHitByName("SelectFreeGift")
-        sleep(1)
-        self.DoHitByName("Comfirm")
-        sleep(0.5)
-        self.TryLeaveJump("NotRemind",self.NotRemindIdImage)
-        self.TryLeaveJump("CloseSelectFreeGift",self.SendPopularityIdImage)
+        self.RefreshScreenShot();
+        SetPopularityPos = self.GetPicPos(self.CanSendPopularityIdImage, 0.997, cv2.TM_CCORR_NORMED)     
+        if SetPopularityPos is not None:
+            SetPopularityHitInfo = [[SetPopularityPos[0] + 20, SetPopularityPos[1]+53],[10,10]]
+            self.TryInnerJumpByPos(SetPopularityHitInfo,self.SendPopularityIdImage)
+            sleep(1)
+            self.DoHitByName("SelectFreeGift")
+            sleep(1)
+            self.DoHitByName("Comfirm")
+            sleep(1)
+            self.TryLeaveJump("NotRemind",self.NotRemindIdImage)
+            self.TryLeaveJump("CloseSelectFreeGift",self.SendPopularityIdImage)
         self.TryLeaveJump("CloseDaily",self.WeChatFriendsIdImage)
 
         bGotoTrade = False;

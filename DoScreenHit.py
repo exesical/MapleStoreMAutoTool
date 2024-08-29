@@ -54,6 +54,14 @@ class DoScreenHit(object):
         SendMessage(self.HandleNumber, WM_LBUTTONDOWN, 0, long_position)  # press
         sleep((np.random.randint(5, 10)) / 100)  # keep random time
         SendMessage(self.HandleNumber, WM_LBUTTONUP, 0, long_position)  # release
+        
+    def MouseWheelMove(self, HitPos, HitRange£¬MoveDis):
+        randompos_f = self.GetRandomHitPosition(HitPos, HitRange);
+        randompos_x = int(randompos_f[0])
+        randompos_y = int(randompos_f[1] - 33)
+        long_position = MAKELONG(randompos_x, randompos_y)
+        SendMessage(self.HandleNumber, WM_ACTIVATE, WA_ACTIVE, 0)
+        SendMessage(self.HandleNumber, WM_MOUSEWHEEL, WHEEL_DELTA * MoveDis, long_position)
 
     def GetRandomHitPosition(self, HitPos, HitRange):
         r = np.random.randint(0,self.GaussDistributionSize);
