@@ -263,6 +263,28 @@ class MSmState(object):
             sleep(0.3)
             self.RefreshScreenShot();
             bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            
+    def TryLeaveJumpAuto(self, CheckPic, HitOffset, HitRange):
+        sleep(1)
+        self.RefreshScreenShot();
+        AutoPos = self.GetPicPos(CheckPic, 0.9,cv2.TM_CCORR_NORMED)
+        if AutoPos is None:
+            return
+        self.DoHit([AutoPos[0] + HitOffset[0], AutoPos[1] + HitOffset[1] + 33], HitRange);
+        sleep(1)
+        self.RefreshScreenShot();
+        bSuccess = self.IsPicMatching(CheckPic)
+        while bSuccess == True:
+            self.DoHit([AutoPos[0] + HitOffset[0], AutoPos[1] + HitOffset[1] + 33],HitRange);
+            sleep(1)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
 
     def TryLeaveJump2(self, HitName, CheckPic, CheckPic2):
         self.DoHitByName(HitName);
@@ -780,7 +802,8 @@ class MSmState_PostProcess(MSmState):
             self.DoHitByName("DailyReciveAll")
         sleep(1)
 
-        self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+        #self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+        self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
         sleep(1)
         #goto wechat
         GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
@@ -795,13 +818,13 @@ class MSmState_PostProcess(MSmState):
             for i in range(np.random.randint(2,4)):
                 self.DoHitByName("DailyReciveAll")
             sleep(1)
-            self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+            self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
             sleep(1)
 
         for i in range(np.random.randint(2,4)):
             self.DoHitByName("DailyReciveAll")
         sleep(1)
-        self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+        self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
         self.TryLeaveJump("CloseDaily",self.DailyIdImage)
         self.TryLeaveJump("AutoFighting",self.DailyIdImage)
         self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)

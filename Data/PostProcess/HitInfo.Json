@@ -66,8 +66,8 @@
     },
     {
         "OpName":"DailyComfirm",
-        "ClickPos":[563,440],
-        "ClickRange":[15,55]
+        "ClickPos":[563,416],
+        "ClickRange":[15,22]
     },
     {
         "OpName":"CloseDaily",
