@@ -133,6 +133,8 @@ class MSmState(object):
             sleeptime = 1
             if(self.Name == "SystemMenuOpening" and TargetState.Name == "GameModeDefault"):
                 sleeptime = 3
+            if(self.Name == "SystemMenuOpening" and TargetState.Name == "FastJump"):
+                sleeptime = 3
 
             while(self.IsUnderState() and OpTimes != MaxOpTimes ):
                 self.DoHit(HitPos, HitRange)
@@ -247,22 +249,23 @@ class MSmState(object):
             self.RefreshScreenShot();
             bSuccess = bSuccess and self.IsPicMatching(CheckPic)
 
-    def TryLeaveJump(self, HitName, CheckPic):
+    def TryLeaveJump(self, HitName, CheckPic, MatchingThreshold = 0.8):
         self.DoHitByName(HitName);
         sleep(1)
         self.RefreshScreenShot();
-        bSuccess = self.IsPicMatching(CheckPic)
+        bSuccess = self.IsPicMatching(CheckPic, MatchingThreshold)
         while bSuccess == True:
             self.DoHitByName(HitName);
             sleep(1)
             self.RefreshScreenShot();
-            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic, MatchingThreshold)
             sleep(0.3)
             self.RefreshScreenShot();
-            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic, MatchingThreshold)
             sleep(0.3)
             self.RefreshScreenShot();
-            bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic, MatchingThreshold)
+    
             
     def TryLeaveJumpAuto(self, CheckPic, HitOffset, HitRange):
         sleep(1)
@@ -360,6 +363,64 @@ class MSmState_CharacterSelect(MSmState):
 class MSmState_ChangeCharacter(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
+
+class MSmState_FastJump(MSmState):
+    def __init__(self, StateName):
+        super().__init__(StateName)
+        self.Enter = self.ReadPic("Enter")
+        self.Enter2 = self.ReadPic("Enter2")
+        self.EnterConfirm = self.ReadPic("EnterConfirm")
+        self.FinishConfirm = self.ReadPic("FinishConfirm")
+        self.OpenTableIdenty = self.ReadPic("OpenTableIdenty")
+        self.MPEnter = []
+        self.MPIdenty = []
+        for i in range(0,5):
+            self.MPEnter.append(self.ReadPic("MPEnter" + str(i)))
+        for i in range(0,3):
+            self.MPIdenty.append(self.ReadPic("MPIdenty" + str(i)))
+
+    def Processing(self):
+        self.TryInnerJump("OpenTable", self.OpenTableIdenty)
+        self.HitHandle.DoMousePull(self.HitInfo["DoMouseWheel"][0],self.HitInfo["DoMouseWheel"][1],[0,-300], 20, 3)
+        sleep(3)
+        self.RefreshScreenShot();
+        FastMPPos = None
+        for i in range(0,3):
+            if FastMPPos is None:
+                FastMPPos = self.GetPicPos(self.MPIdenty[i], 0.987, cv2.TM_CCORR_NORMED)     
+        
+        if FastMPPos is not None:
+            self.TryInnerJump("OpenTable", self.OpenTableIdenty)
+            FastMPEnterPos = [[FastMPPos[0] + 360, FastMPPos[1]+49],[12,5]]
+            self.TryInnerJumpByPos(FastMPEnterPos, self.Enter2)
+            self.RefreshScreenShot();
+            FastMPPos = None
+            for i in range(0,5):
+                if FastMPPos is not None:
+                    break
+                FastMPPos = self.GetPicPos(self.MPEnter[i], 0.998, cv2.TM_CCORR_NORMED)     
+            if FastMPPos is not None:
+                FastMPEnterPos = [[FastMPPos[0] + 40, FastMPPos[1]+33],[10,10]]
+                for i in range(np.random.randint(2,4)):
+                    self.DoHit(FastMPEnterPos[0],FastMPEnterPos[1])
+                self.RefreshScreenShot();
+                FastMPEnterPos = self.GetPicPos(self.Enter, 0.99, cv2.TM_CCORR_NORMED)
+                if FastMPEnterPos is not None:
+                    self.TryInnerJump("UseJump", self.EnterConfirm)
+                    self.TryLeaveJump("FinalComfirm",self.EnterConfirm,0.9)
+                    sleep(3)
+                    self.TryLeaveJump("Finish",self.FinishConfirm)
+                else:
+                    self.TryLeaveJump("GiveUp",self.Enter2)
+                    self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+            else:
+                self.TryLeaveJump("GiveUp",self.Enter2)
+                self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+        else:
+            self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+
+        return True
+    
 
 
 class MSmState_GameModeDefault(MSmState):

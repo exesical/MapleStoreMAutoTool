@@ -15,6 +15,11 @@
         "ClickRange":[60,25]
     },
     {
+        "NextStateName":"FastJump",
+        "ClickPos":[860,257],
+        "ClickRange":[60,25]
+    },
+    {
         "NextStateName":"Mail",
         "ClickPos":[796,58],
         "ClickRange":[10,10]

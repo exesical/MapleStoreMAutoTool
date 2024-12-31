@@ -2,7 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 from win32api import MAKELONG, SendMessage
-from win32con import WM_LBUTTONUP, WM_LBUTTONDOWN, WM_ACTIVATE, WA_ACTIVE
+from win32con import WM_LBUTTONUP, WM_LBUTTONDOWN, WM_ACTIVATE, WA_ACTIVE, WM_MOUSEMOVE, WM_MOUSEWHEEL,MK_LBUTTON
 from time import sleep
 class DoScreenHit(object):
     """description of class"""
@@ -54,6 +54,42 @@ class DoScreenHit(object):
         SendMessage(self.HandleNumber, WM_LBUTTONDOWN, 0, long_position)  # press
         sleep((np.random.randint(5, 10)) / 100)  # keep random time
         SendMessage(self.HandleNumber, WM_LBUTTONUP, 0, long_position)  # release
+        
+    # def MousePull(self, StartPos, EndPos, StepCount, RandRange):
+    #     StartPosR = self.GetRandomHitPosition(StartPos, RandRange)
+    #     EndPosR = self.GetRandomHitPosition(EndPos, RandRange)
+    #     StepSize = abs(EndPosR - StartPosR) / StepCount + [1,1];
+    #     if EndPosR[0]<StartPosR[0]:
+    #         StepSize[0] = -StepSize[0]
+    #     if EndPosR[1]<StartPosR[1]:
+    #         StepSize[1] = -StepSize[1]
+    #     long_position_start = MAKELONG(StartPosR[0], StartPosR[1])
+    #     long_position_end = MAKELONG(EndPosR[0], EndPosR[1])
+    #     SendMessage(self.HandleNumber, WM_ACTIVATE, WA_ACTIVE, 0)
+    #     SendMessage(self.HandleNumber, WM_LBUTTONDOWN, 0, long_position_start)  # press
+
+    def DoMousePull(self, HitPos, HitRange, Dir, Step, Count):        
+        randompos_f = self.GetRandomHitPosition(HitPos, HitRange);
+        randompos_x_start = int(randompos_f[0])
+        randompos_x_end = randompos_x_start + Dir[0]
+        randompos_y_start = int(randompos_f[1] - 33)
+        randompos_y_end = randompos_y_start + Dir[1]
+        long_position_start = MAKELONG(randompos_x_start, randompos_y_start)
+        long_position_end = MAKELONG(randompos_x_end, randompos_y_end)
+        SendMessage(self.HandleNumber, WM_ACTIVATE, WA_ACTIVE, 0)
+        move_x = np.linspace(randompos_x_start, randompos_x_end, num=Step)[0:]
+        move_y = np.linspace(randompos_y_start, randompos_y_end, num=Step)[0:]
+        for i in range(0, Count):
+            SendMessage(self.HandleNumber, WM_LBUTTONDOWN, 0, long_position_start)  # press
+            for i in range(0, Step): 
+                x = int(round(move_x[i]))
+                y = int(round(move_y[i]))
+                SendMessage(self.HandleNumber, WM_LBUTTONDOWN, 0, MAKELONG(x,y))  # press
+                sleep(0.01)
+            SendMessage(self.HandleNumber, WM_LBUTTONUP, 0, long_position_end)  # release
+        
+        return
+        
 
     def GetRandomHitPosition(self, HitPos, HitRange):
         r = np.random.randint(0,self.GaussDistributionSize);

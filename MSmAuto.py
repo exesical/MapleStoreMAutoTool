@@ -15,9 +15,12 @@ if __name__ == '__main__':
     bExpeditionModeEnable = False;
     CharacterCount = 100000
     ExpeditionEndMinitue = 55
+    bTestMode = False
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
+        if search(r'test', args):
+            bTestMode = True
         if search(r'MainWindowsCapture',args):
             MSmState.bUseMainWindowCapture = True
         if search(r'Expedition',args):
@@ -49,7 +52,8 @@ if __name__ == '__main__':
         for line in CurCharacterIndexExFile:
             CurCharacterIndexEx = int(line.strip())
         CurCharacterIndexExFile.close()
-    
+    if bTestMode:
+        CurCharacterIndex = 7
 
     for cur_dir, sub_dir, included_file in walk(frozen.app_path()):
             if included_file:
@@ -79,6 +83,7 @@ if __name__ == '__main__':
         StateTable["NitePyramid"]          = MSmState_NitePyramid("NitePyramid")
         StateTable["Dimension"]            = MSmState_Dimension("Dimension")
         StateTable["MonsterPark"]          = MSmState_MonsterPark("MonsterPark")
+        StateTable["FastJump"]             = MSmState_FastJump("FastJump")
         StateTable["Tangyun"]              = MSmState_Tangyun("Tangyun")
         StateTable["Weekly"]               = MSmState_Weekly("Weekly")
         StateTable["Wulin"]                = MSmState_Wulin("Wulin")
@@ -103,8 +108,12 @@ if __name__ == '__main__':
         TaskFilePath = frozen.app_path() + "\\Data\\TaskList.json" 
         TaskJson = json.load(open(TaskFilePath, 'r', encoding='utf-8'))
         TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TaskListMain.json", 'r', encoding='utf-8'))
-        
         TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TaskListFive.json", 'r', encoding='utf-8'))
+        if bTestMode:        
+            TaskJson = json.load(open(frozen.app_path() + "\\Data\\TestList.json", 'r', encoding='utf-8'))
+            TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TestList.json", 'r', encoding='utf-8'))
+            TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TestList.json", 'r', encoding='utf-8'))
+
         InitState = StateTable["CharacterSelect"] 
         if InitState.IsUnderState() == False:
             print("Please move to character select widget and restart this script")
