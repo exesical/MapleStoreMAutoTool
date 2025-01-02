@@ -372,6 +372,7 @@ class MSmState_FastJump(MSmState):
         self.EnterConfirm = self.ReadPic("EnterConfirm")
         self.FinishConfirm = self.ReadPic("FinishConfirm")
         self.OpenTableIdenty = self.ReadPic("OpenTableIdenty")
+        self.UseAllTimes = self.ReadPic("UseAllTimes")
         self.MPEnter = []
         self.MPIdenty = []
         for i in range(0,5):
@@ -381,6 +382,11 @@ class MSmState_FastJump(MSmState):
 
     def Processing(self):
         self.TryInnerJump("OpenTable", self.OpenTableIdenty)
+        self.RefreshScreenShot();
+        bUseAllTimes = self.GetPicPos(self.UseAllTimes, 0.999, cv2.TM_CCORR_NORMED)               
+        if bUseAllTimes is not None:
+            self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+            return True
         self.HitHandle.DoMousePull(self.HitInfo["DoMouseWheel"][0],self.HitInfo["DoMouseWheel"][1],[0,-300], 20, 3)
         sleep(3)
         self.RefreshScreenShot();

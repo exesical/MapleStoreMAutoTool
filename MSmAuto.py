@@ -16,6 +16,7 @@ if __name__ == '__main__':
     CharacterCount = 100000
     ExpeditionEndMinitue = 55
     bTestMode = False
+    TestStartIndex = 2;
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
@@ -29,6 +30,8 @@ if __name__ == '__main__':
             CharacterCount = int(args.split("=")[1])
         if search(r'ExpeditionEndMinitue',args):
             ExpeditionEndMinitue = int(args.split("=")[1])
+        if search(r'TestStartIndex',args):
+            TestStartIndex = int(args.split("=")[1])
 
     IsMainCharacter = False
     hwd_title = "雷电模拟器"
@@ -53,7 +56,7 @@ if __name__ == '__main__':
             CurCharacterIndexEx = int(line.strip())
         CurCharacterIndexExFile.close()
     if bTestMode:
-        CurCharacterIndex = 7
+        CurCharacterIndex = TestStartIndex
 
     for cur_dir, sub_dir, included_file in walk(frozen.app_path()):
             if included_file:
