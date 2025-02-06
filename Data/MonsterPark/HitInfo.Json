@@ -33,5 +33,10 @@
         "OpName":"Exit",
         "ClickPos":[287,518],
         "ClickRange":[70,18]
+    },
+    {
+        "OpName":"BuyMoreExp",
+        "ClickPos":[624,385],
+        "ClickRange":[20,20]
     }
 ]

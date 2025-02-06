@@ -6,7 +6,7 @@
     },
     {
         "NextStateName":"PostProcess",
-        "ClickPos":[512,419],
-        "ClickRange":[50,50]
+        "ClickPos":[590,477],
+        "ClickRange":[10,10]
     }
 ]

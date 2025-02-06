@@ -20,7 +20,7 @@ GHasGottenAll = False
 
 class MSmState(object):
     """description of class"""
-    
+    bMainCharacter = False
     bUseDebug = False
     bUseMainWindowCapture = False
     HandleNumber_Main = 0
@@ -383,7 +383,7 @@ class MSmState_FastJump(MSmState):
     def Processing(self):
         self.TryInnerJump("OpenTable", self.OpenTableIdenty)
         self.RefreshScreenShot();
-        bUseAllTimes = self.GetPicPos(self.UseAllTimes, 0.999, cv2.TM_CCORR_NORMED)               
+        bUseAllTimes = self.GetPicPos(self.UseAllTimes, 0.995, cv2.TM_CCORR_NORMED)               
         if bUseAllTimes is not None:
             self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
             return True
@@ -443,7 +443,7 @@ class MSmState_GameModeDefault(MSmState):
         self.DimensionEnterIdImage = self.ReadPic("DimensionEnterIdImage")
         self.ExpeditionEnterIdImage = self.ReadPic("ExpeditionEnterIdImage")
 
-    def AddEnter(self, ModeName, IdPic):
+    def AddEnter(self, ModeName, IdPic,MatchingThreshold = 0.8):
         Pos = self.GetPicPos(IdPic)
         if Pos is None:
             print("Cannot find "+ ModeName + " Enter")
@@ -461,7 +461,7 @@ class MSmState_GameModeDefault(MSmState):
                 self.JumpInfo[JumpInfoJson[i]["NextStateName"]] = [JumpInfoJson[i]["ClickPos"],JumpInfoJson[i]["ClickRange"]]
         self.RefreshScreenShot()
         self.AddEnter("MaterialsMain", self.MaterialEnterIdImage)        
-        self.AddEnter("Elite", self.EliteEnterIdImage)        
+        self.AddEnter("Elite", self.EliteEnterIdImage,0.85)        
         self.AddEnter("Tangyun", self.TangyunEnterIdImage)        
         self.AddEnter("Pirate", self.PirateEnterIdImage)        
         self.AddEnter("NitePyramid", self.NitePyramidEnterIdImage)        
@@ -557,6 +557,16 @@ class MSmState_MaterialEnter1(MSmState):
 class MSmState_MaterialsMain(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
+        self.Material160 = self.ReadPic("Material160")
+        self.Material170 = self.ReadPic("Material170")
+    
+    def Processing(self):
+        if MSmState.bMainCharacter == False:
+            b170 = self.IsPicMatching(self.Material170)
+            if b170:
+                self.TryInnerJumpByPos([[74,438],[30,10]],self.Material160)
+
+        return True
 
 class MSmState_SystemMenuOpening(MSmState):
     def __init__(self, StateName):
@@ -707,9 +717,44 @@ class MSmState_Expedition(MSmState):
         return True
 
 
-class MSmState_Elite(MSmState_TeamCommon):
+class MSmState_Elite(MSmState_TeamCommon): 
     def __init__(self, StateName):
-        super().__init__(StateName)   
+        super().__init__(StateName)
+        self.AddTimesIdImage = self.ReadPic("AddTimesIdImage")
+        self.WaitingRoomIdImage = self.ReadPic("WaitingRoomIdImage")
+        self.WaitingTeamIdImage = self.ReadPic("WaitingTeamIdImage")
+        self.FindTeamIdImage = self.ReadPic("FindTeamIdImage")
+        self.ExitIdImage = self.ReadPic("ExitIdImage")
+        self.BuyMore = self.ReadPic("BuyMore")
+
+    def Processing(self):
+        #Main
+        self.TryInnerJump("CreateRoom", self.AddTimesIdImage)
+        #Add times
+        self.DoAddTimes()  
+        #Try enter waiting room
+        self.TryInnerJump("Comfirm", self.WaitingRoomIdImage)
+        #In Room
+        self.TryInnerJump("FindTeam", self.FindTeamIdImage)
+        sleep(1)
+        self.TryLeaveJump("CreateTeam", self.FindTeamIdImage)
+        #waiting 300s for finding team, 
+        self.RefreshScreenShot()
+        bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
+        Iter = 0
+        while bStillInRoom and Iter < 300:
+            sleep(1)
+            self.RefreshScreenShot()
+            bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
+            Iter = Iter + 1
+        if Iter >= 300 and bStillInRoom == True:
+            self.TryLeaveJump("Start",self.WaitingTeamIdImage)  
+        self.WaitingForAutoFightingFinished()
+
+        self.TryInnerJump("BuyMore", self.BuyMore)
+        self.TryLeaveJump("BuyMoreConfirm", self.BuyMore)
+        self.TryLeaveJump("Exit", self.ExitIdImage)
+        return True
 
 class MSmState_Pirate(MSmState_TeamCommon):
     def __init__(self, StateName):
@@ -736,11 +781,13 @@ class MSmState_MonsterPark(MSmState):
         self.EnterMonsterParkIdImage = self.ReadPic("EnterMonsterParkIdImage")
         self.GetMoreIdImage = self.ReadPic("GetMoreIdImage")
         self.ExitIdImage = self.ReadPic("ExitIdImage")
+        self.BuyMoreExp = self.ReadPic("BuyMoreExp")
 
     def Processing(self):
         self.TryInnerJump("Enter0", self.AddTimesIdImage)
         self.DoAddTimes()   
         self.TryInnerJump("Comfirm0", self.EnterMonsterParkIdImage)
+        self.TryInnerJump("BuyMoreExp", self.BuyMoreExp)
         self.TryLeaveJump("Enter1", self.EnterMonsterParkIdImage)
         self.WaitingForAutoFightingFinished()
         self.TryInnerJump("Spend",self.GetMoreIdImage)

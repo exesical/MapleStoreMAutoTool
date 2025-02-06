@@ -164,6 +164,11 @@ if __name__ == '__main__':
                     CurIndex = CharacterCount
                 
                 MSmState_CharacterSelect.CurrentSelectedCharacterIndex = CurIndex
+                if CurIndex == 0:
+                    MSmState.bMainCharacter = True
+                else:
+                    MSmState.bMainCharacter = False
+   
                 TaskLen = len(TaskCur)
                 for StateIndex in range(TaskLen):
                     TargetStateName = TaskCur[StateIndex]

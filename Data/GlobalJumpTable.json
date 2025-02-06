@@ -333,6 +333,7 @@
 		"TargetStateName":"PostProcess",
 		"TargetTable":[
 			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
 			["Wander", "PostProcess"],
 			["SystemMenuOpening", "Wander"],
 			["Mail", "SystemMenuOpening"],
