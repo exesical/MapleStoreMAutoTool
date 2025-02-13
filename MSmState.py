@@ -22,6 +22,7 @@ class MSmState(object):
     """description of class"""
     bMainCharacter = False
     bUseDebug = False
+    bFastMode = False
     bUseMainWindowCapture = False
     HandleNumber_Main = 0
     HandleNumber_Render = 0
@@ -521,7 +522,27 @@ class MSmState_MaterialAutoFighting(MSmState):
         MaterialExitPath = Path_cur + "\\MaterialExit.png"
         self.MaterialExitIdImage = cv2.imdecode(fromfile(MaterialExitPath, dtype=uint8), -1)
         self.MaterialExitIdImage = cv2.cvtColor(self.MaterialExitIdImage, cv2.COLOR_BGR2GRAY)
+        self.AutoFightingIdImage = self.ReadPic("AutoFightingIdImage")
+        self.DailyIdImage = self.ReadPic("DailyIdImage")
+        self.FriendsIdImage = self.ReadPic("FriendsIdImage")
+        self.SendPopularityIdImage = self.ReadPic("SendPopularityIdImage")
+        self.CanSendPopularityIdImage = self.ReadPic("CanSendPopularityIdImage")
+        self.SysOpeningIdImage = self.ReadPic("SysOpeningIdImage")
+        self.WeChatFriendsIdImage = self.ReadPic("WeChatFriendsIdImage")
+        self.DailyComfirmIdImage = self.ReadPic("DailyComfirmIdImage")
+        self.GotoWeChatIdImage = self.ReadPic("GotoWeChatIdImage")
+        self.NotRemindIdImage = self.ReadPic("NotRemindIdImage")
+        self.TradeEnterIdImage = self.ReadPic("TradeEnterIdImage")
+        self.GotoGetTradeGoodsIdImage = self.ReadPic("GotoGetTradeGoodsIdImage")
+        self.GotoGetTradeGoodsEnterIdImage = self.ReadPic("GotoGetTradeGoodsEnterIdImage")
+        self.GoodsPackageOpenIdImage = self.ReadPic("GoodsPackageOpenIdImage")
+        self.LeaveGetTradeGoodsIdImage = self.ReadPic("LeaveGetTradeGoodsIdImage")
+        self.GetGoodsResultConfirmIdImage = self.ReadPic("GetGoodsResultConfirmIdImage")
+        self.GoodsPackageClosedIdImage = self.ReadPic("GoodsPackageClosedIdImage")
+
     def Processing(self):
+        
+
         while True:
             self.RefreshScreenShot()
             if self.IsPicMatching(self.MaterialGiveUpIdImage):
@@ -867,6 +888,10 @@ class MSmState_PostProcess(MSmState):
         self.GoodsPackageClosedIdImage = self.ReadPic("GoodsPackageClosedIdImage")
 
     def Processing(self):
+        #if MSmState.bFastMode:
+        #    self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+
+
         self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
         self.TryInnerJump("Communication",self.FriendsIdImage)
         self.TryInnerJump("WeChatFriends",self.WeChatFriendsIdImage)

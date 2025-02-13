@@ -17,9 +17,12 @@ if __name__ == '__main__':
     ExpeditionEndMinitue = 55
     bTestMode = False
     TestStartIndex = 2;
+    bCanUesFastMode = False
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
+        if search(r'FastMode', args):
+            bCanUesFastMode = True
         if search(r'test', args):
             bTestMode = True
         if search(r'MainWindowsCapture',args):
@@ -166,8 +169,11 @@ if __name__ == '__main__':
                 MSmState_CharacterSelect.CurrentSelectedCharacterIndex = CurIndex
                 if CurIndex == 0:
                     MSmState.bMainCharacter = True
+                    MSmState.bFastMode = False
                 else:
                     MSmState.bMainCharacter = False
+                    if bCanUesFastMode:
+                        MSmState.bFastMode = True
    
                 TaskLen = len(TaskCur)
                 for StateIndex in range(TaskLen):
