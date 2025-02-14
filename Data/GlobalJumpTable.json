@@ -19,6 +19,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -43,6 +44,32 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
+			["Wulin", "Wander"],
+			["MaterialAutoFighting", "Wander"]
+		]
+	},
+	{
+		"TargetStateName":"SpecialWeekly",
+		"TargetTable":[
+			["Login", "CharacterSelect"],
+			["CharacterSelect", "Wander"],
+			["Wander", "SystemMenuOpening"],
+			["SystemMenuOpening", "GameModeDefault"],
+			["GameModeDefault", "SpecialWeekly"],
+			["ChangeCharacter", "SystemMenuOpening"],
+			["GuildInfo", "SystemMenuOpening"],
+			["Mail", "SystemMenuOpening"],
+
+			["Elite", "Wander"],
+			["Dimension", "Wander"],
+			["MonsterPark", "Wander"],
+			["FastJump", "GameModeDefault"],
+			["NitePyramid", "Wander"],
+			["Pirate", "Wander"],
+			["Tangyun", "Wander"],
+			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -67,6 +94,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -91,6 +119,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -115,6 +144,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -139,6 +169,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -163,6 +194,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -187,6 +219,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -211,6 +244,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -235,6 +269,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -262,6 +297,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["MaterialAutoFighting", "Wander"]
 		]
@@ -325,6 +361,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
 			["PostProcess", "Wander"]
 		]
@@ -353,6 +390,7 @@
 			["Pirate", "Wander"],
 			["Tangyun", "Wander"],
 			["Weekly", "Wander"],
+			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"]
 		]
 	}

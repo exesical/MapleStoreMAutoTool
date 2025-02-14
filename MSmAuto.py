@@ -92,6 +92,7 @@ if __name__ == '__main__':
         StateTable["FastJump"]             = MSmState_FastJump("FastJump")
         StateTable["Tangyun"]              = MSmState_Tangyun("Tangyun")
         StateTable["Weekly"]               = MSmState_Weekly("Weekly")
+        StateTable["SpecialWeekly"]        = MSmState_SpecialWeekly("SpecialWeekly")
         StateTable["Wulin"]                = MSmState_Wulin("Wulin")
         StateTable["PostProcess"]          = MSmState_PostProcess("PostProcess")
         StateTable["Expedition"]           = MSmState_Expedition("Expedition")

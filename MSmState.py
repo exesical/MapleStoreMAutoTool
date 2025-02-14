@@ -466,7 +466,8 @@ class MSmState_GameModeDefault(MSmState):
         self.AddEnter("Tangyun", self.TangyunEnterIdImage)        
         self.AddEnter("Pirate", self.PirateEnterIdImage)        
         self.AddEnter("NitePyramid", self.NitePyramidEnterIdImage)        
-        self.AddEnter("Weekly", self.WeeklyEnterIdImage)        
+        self.AddEnter("Weekly", self.WeeklyEnterIdImage)     
+        self.AddEnter("SpecialWeekly", self.WeeklyEnterIdImage)          
         self.AddEnter("Wulin", self.WulinEnterIdImage)        
         self.AddEnter("Dimension", self.DimensionEnterIdImage)        
         self.AddEnter("MonsterPark", self.MonsterParkEnterIdImage)        
@@ -846,6 +847,26 @@ class MSmState_Weekly(MSmState):
         self.ExitIdImage = self.ReadPic("ExitIdImage")
 
     def Processing(self):
+        self.TryInnerJump("Enter",self.AddTimesIdImage)
+        self.DoAddTimes()
+        self.TryLeaveJump("Comfirm", self.AddTimesIdImage)
+        self.WaitingForAutoFightingFinished()
+        self.TryLeaveJump("Exit", self.ExitIdImage)
+        return True
+    
+class MSmState_SpecialWeekly(MSmState):
+    def __init__(self, StateName):
+        super().__init__(StateName)
+        self.AddTimesIdImage = self.ReadPic("AddTimesIdImage")
+        self.ExitIdImage = self.ReadPic("ExitIdImage")
+        self.NoTimes = self.ReadPic("NoTimes")
+        self.SwithSpecial = self.ReadPic("SwithSpecial")
+
+    def Processing(self):
+        self.TryInnerJump("SwithSpecial",self.SwithSpecial)
+        if self.IsPicMatching(self.NoTimes,0.985):
+            self.TryLeaveJump("CloseToWander", self.SwithSpecial)
+            return True
         self.TryInnerJump("Enter",self.AddTimesIdImage)
         self.DoAddTimes()
         self.TryLeaveJump("Comfirm", self.AddTimesIdImage)
