@@ -374,6 +374,7 @@ class MSmState_FastJump(MSmState):
         self.FinishConfirm = self.ReadPic("FinishConfirm")
         self.OpenTableIdenty = self.ReadPic("OpenTableIdenty")
         self.UseAllTimes = self.ReadPic("UseAllTimes")
+        self.MPEnterDefault = self.ReadPic("MPEnterDefault")
         self.MPEnter = []
         self.MPIdenty = []
         for i in range(0,5):
@@ -394,7 +395,7 @@ class MSmState_FastJump(MSmState):
         FastMPPos = None
         for i in range(0,3):
             if FastMPPos is None:
-                FastMPPos = self.GetPicPos(self.MPIdenty[i], 0.987, cv2.TM_CCORR_NORMED)     
+                FastMPPos = self.GetPicPos(self.MPIdenty[i], 0.982, cv2.TM_CCORR_NORMED)     
         
         if FastMPPos is not None:
             self.TryInnerJump("OpenTable", self.OpenTableIdenty)
@@ -402,10 +403,12 @@ class MSmState_FastJump(MSmState):
             self.TryInnerJumpByPos(FastMPEnterPos, self.Enter2)
             self.RefreshScreenShot();
             FastMPPos = None
-            for i in range(0,5):
+            for i in range(4,5):
                 if FastMPPos is not None:
                     break
-                FastMPPos = self.GetPicPos(self.MPEnter[i], 0.998, cv2.TM_CCORR_NORMED)     
+                FastMPPos = self.GetPicPos(self.MPEnter[i], 0.998, cv2.TM_CCORR_NORMED)    
+            if FastMPPos is None:
+                FastMPPos = self.GetPicPos(self.MPEnterDefault, 0.998, cv2.TM_CCORR_NORMED)
             if FastMPPos is not None:
                 FastMPEnterPos = [[FastMPPos[0] + 40, FastMPPos[1]+33],[10,10]]
                 for i in range(np.random.randint(2,4)):
