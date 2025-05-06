@@ -385,7 +385,7 @@ class MSmState_FastJump(MSmState):
     def Processing(self):
         self.TryInnerJump("OpenTable", self.OpenTableIdenty)
         self.RefreshScreenShot();
-        bUseAllTimes = self.GetPicPos(self.UseAllTimes, 0.995, cv2.TM_CCORR_NORMED)               
+        bUseAllTimes = self.GetPicPos(self.UseAllTimes, 0.999, cv2.TM_CCORR_NORMED)               
         if bUseAllTimes is not None:
             self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
             return True
@@ -812,12 +812,16 @@ class MSmState_MonsterPark(MSmState):
         self.TryInnerJump("Enter0", self.AddTimesIdImage)
         self.DoAddTimes()   
         self.TryInnerJump("Comfirm0", self.EnterMonsterParkIdImage)
-        self.TryInnerJump("BuyMoreExp", self.BuyMoreExp)
+        if MSmState.bMainCharacter == True:
+            self.TryInnerJump("BuyMoreExp", self.BuyMoreExp)
+        else:
+            self.TryLeaveJump("BuyMoreExp", self.BuyMoreExp)
         self.TryLeaveJump("Enter1", self.EnterMonsterParkIdImage)
         self.WaitingForAutoFightingFinished()
-        self.TryInnerJump("Spend",self.GetMoreIdImage)
-        sleep(3)
-        self.TryLeaveJump("SpendComfirm",self.GetMoreIdImage)
+        if MSmState.bMainCharacter == True:
+            self.TryInnerJump("Spend",self.GetMoreIdImage)
+            sleep(3)
+            self.TryLeaveJump("SpendComfirm",self.GetMoreIdImage)
         self.TryLeaveJump("Exit", self.ExitIdImage)
         return True
 

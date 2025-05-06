@@ -13,5 +13,10 @@
         "OpName":"Exit",
         "ClickPos":[388,515],
         "ClickRange":[80,18]
+    },
+    {
+        "OpName":"CloseWeekly",
+        "ClickPos":[408,520],
+        "ClickRange":[10,10]
     }
 ]
