@@ -16,8 +16,11 @@ if __name__ == '__main__':
     CharacterCount = 100000
     ExpeditionEndMinitue = 55
     bTestMode = False
-    TestStartIndex = 2;
+    TestStartIndex = 1;
     bCanUesFastMode = False
+    TestTaskIndex = 0;
+    # 0 is NitePyramid, 1 is MonsterPark
+    FastJumpType = 0;
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
@@ -35,6 +38,10 @@ if __name__ == '__main__':
             ExpeditionEndMinitue = int(args.split("=")[1])
         if search(r'TestStartIndex',args):
             TestStartIndex = int(args.split("=")[1])
+        if search(r'TestTaskIndex',args):
+            TestTaskIndex = int(args.split("=")[1])
+        if search(r'FastJumpType',args):
+            FastJumpType = int(args.split("=")[1])
 
     IsMainCharacter = False
     hwd_title = "雷电模拟器"
@@ -117,9 +124,9 @@ if __name__ == '__main__':
         TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TaskListMain.json", 'r', encoding='utf-8'))
         TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TaskListFive.json", 'r', encoding='utf-8'))
         if bTestMode:        
-            TaskJson = json.load(open(frozen.app_path() + "\\Data\\TestList.json", 'r', encoding='utf-8'))
-            TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TestList.json", 'r', encoding='utf-8'))
-            TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TestList.json", 'r', encoding='utf-8'))
+            TaskJson = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))
+            TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))
+            TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))
 
         InitState = StateTable["CharacterSelect"] 
         if InitState.IsUnderState() == False:
@@ -131,7 +138,7 @@ if __name__ == '__main__':
         CurrentState = InitState
         bStateChanged = False
         bLastExpeditionMode = bExpeditionMode
-        
+        MSmState_FastJump.FastJumpType = FastJumpType;
         if True:
             for j in range(0, 100000):
                 current_time_h = int(time.strftime("%H:%M:%S")[0:2])

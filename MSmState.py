@@ -216,22 +216,22 @@ class MSmState(object):
             self.RefreshScreenShot();
             bSuccess = bSuccess or self.IsPicMatching(CheckPic)
 
-    def TryInnerJump(self, HitName, CheckPic):
+    def TryInnerJump(self, HitName, CheckPic, MatchingThreshold = 0.8):
         self.DoHitByName(HitName);
         sleep(1)
         self.RefreshScreenShot();
-        bSuccess = self.IsPicMatching(CheckPic)
+        bSuccess = self.IsPicMatching(CheckPic, MatchingThreshold)
         while bSuccess == False:
             self.DoHitByName(HitName);
             sleep(1)
             self.RefreshScreenShot();
-            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic, MatchingThreshold)
             sleep(0.3)
             self.RefreshScreenShot();
-            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic, MatchingThreshold)
             sleep(0.3)
             self.RefreshScreenShot();
-            bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic, MatchingThreshold)
 
     def TryLeaveJumpByPos(self, HitPos, CheckPic):
         self.DoHit(HitPos[0],HitPos[1])
@@ -366,6 +366,7 @@ class MSmState_ChangeCharacter(MSmState):
         super().__init__(StateName)
 
 class MSmState_FastJump(MSmState):
+    FastJumpType = 0;
     def __init__(self, StateName):
         super().__init__(StateName)
         self.Enter = self.ReadPic("Enter")
@@ -381,6 +382,10 @@ class MSmState_FastJump(MSmState):
             self.MPEnter.append(self.ReadPic("MPEnter" + str(i)))
         for i in range(0,3):
             self.MPIdenty.append(self.ReadPic("MPIdenty" + str(i)))
+        self.NPIdenty = []
+        for i in range(0,4):
+            self.NPIdenty.append(self.ReadPic("NPIdenty" + str(i)))
+        self.NPEnter = self.ReadPic("NPEnter")
 
     def Processing(self):
         self.TryInnerJump("OpenTable", self.OpenTableIdenty)
@@ -389,46 +394,74 @@ class MSmState_FastJump(MSmState):
         if bUseAllTimes is not None:
             self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
             return True
-        self.HitHandle.DoMousePull(self.HitInfo["DoMouseWheel"][0],self.HitInfo["DoMouseWheel"][1],[0,-300], 20, 3)
-        sleep(3)
-        self.RefreshScreenShot();
-        FastMPPos = None
-        for i in range(0,3):
-            if FastMPPos is None:
-                FastMPPos = self.GetPicPos(self.MPIdenty[i], 0.982, cv2.TM_CCORR_NORMED)     
-        
-        if FastMPPos is not None:
-            self.TryInnerJump("OpenTable", self.OpenTableIdenty)
-            FastMPEnterPos = [[FastMPPos[0] + 360, FastMPPos[1]+49],[12,5]]
-            self.TryInnerJumpByPos(FastMPEnterPos, self.Enter2)
+        if MSmState_FastJump.FastJumpType == 1:
+            self.HitHandle.DoMousePull(self.HitInfo["DoMouseWheel"][0],self.HitInfo["DoMouseWheel"][1],[0,-300], 20, 3)
+            sleep(3)
             self.RefreshScreenShot();
             FastMPPos = None
-            for i in range(4,5):
-                if FastMPPos is not None:
-                    break
-                FastMPPos = self.GetPicPos(self.MPEnter[i], 0.998, cv2.TM_CCORR_NORMED)    
-            if FastMPPos is None:
-                FastMPPos = self.GetPicPos(self.MPEnterDefault, 0.998, cv2.TM_CCORR_NORMED)
+            for i in range(0,3):
+               if FastMPPos is None:
+                    FastMPPos = self.GetPicPos(self.MPIdenty[i], 0.982, cv2.TM_CCORR_NORMED)     
+        
             if FastMPPos is not None:
-                FastMPEnterPos = [[FastMPPos[0] + 40, FastMPPos[1]+33],[10,10]]
-                for i in range(np.random.randint(2,4)):
-                    self.DoHit(FastMPEnterPos[0],FastMPEnterPos[1])
+                self.TryInnerJump("OpenTable", self.OpenTableIdenty)
+                FastMPEnterPos = [[FastMPPos[0] + 360, FastMPPos[1]+49],[12,5]]
+                self.TryInnerJumpByPos(FastMPEnterPos, self.Enter2)
                 self.RefreshScreenShot();
-                FastMPEnterPos = self.GetPicPos(self.Enter, 0.99, cv2.TM_CCORR_NORMED)
-                if FastMPEnterPos is not None:
-                    self.TryInnerJump("UseJump", self.EnterConfirm)
-                    self.TryLeaveJump("FinalComfirm",self.EnterConfirm,0.9)
-                    sleep(3)
-                    self.TryLeaveJump("Finish",self.FinishConfirm)
+                FastMPPos = None
+                for i in range(4,5):
+                    if FastMPPos is not None:
+                        break
+                    FastMPPos = self.GetPicPos(self.MPEnter[i], 0.998, cv2.TM_CCORR_NORMED)    
+                if FastMPPos is None:
+                    FastMPPos = self.GetPicPos(self.MPEnterDefault, 0.998, cv2.TM_CCORR_NORMED)
+                if FastMPPos is not None:
+                    FastMPEnterPos = [[FastMPPos[0] + 40, FastMPPos[1]+33],[10,10]]
+                    for i in range(np.random.randint(2,4)):
+                        self.DoHit(FastMPEnterPos[0],FastMPEnterPos[1])
+                    self.RefreshScreenShot();
+                    FastMPEnterPos = self.GetPicPos(self.Enter, 0.99, cv2.TM_CCORR_NORMED)
+                    if FastMPEnterPos is not None:
+                        self.TryInnerJump("UseJump", self.EnterConfirm)
+                        self.TryLeaveJump("FinalComfirm",self.EnterConfirm,0.9)
+                        sleep(3)
+                        self.TryLeaveJump("Finish",self.FinishConfirm)
+                    else:
+                        self.TryLeaveJump("GiveUp",self.Enter2)
+                        self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
                 else:
                     self.TryLeaveJump("GiveUp",self.Enter2)
                     self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
             else:
-                self.TryLeaveJump("GiveUp",self.Enter2)
                 self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
         else:
-            self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
-
+            self.RefreshScreenShot();
+            FastNPPos = None
+            for i in range(0,4):
+               if FastNPPos is None:
+                    FastNPPos = self.GetPicPos(self.NPIdenty[i], 0.982, cv2.TM_CCORR_NORMED)     
+            if FastNPPos is not None:
+                FastNPEnterPos = [[FastNPPos[0] + 360, FastNPPos[1]+49],[12,5]]
+                self.TryInnerJumpByPos(FastNPEnterPos, self.NPEnter)
+                self.RefreshScreenShot();
+                FastNPPos = None
+                FastNPPos = self.GetPicPos(self.Enter, 0.98, cv2.TM_CCORR_NORMED)  
+                if FastNPPos is not None:
+                    self.RefreshScreenShot();
+                    FastNPEnterPos = self.GetPicPos(self.Enter, 0.99, cv2.TM_CCORR_NORMED)
+                    if FastNPEnterPos is not None:
+                        self.TryInnerJump("UseJump", self.EnterConfirm)
+                        self.TryLeaveJump("FinalComfirm",self.EnterConfirm,0.9)
+                        sleep(3)
+                        self.TryLeaveJump("Finish",self.FinishConfirm)
+                    else:
+                        self.TryLeaveJump("GiveUp",self.Enter2)
+                        self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+                else:
+                    self.TryLeaveJump("GiveUp",self.Enter2)
+                    self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+            else:
+                self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
         return True
     
 
@@ -481,12 +514,16 @@ class MSmState_GameModeDefault(MSmState):
 class MSmState_GuildInfo(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
+        self.TreeGift = self.ReadPic("TreeGift")
 
     def Processing(self):
-        sleep(3)
-        for i in range(np.random.randint(2,5)):
-            self.DoHitByName("ReciveGift")
-        sleep(2)
+        sleep(1)
+        if MSmState.bMainCharacter == False:
+            self.TryInnerJump("ReciveTreeGift", self.TreeGift, 0.9)
+            for i in range(np.random.randint(1,3)):
+                self.DoHitByName("ReciveTreeGift")
+            self.TryLeaveJump("CloseTreeGift", self.TreeGift, 0.9)
+        sleep(1)
         return True
 
 class MSmState_Loading(MSmState):
