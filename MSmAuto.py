@@ -67,8 +67,8 @@ if __name__ == '__main__':
         CurCharacterIndexExFile.close()
     if bTestMode:
         CurCharacterIndex = TestStartIndex
-
-    for cur_dir, sub_dir, included_file in walk(frozen.app_path()):
+    if bTestMode == False:
+        for cur_dir, sub_dir, included_file in walk(frozen.app_path()):
             if included_file:
                 for file in included_file:
                     if search(r'RecordFile', file) or search(r'&m', file):
@@ -162,11 +162,11 @@ if __name__ == '__main__':
                 else:
                     TaskCur = TaskJson
                 #CurrentState.SelectCharacter(i)
-                if j != 0 and CurCharacterIndex > 1:
+                if j != 0 and CurCharacterIndex > 1 and bTestMode == False:
                     CurCharacterIndexFile = open(CurCharacterIndexFileName, "w")
                     CurCharacterIndexFile.write(str(CurCharacterIndex - 1))
                     CurCharacterIndexFile.close()
-                if j != 0 and CurCharacterIndexEx > 1:
+                if j != 0 and CurCharacterIndexEx > 1 and bTestMode == False:
                     CurCharacterIndexExFile = open(CurCharacterIndexExFileName, "w")
                     CurCharacterIndexExFile.write(str(CurCharacterIndexEx - 1))
                     CurCharacterIndexExFile.close()
