@@ -932,6 +932,7 @@ class MSmState_Wulin(MSmState):
         return True
 
 class MSmState_PostProcess(MSmState):
+    PostProcessType = 0;
     def __init__(self, StateName):
         super().__init__(StateName)
         self.AutoFightingIdImage = self.ReadPic("AutoFightingIdImage")
@@ -952,88 +953,130 @@ class MSmState_PostProcess(MSmState):
         self.GetGoodsResultConfirmIdImage = self.ReadPic("GetGoodsResultConfirmIdImage")
         self.GoodsPackageClosedIdImage = self.ReadPic("GoodsPackageClosedIdImage")
 
+        self.FinishCommission = self.ReadPic("FinishCommission")
+        self.CommisionStartReady = self.ReadPic("CommisionStartReady")
+        self.NoCommissionTicket = self.ReadPic("NoCommissionTicket")
+        self.CommissionMain = self.ReadPic("CommissionMain")
+        self.CommisionReciveReady = self.ReadPic("CommisionReciveReady")
+
+        self.WeeklyTask= self.ReadPic("WeeklyTask")
+        self.WeeklyAnyThingToRecive= self.ReadPic("WeeklyAnyThingToRecive")
+
+
     def Processing(self):
-        #if MSmState.bFastMode:
-        #    self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+        if MSmState_PostProcess.PostProcessType == 0:
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("Communication",self.FriendsIdImage)
+            self.TryInnerJump("WeChatFriends",self.WeChatFriendsIdImage)
+            self.RefreshScreenShot();
+            SetPopularityPos = self.GetPicPos(self.CanSendPopularityIdImage, 0.997, cv2.TM_CCORR_NORMED)     
+            if SetPopularityPos is not None:
+                SetPopularityHitInfo = [[SetPopularityPos[0] + 20, SetPopularityPos[1]+53],[10,10]]
+                self.TryInnerJumpByPos(SetPopularityHitInfo,self.SendPopularityIdImage)
+                sleep(1)
+                self.DoHitByName("SelectFreeGift")
+                sleep(1)
+                self.DoHitByName("Comfirm")
+                sleep(1)
+                self.TryLeaveJump("NotRemind",self.NotRemindIdImage)
+                self.TryLeaveJump("CloseSelectFreeGift",self.SendPopularityIdImage)
+            self.TryLeaveJump("CloseDaily",self.WeChatFriendsIdImage)
 
+            bGotoTrade = False;
+            GotoTradePos = self.GetPicPos(self.TradeEnterIdImage, 0.9)
+            if GotoTradePos is not None:
+                GotoTradePosHitInfo = [[GotoTradePos[0] + 20, GotoTradePos[1]+55],[10,10]]
+                self.TryInnerJumpByPos(GotoTradePosHitInfo, self.GotoGetTradeGoodsIdImage)
+                self.TryLeaveJump("GotoGetTradeGoods", self.GotoGetTradeGoodsIdImage)
+                EnterTradePos = self.GetPicPos(self.GotoGetTradeGoodsEnterIdImage,0.9)
+                if EnterTradePos is not None:
+                    self.TryLeaveJump("GotoGetTradeGoodsEnter", self.GotoGetTradeGoodsEnterIdImage)
+                    sleep(0.5)
+                    self.WaitUntil(self.GoodsPackageOpenIdImage)
+                    self.TryLeaveJump("CloseGoodsPackage", self.GoodsPackageOpenIdImage)
+                    #self.TryInnerJump("CloseGoodsPackage", self.GoodsPackageClosedIdImage)
 
-        self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
-        self.TryInnerJump("Communication",self.FriendsIdImage)
-        self.TryInnerJump("WeChatFriends",self.WeChatFriendsIdImage)
-        self.RefreshScreenShot();
-        SetPopularityPos = self.GetPicPos(self.CanSendPopularityIdImage, 0.997, cv2.TM_CCORR_NORMED)     
-        if SetPopularityPos is not None:
-            SetPopularityHitInfo = [[SetPopularityPos[0] + 20, SetPopularityPos[1]+53],[10,10]]
-            self.TryInnerJumpByPos(SetPopularityHitInfo,self.SendPopularityIdImage)
-            sleep(1)
-            self.DoHitByName("SelectFreeGift")
-            sleep(1)
-            self.DoHitByName("Comfirm")
-            sleep(1)
-            self.TryLeaveJump("NotRemind",self.NotRemindIdImage)
-            self.TryLeaveJump("CloseSelectFreeGift",self.SendPopularityIdImage)
-        self.TryLeaveJump("CloseDaily",self.WeChatFriendsIdImage)
-
-        bGotoTrade = False;
-        GotoTradePos = self.GetPicPos(self.TradeEnterIdImage, 0.9)
-        if GotoTradePos is not None:
-            GotoTradePosHitInfo = [[GotoTradePos[0] + 20, GotoTradePos[1]+55],[10,10]]
-            self.TryInnerJumpByPos(GotoTradePosHitInfo, self.GotoGetTradeGoodsIdImage)
-            self.TryLeaveJump("GotoGetTradeGoods", self.GotoGetTradeGoodsIdImage)
-            EnterTradePos = self.GetPicPos(self.GotoGetTradeGoodsEnterIdImage,0.9)
-            if EnterTradePos is not None:
-                self.TryLeaveJump("GotoGetTradeGoodsEnter", self.GotoGetTradeGoodsEnterIdImage)
-                sleep(0.5)
-                self.WaitUntil(self.GoodsPackageOpenIdImage)
-                self.TryLeaveJump("CloseGoodsPackage", self.GoodsPackageOpenIdImage)
-                #self.TryInnerJump("CloseGoodsPackage", self.GoodsPackageClosedIdImage)
-
-                self.TryInnerJump("LeaveGetTradeGoods", self.LeaveGetTradeGoodsIdImage)
-                self.TryLeaveJump("LeaveGetTradeGoods2", self.LeaveGetTradeGoodsIdImage)
-                sleep(0.5)
-                self.WaitUntil(self.GetGoodsResultConfirmIdImage)
-                self.TryLeaveJump("GetGoodsResultConfirm", self.GetGoodsResultConfirmIdImage)
+                    self.TryInnerJump("LeaveGetTradeGoods", self.LeaveGetTradeGoodsIdImage)
+                    self.TryLeaveJump("LeaveGetTradeGoods2", self.LeaveGetTradeGoodsIdImage)
+                    sleep(0.5)
+                    self.WaitUntil(self.GetGoodsResultConfirmIdImage)
+                    self.TryLeaveJump("GetGoodsResultConfirm", self.GetGoodsResultConfirmIdImage)
                 
-                bGotoTrade = True;
-                sleep(0.3)
-                self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
-            else:
-                self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+                    bGotoTrade = True;
+                    sleep(0.3)
+                    self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+                else:
+                    self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
 
-        self.TryInnerJump("Daily",self.DailyIdImage)
-        sleep(0.5)
-        for i in range(np.random.randint(2,4)):
-            self.DoHitByName("DailyReciveAll")
-        sleep(1)
-
-        #self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
-        self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
-        sleep(1)
-        #goto wechat
-        GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
-        if GotoWeChatHitPos is not None:
-            print("Find Goto WeChat")
-            GotoWeChatHitInfo = [[GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+65],[10,10]]
-            self.TryLeaveJumpByPos(GotoWeChatHitInfo,self.DailyIdImage)
-            #now is under state system menu open
-            self.TryInnerJump("CloseGotoWeChat",self.SysOpeningIdImage)
             self.TryInnerJump("Daily",self.DailyIdImage)
             sleep(0.5)
             for i in range(np.random.randint(2,4)):
                 self.DoHitByName("DailyReciveAll")
             sleep(1)
+
+            #self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
             self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
             sleep(1)
+            #goto wechat
+            GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
+            if GotoWeChatHitPos is not None:
+                print("Find Goto WeChat")
+                GotoWeChatHitInfo = [[GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+65],[10,10]]
+                self.TryLeaveJumpByPos(GotoWeChatHitInfo,self.DailyIdImage)
+                #now is under state system menu open
+                self.TryInnerJump("CloseGotoWeChat",self.SysOpeningIdImage)
+                self.TryInnerJump("Daily",self.DailyIdImage)
+                sleep(0.5)
+                for i in range(np.random.randint(2,4)):
+                    self.DoHitByName("DailyReciveAll")
+                sleep(1)
+                self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+                sleep(1)
 
-        for i in range(np.random.randint(2,4)):
-            self.DoHitByName("DailyReciveAll")
-        sleep(1)
-        self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
-        self.TryLeaveJump("CloseDaily",self.DailyIdImage)
-        self.TryLeaveJump("AutoFighting",self.DailyIdImage)
-        self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)
-        sleep(1)
-        for i in range(np.random.randint(1,2)):
-            self.DoHitByName("UseFreeTime")
-        self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
+            for i in range(np.random.randint(2,4)):
+                self.DoHitByName("DailyReciveAll")
+            sleep(1)
+            self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+            self.TryLeaveJump("CloseDaily",self.DailyIdImage)
+            self.TryLeaveJump("AutoFighting",self.DailyIdImage)
+            self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)
+            sleep(1)
+            for i in range(np.random.randint(1,2)):
+                self.DoHitByName("UseFreeTime")
+            self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
+
+        elif MSmState_PostProcess.PostProcessType == 1:
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("Daily",self.DailyIdImage)
+            self.TryInnerJump("WeeklyTask",self.WeeklyTask)
+            WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
+            while WeeklyAnyThingToRecive is not None:
+                for i in range(np.random.randint(2,3)):
+                    self.DoHitByName("DailyReciveAll")
+                sleep(1)
+                self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+                WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
+            self.TryLeaveJump("CloseDaily",self.DailyIdImage)
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+
+        elif MSmState_PostProcess.PostProcessType == 2:
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("Commission",self.CommissionMain)
+            NoCommissionTicket = self.GetPicPos(self.NoCommissionTicket, 0.999, cv2.TM_CCORR_NORMED)
+            if NoCommissionTicket is None:
+                for k in range(3):
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("CommissionTask" + str(k))
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("ReciveCommission")
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("CloseCommissionRevice")
+                self.TryInnerJump("AlignCommission",self.CommisionReciveReady,0.95)
+                self.TryInnerJump("StartCommission",self.CommisionStartReady,0.95)
+                for i in range(3):
+                    self.TryInnerJump("DoCommission",self.FinishCommission,0.95)
+                    self.TryLeaveJump("ReciveReward",self.FinishCommission,0.95)
+            self.TryLeaveJump("CloseCommissionMain",self.CommissionMain)
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+
         return True

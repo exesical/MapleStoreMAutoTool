@@ -25,9 +25,69 @@
         "ClickRange":[35,25]
     },
     {
+        "OpName":"Commission",
+        "ClickPos":[645,457],
+        "ClickRange":[35,25]
+    },
+    {
+        "OpName":"CommissionTask0",
+        "ClickPos":[134,237],
+        "ClickRange":[55,55]
+    },
+    {
+        "OpName":"CommissionTask1",
+        "ClickPos":[134,416],
+        "ClickRange":[55,55]
+    },
+    {
+        "OpName":"CommissionTask2",
+        "ClickPos":[335,308],
+        "ClickRange":[55,55]
+    },
+    {
+        "OpName":"ReciveCommission",
+        "ClickPos":[412,418],
+        "ClickRange":[5,5]
+    },
+    {
+        "OpName":"CloseCommissionRevice",
+        "ClickPos":[660,181],
+        "ClickRange":[5,5]
+    },
+    {
+        "OpName":"CloseCommissionMain",
+        "ClickPos":[934,66],
+        "ClickRange":[5,5]
+    },
+    {
+        "OpName":"AlignCommission",
+        "ClickPos":[689,179],
+        "ClickRange":[15,15]
+    },
+    {
+        "OpName":"StartCommission",
+        "ClickPos":[689,336],
+        "ClickRange":[15,15]
+    },
+    {
+        "OpName":"DoCommission",
+        "ClickPos":[790,498],
+        "ClickRange":[50,10]
+    },
+    {
+        "OpName":"ReciveReward",
+        "ClickPos":[477,515],
+        "ClickRange":[20,10]
+    },
+    {
         "OpName":"Daily",
         "ClickPos":[818,124],
         "ClickRange":[35,25]
+    },
+    {
+        "OpName":"WeeklyTask",
+        "ClickPos":[80,200],
+        "ClickRange":[40,15]
     },
     {
         "OpName":"WeChatFriends",

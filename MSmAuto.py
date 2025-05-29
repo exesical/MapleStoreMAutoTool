@@ -21,6 +21,11 @@ if __name__ == '__main__':
     TestTaskIndex = 0;
     # 0 is NitePyramid, 1 is MonsterPark
     FastJumpType = 0;
+    
+    # 0 default 
+    # 1 recive weekly reward
+    # 2 auto commission
+    PostProcessType = 0;
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
@@ -42,6 +47,8 @@ if __name__ == '__main__':
             TestTaskIndex = int(args.split("=")[1])
         if search(r'FastJumpType',args):
             FastJumpType = int(args.split("=")[1])
+        if search(r'PostProcessType',args):
+            PostProcessType = int(args.split("=")[1])
 
     IsMainCharacter = False
     hwd_title = "雷电模拟器"
@@ -139,6 +146,7 @@ if __name__ == '__main__':
         bStateChanged = False
         bLastExpeditionMode = bExpeditionMode
         MSmState_FastJump.FastJumpType = FastJumpType;
+        MSmState_PostProcess.PostProcessType = PostProcessType;
         if True:
             for j in range(0, 100000):
                 current_time_h = int(time.strftime("%H:%M:%S")[0:2])
