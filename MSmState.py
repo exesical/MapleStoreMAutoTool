@@ -852,7 +852,9 @@ class MSmState_MonsterPark(MSmState):
         if MSmState.bMainCharacter == True:
             self.TryInnerJump("BuyMoreExp", self.BuyMoreExp)
         else:
-            self.TryLeaveJump("BuyMoreExp", self.BuyMoreExp)
+            buypos =self.GetPicPos(self.BuyMoreExp, 0.997, cv2.TM_CCORR_NORMED);
+            if buypos is not None:
+                self.TryLeaveJump("BuyMoreExp", self.BuyMoreExp)
         self.TryLeaveJump("Enter1", self.EnterMonsterParkIdImage)
         self.WaitingForAutoFightingFinished()
         if MSmState.bMainCharacter == True:
@@ -891,6 +893,9 @@ class MSmState_Weekly(MSmState):
         self.ExitIdImage = self.ReadPic("ExitIdImage")
 
     def Processing(self):
+        if MSmState.bMainCharacter == False:
+            for i in range(np.random.randint(2,3)):
+                self.DoHitByName("SelectSimple")
         self.TryInnerJump("Enter",self.AddTimesIdImage)
         self.DoAddTimes()
         self.TryLeaveJump("Comfirm", self.AddTimesIdImage)

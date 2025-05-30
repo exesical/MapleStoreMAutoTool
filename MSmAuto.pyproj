@@ -17,7 +17,7 @@
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <InterpreterPath>
     </InterpreterPath>
-    <CommandLineArguments>-test -TestTaskIndex=3 -TestStartIndex=12 -PostProcessType=2</CommandLineArguments>
+    <CommandLineArguments> -test -TestStartIndex=2 -TestTaskIndex=2</CommandLineArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

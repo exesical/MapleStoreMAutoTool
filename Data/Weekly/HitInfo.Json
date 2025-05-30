@@ -15,6 +15,11 @@
         "ClickRange":[80,20]
     },
     {
+        "OpName":"SelectSimple",
+        "ClickPos":[74,264],
+        "ClickRange":[20,10]
+    },
+    {
         "OpName":"Exit",
         "ClickPos":[295,454],
         "ClickRange":[80,18]
