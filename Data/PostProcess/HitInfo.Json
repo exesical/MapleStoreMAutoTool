@@ -168,6 +168,36 @@
         "OpName":"GetGoodsResultConfirm",
         "ClickPos":[481,460],
         "ClickRange":[60,18]
+    },
+    {
+        "OpName":"OpenPackage",
+        "ClickPos":[838,59],
+        "ClickRange":[8,8]
+    },
+    {
+        "OpName":"OpenTreasureBox",
+        "ClickPos":[692,541],
+        "ClickRange":[8,8]
+    },
+    {
+        "OpName":"SelectRandomTreasureBox",
+        "ClickPos":[166,539],
+        "ClickRange":[5,5]
+    },
+    {
+        "OpName":"TryOpenTreasureBox",
+        "ClickPos":[875,539],
+        "ClickRange":[25,5]
+    },
+    {
+        "OpName":"TryOpenTreasureBox2",
+        "ClickPos":[588,436],
+        "ClickRange":[35,15]
+    },
+    {
+        "OpName":"OpenTreasureBoxComfirm",
+        "ClickPos":[479,510],
+        "ClickRange":[35,15]
     }
 
 ]

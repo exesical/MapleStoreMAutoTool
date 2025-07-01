@@ -25,6 +25,7 @@ if __name__ == '__main__':
     # 0 default 
     # 1 recive weekly reward
     # 2 auto commission
+    # 3 自动开箱子
     PostProcessType = 0;
     for args in sys.argv:
         if search(r'debug', args):
@@ -183,6 +184,7 @@ if __name__ == '__main__':
                     CurIndex = CharacterCount
                 
                 MSmState_CharacterSelect.CurrentSelectedCharacterIndex = CurIndex
+                MSmState.CharacterIndex = CurIndex
                 if CurIndex == 0:
                     MSmState.bMainCharacter = True
                     MSmState.bFastMode = False

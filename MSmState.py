@@ -21,6 +21,7 @@ GHasGottenAll = False
 class MSmState(object):
     """description of class"""
     bMainCharacter = False
+    CharacterIndex = 0
     bUseDebug = False
     bFastMode = False
     bUseMainWindowCapture = False
@@ -154,6 +155,11 @@ class MSmState(object):
             print("State " + self.Name + "has no methon jump to " + TargetState.Name +", please check jump table")
             return 2
     
+    def SaveScreenShot(self):
+        #MSmState.CharacterIndex;
+        cv2.imwrite("MSmSave"+ str(MSmState.CharacterIndex)+".png", self.ScreenShotImage)
+        #cv2.imwrite(str(MSmState.CharacterIndex)+".png", self.ScreenShotImage)
+
     def RefreshScreenShot(self):
         if(MSmState.bUseMainWindowCapture):
             hwnd_dc = GetWindowDC(MSmState.HandleNumber_Main)
@@ -173,7 +179,6 @@ class MSmState(object):
         DeleteObject(save_bit_map.GetHandle())
         save_dc.DeleteDC()
         mfc_dc.DeleteDC()
-
         #show for test
         #cv2.namedWindow('scr_img')  # 命名窗口
         #cv2.imshow("scr_img", self.ScreenShotImage)  # 显示
@@ -323,7 +328,6 @@ class MSmState(object):
             self.RefreshScreenShot()
             self.CloseAuction()
             bAutoFightingFinished = self.IsPicMatching(self.ExitIdImage);
-
 
 class MSmState_CharacterSelect(MSmState):
 
@@ -590,8 +594,11 @@ class MSmState_MaterialAutoFighting(MSmState):
                 self.DoHitByName("GiveUp")
                 sleep(3)
             if self.IsPicMatching(self.MaterialExitIdImage):
+                self.SaveScreenShot()
                 return True
             sleep(5)
+
+        
         #self.TryLeaveJump("Leave",self.MaterialExitIdImage)
 
 class MSmState_MaterialEnter0(MSmState):
@@ -967,6 +974,11 @@ class MSmState_PostProcess(MSmState):
         self.WeeklyTask= self.ReadPic("WeeklyTask")
         self.WeeklyAnyThingToRecive= self.ReadPic("WeeklyAnyThingToRecive")
 
+        self.OpenPackage = self.ReadPic("OpenPackage")
+        self.OpenTreasureBox = self.ReadPic("OpenTreasureBox")
+        self.HasNoTreasureBox = self.ReadPic("HasNoTreasureBox")
+        self.SelectRandomTreasureBox = self.ReadPic("SelectRandomTreasureBox")
+        self.TryOpenTreasureBox = self.ReadPic("TryOpenTreasureBox")
 
     def Processing(self):
         if MSmState_PostProcess.PostProcessType == 0:
@@ -1082,6 +1094,22 @@ class MSmState_PostProcess(MSmState):
                     self.TryInnerJump("DoCommission",self.FinishCommission,0.95)
                     self.TryLeaveJump("ReciveReward",self.FinishCommission,0.95)
             self.TryLeaveJump("CloseCommissionMain",self.CommissionMain)
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+
+        elif MSmState_PostProcess.PostProcessType == 3:
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("OpenPackage",self.OpenPackage)
+            self.TryInnerJump("OpenTreasureBox",self.OpenTreasureBox)
+            self.TryInnerJump("SelectRandomTreasureBox",self.SelectRandomTreasureBox)
+            HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
+            while HasNoTreasureBoxPos is None:
+                 self.TryInnerJump("TryOpenTreasureBox",self.TryOpenTreasureBox,0.95)
+                 self.TryInnerJump("TryOpenTreasureBox2",self.DailyComfirmIdImage)
+                 self.TryLeaveJump("OpenTreasureBoxComfirm",self.DailyComfirmIdImage)
+                 self.RefreshScreenShot()
+                 HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
+            self.TryLeaveJump("CloseCommissionMain",self.OpenTreasureBox)
+            self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
 
         return True
