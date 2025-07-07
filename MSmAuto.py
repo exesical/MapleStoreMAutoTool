@@ -26,6 +26,7 @@ if __name__ == '__main__':
     # 1 recive weekly reward
     # 2 auto commission
     # 3 自动开箱子
+    # 4 自动换黄图
     PostProcessType = 0;
     for args in sys.argv:
         if search(r'debug', args):

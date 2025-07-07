@@ -980,6 +980,19 @@ class MSmState_PostProcess(MSmState):
         self.SelectRandomTreasureBox = self.ReadPic("SelectRandomTreasureBox")
         self.TryOpenTreasureBox = self.ReadPic("TryOpenTreasureBox")
 
+        self.OpenActivity = self.ReadPic("OpenActivity")
+        self.ChangeEnter = self.ReadPic("ChangeEnter")
+        self.ChangeMain = self.ReadPic("ChangeMain")
+        self.SelectNite = self.ReadPic("SelectNite")
+        self.SelectEssence = self.ReadPic("SelectEssence")
+        self.NoChangeMaterial = self.ReadPic("NoChangeMaterial")
+        self.ChangeAll = self.ReadPic("ChangeAll")
+        self.ChangeAll2 = self.ReadPic("ChangeAll2")
+        self.ChangeResult = self.ReadPic("ChangeResult")
+        self.CompositeChangeResult = self.ReadPic("CompositeChangeResult")
+        self.CompositeChangeResultMain = self.ReadPic("CompositeChangeResultMain")
+
+
     def Processing(self):
         if MSmState_PostProcess.PostProcessType == 0:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
@@ -1111,5 +1124,79 @@ class MSmState_PostProcess(MSmState):
             self.TryLeaveJump("CloseCommissionMain",self.OpenTreasureBox)
             self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+
+        elif MSmState_PostProcess.PostProcessType == 4:
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("OpenActivity",self.OpenActivity)
+            self.HitHandle.DoMousePull(self.HitInfo["ActivityDoMouseWheel"][0],self.HitInfo["ActivityDoMouseWheel"][1],[0,-300], 20, 3)
+            sleep(2)
+            self.RefreshScreenShot()
+            ChangeEnterPos = self.GetPicPos(self.ChangeEnter, 0.85)
+            if ChangeEnterPos is not None:
+                ChangeEnterHitInfo = [[ChangeEnterPos[0] + 20, ChangeEnterPos[1]+45],[10,10]]
+                self.TryInnerJumpByPos(ChangeEnterHitInfo,self.ChangeMain)
+                self.TryInnerJump("SelectNite",self.SelectNite)
+                self.TryInnerJump("SelectEssence",self.SelectEssence)
+                NoChangeMaterialPos = self.GetPicPos(self.NoChangeMaterial, 0.9)
+                ChangeAllPos = self.GetPicPos(self.ChangeAll, 0.98)
+                if ChangeAllPos is None:
+                    ChangeAllPos = self.GetPicPos(self.ChangeAll2, 0.98)
+                while True:
+                    if NoChangeMaterialPos is not None:
+                        break
+                    if ChangeAllPos is not None:
+                        break
+                    self.DoHitByName("SelectFirst")
+                    sleep(0.1)
+                    self.DoHitByName("SelectFirst")
+                    sleep(0.5)
+                    self.DoHitByName("AddMatertialMax")
+                    sleep(0.1)
+                    self.DoHitByName("AddMatertialMax")
+                    sleep(0.5)
+                    self.DoHitByName("AddMatertialConfirm")
+                    sleep(0.1)
+                    self.DoHitByName("AddMatertialConfirm")
+                    sleep(0.5)
+                    self.DoHitByName("DoChange")
+                    sleep(0.1)
+                    self.DoHitByName("DoChange")
+                    self.RefreshScreenShot()
+                    NoChangeMaterialPos = self.GetPicPos(self.NoChangeMaterial, 0.9)
+                    ChangeAllPos = self.GetPicPos(self.ChangeAll, 0.98)
+                    if ChangeAllPos is None:
+                        ChangeAllPos = self.GetPicPos(self.ChangeAll2, 0.98)
+                for i in range(0,6):
+                    self.TryInnerJump("GetChange"+ str(i),self.ChangeResult)
+                    self.TryLeaveJump("CloseChangeResult",self.ChangeResult)
+                self.TryInnerJump("GetChange6",self.CompositeChangeResult)
+                self.TryInnerJump("StartCompositeChangeResult",self.CompositeChangeResultMain)
+                self.DoHitByName("CompositeMax")
+                sleep(0.1)
+                self.DoHitByName("CompositeMax")
+                sleep(0.3)
+                self.DoHitByName("DoComposite")
+                sleep(0.1)
+                self.DoHitByName("DoComposite")
+                sleep(0.1)
+                self.DoHitByName("DoComposite")
+                sleep(0.5)
+                self.DoHitByName("DoComposite2")
+                sleep(0.2)
+                self.DoHitByName("DoComposite2")
+                sleep(0.2)
+                self.DoHitByName("DoComposite2")
+                sleep(0.2)
+                self.DoHitByName("DoComposite2")
+                sleep(5)
+                self.DoHitByName("DoComposite3")
+                sleep(0.2)
+                self.DoHitByName("DoComposite3")
+                sleep(0.2)
+                self.TryLeaveJump("CloseCommissionMain",self.CompositeChangeResultMain)
+                self.TryLeaveJump("CloseCommissionMain",self.ChangeMain)
+                self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+            else:
+                self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
 
         return True
