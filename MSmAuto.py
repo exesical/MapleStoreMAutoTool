@@ -21,13 +21,23 @@ if __name__ == '__main__':
     TestTaskIndex = 0;
     # 0 is NitePyramid, 1 is MonsterPark
     FastJumpType = 0;
-    
-    # 0 default 
+    WeekDay = datetime.datetime.now().weekday()
+    TaskGroupIndex = WeekDay % 2;
+    FastJumpType = TaskGroupIndex
+    if WeekDay == 3:
+        FastJumpType = 0
+
+    # 10 default 
     # 1 recive weekly reward
-    # 2 auto commission
-    # 3 自动开箱子
-    # 4 自动换黄图
-    PostProcessType = 0;
+    # 2 自动换黄图
+    # 3 自动整理背包
+    # 4 自动跳过委托
+    # 11 default + recive weekly reward
+    # 12 default + 自动换黄图
+    # 13 default + 自动开箱子
+    PostProcessType = 16 - WeekDay;
+    if PostProcessType < 10 or PostProcessType > 13:
+        PostProcessType = 10
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
@@ -127,11 +137,11 @@ if __name__ == '__main__':
             GlobalJumpTable[targetstatename] = TargetJumeTable
 
         
-        TaskJsonExpedition = json.load(open(frozen.app_path() + "\\Data\\TaskListExpedition.json", 'r', encoding='utf-8'))
-        TaskFilePath = frozen.app_path() + "\\Data\\TaskList.json" 
+        TaskJsonExpedition = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListExpedition.json", 'r', encoding='utf-8'))
+        TaskFilePath = frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskList.json" 
         TaskJson = json.load(open(TaskFilePath, 'r', encoding='utf-8'))
-        TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TaskListMain.json", 'r', encoding='utf-8'))
-        TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TaskListFive.json", 'r', encoding='utf-8'))
+        TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListMain.json", 'r', encoding='utf-8'))
+        TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListFive.json", 'r', encoding='utf-8'))
         if bTestMode:        
             TaskJson = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))
             TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))

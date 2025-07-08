@@ -10,6 +10,16 @@
         "ClickRange":[80,18]
     },
     {
+        "OpName":"GiveUp",
+        "ClickPos":[926,247],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"GiveUpConfirm",
+        "ClickPos":[590,433],
+        "ClickRange":[30,15]
+    },
+    {
         "OpName":"Exit",
         "ClickPos":[388,515],
         "ClickRange":[80,18]

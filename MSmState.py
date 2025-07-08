@@ -475,6 +475,11 @@ class MSmState_GameModeDefault(MSmState):
         super().__init__(StateName)
         self.MaterialEnterIdImage = self.ReadPic("MaterialEnterIdentify")
         self.EliteEnterIdImage = self.ReadPic("EliteEnterIdImage")
+
+        self.EliteEnterIdImages = []
+        for i in range(0,7):
+            self.EliteEnterIdImages.append(self.ReadPic("EliteEnterIdImage" + str(i)))
+
         self.TangyunEnterIdImage = self.ReadPic("TangyunEnterIdImage")
         self.PirateEnterIdImage = self.ReadPic("PirateEnterIdImage")
         self.NitePyramidEnterIdImage = self.ReadPic("NitePyramidEnterIdImage")
@@ -502,7 +507,12 @@ class MSmState_GameModeDefault(MSmState):
                 self.JumpInfo[JumpInfoJson[i]["NextStateName"]] = [JumpInfoJson[i]["ClickPos"],JumpInfoJson[i]["ClickRange"]]
         self.RefreshScreenShot()
         self.AddEnter("MaterialsMain", self.MaterialEnterIdImage)        
-        self.AddEnter("Elite", self.EliteEnterIdImage,0.85)        
+        self.AddEnter("Elite", self.EliteEnterIdImage,0.85)
+        for i in range(0,7):
+            if "Elite" not in self.JumpInfo:
+                self.AddEnter("Elite", self.EliteEnterIdImages[i],0.85)
+
+
         self.AddEnter("Tangyun", self.TangyunEnterIdImage)        
         self.AddEnter("Pirate", self.PirateEnterIdImage)        
         self.AddEnter("NitePyramid", self.NitePyramidEnterIdImage)        
@@ -819,9 +829,9 @@ class MSmState_Elite(MSmState_TeamCommon):
         if Iter >= 300 and bStillInRoom == True:
             self.TryLeaveJump("Start",self.WaitingTeamIdImage)  
         self.WaitingForAutoFightingFinished()
-
-        self.TryInnerJump("BuyMore", self.BuyMore)
-        self.TryLeaveJump("BuyMoreConfirm", self.BuyMore)
+        if MSmState.bMainCharacter == True:
+            self.TryInnerJump("BuyMore", self.BuyMore)
+            self.TryLeaveJump("BuyMoreConfirm", self.BuyMore)
         self.TryLeaveJump("Exit", self.ExitIdImage)
         return True
 
@@ -898,6 +908,7 @@ class MSmState_Weekly(MSmState):
         super().__init__(StateName)
         self.AddTimesIdImage = self.ReadPic("AddTimesIdImage")
         self.ExitIdImage = self.ReadPic("ExitIdImage")
+        self.GiveUp = self.ReadPic("GiveUp")
 
     def Processing(self):
         if MSmState.bMainCharacter == False:
@@ -939,6 +950,7 @@ class MSmState_Wulin(MSmState):
     def Processing(self):
         self.TryInnerJump("Enter",self.Enter2IdImage)
         self.TryLeaveJump("Enter1", self.Enter2IdImage)
+
         self.WaitingForAutoFightingFinished()
         self.TryLeaveJump("Exit", self.ExitIdImage)
         return True
@@ -973,12 +985,17 @@ class MSmState_PostProcess(MSmState):
 
         self.WeeklyTask= self.ReadPic("WeeklyTask")
         self.WeeklyAnyThingToRecive= self.ReadPic("WeeklyAnyThingToRecive")
+        self.SharePic= self.ReadPic("SharePic")
+        self.SharePicButton= self.ReadPic("SharePicButton")
+        self.SharePicTarget= self.ReadPic("SharePicTarget")
 
         self.OpenPackage = self.ReadPic("OpenPackage")
         self.OpenTreasureBox = self.ReadPic("OpenTreasureBox")
         self.HasNoTreasureBox = self.ReadPic("HasNoTreasureBox")
         self.SelectRandomTreasureBox = self.ReadPic("SelectRandomTreasureBox")
         self.TryOpenTreasureBox = self.ReadPic("TryOpenTreasureBox")
+        self.DisassembleComfirm = self.ReadPic("DisassembleComfirm")
+        self.DisassembleMain = self.ReadPic("DisassembleMain")
 
         self.OpenActivity = self.ReadPic("OpenActivity")
         self.ChangeEnter = self.ReadPic("ChangeEnter")
@@ -994,7 +1011,8 @@ class MSmState_PostProcess(MSmState):
 
 
     def Processing(self):
-        if MSmState_PostProcess.PostProcessType == 0:
+        TempPostProcessType = MSmState_PostProcess.PostProcessType 
+        if TempPostProcessType > 9:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("Communication",self.FriendsIdImage)
             self.TryInnerJump("WeChatFriends",self.WeChatFriendsIdImage)
@@ -1074,10 +1092,24 @@ class MSmState_PostProcess(MSmState):
             for i in range(np.random.randint(1,2)):
                 self.DoHitByName("UseFreeTime")
             self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
+            TempPostProcessType = TempPostProcessType - 10
 
-        elif MSmState_PostProcess.PostProcessType == 1:
+        #收周任务奖励
+        if TempPostProcessType == 1:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("Daily",self.DailyIdImage)
+            #先做一次图片分享
+            self.TryInnerJump("SharePic",self.SharePic)
+            self.HitHandle.DoMousePull(self.HitInfo["MoveSharePic"][0],self.HitInfo["MoveSharePic"][1],[0,-300], 20, 3)
+            sleep(2)
+            SharePicButtonPos = self.GetPicPos(self.SharePicButton, 0.8)
+            if SharePicButtonPos is not None:
+                SharePicButtonInfo = [[SharePicButtonPos[0] + 40, SharePicButtonPos[1]+55],[10,10]]
+                self.TryInnerJumpByPos(SharePicButtonInfo,self.SharePicTarget)
+                for i in range(np.random.randint(2,3)):
+                    self.DoHitByName("ShareToWeChat")
+                self.TryLeaveJump("CloseSharePic",self.SharePicTarget)
+                sleep(0.2)
             self.TryInnerJump("WeeklyTask",self.WeeklyTask)
             WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
             while WeeklyAnyThingToRecive is not None:
@@ -1088,44 +1120,9 @@ class MSmState_PostProcess(MSmState):
                 WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
             self.TryLeaveJump("CloseDaily",self.DailyIdImage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
-
-        elif MSmState_PostProcess.PostProcessType == 2:
-            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
-            self.TryInnerJump("Commission",self.CommissionMain)
-            NoCommissionTicket = self.GetPicPos(self.NoCommissionTicket, 0.999, cv2.TM_CCORR_NORMED)
-            if NoCommissionTicket is None:
-                for k in range(3):
-                    for i in range(np.random.randint(2,3)):
-                        self.DoHitByName("CommissionTask" + str(k))
-                    for i in range(np.random.randint(2,3)):
-                        self.DoHitByName("ReciveCommission")
-                    for i in range(np.random.randint(2,3)):
-                        self.DoHitByName("CloseCommissionRevice")
-                self.TryInnerJump("AlignCommission",self.CommisionReciveReady,0.95)
-                self.TryInnerJump("StartCommission",self.CommisionStartReady,0.95)
-                for i in range(3):
-                    self.TryInnerJump("DoCommission",self.FinishCommission,0.95)
-                    self.TryLeaveJump("ReciveReward",self.FinishCommission,0.95)
-            self.TryLeaveJump("CloseCommissionMain",self.CommissionMain)
-            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
-
-        elif MSmState_PostProcess.PostProcessType == 3:
-            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
-            self.TryInnerJump("OpenPackage",self.OpenPackage)
-            self.TryInnerJump("OpenTreasureBox",self.OpenTreasureBox)
-            self.TryInnerJump("SelectRandomTreasureBox",self.SelectRandomTreasureBox)
-            HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
-            while HasNoTreasureBoxPos is None:
-                 self.TryInnerJump("TryOpenTreasureBox",self.TryOpenTreasureBox,0.95)
-                 self.TryInnerJump("TryOpenTreasureBox2",self.DailyComfirmIdImage)
-                 self.TryLeaveJump("OpenTreasureBoxComfirm",self.DailyComfirmIdImage)
-                 self.RefreshScreenShot()
-                 HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
-            self.TryLeaveJump("CloseCommissionMain",self.OpenTreasureBox)
-            self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
-            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
-
-        elif MSmState_PostProcess.PostProcessType == 4:
+    
+        #自动换黄图
+        if TempPostProcessType == 2:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("OpenActivity",self.OpenActivity)
             self.HitHandle.DoMousePull(self.HitInfo["ActivityDoMouseWheel"][0],self.HitInfo["ActivityDoMouseWheel"][1],[0,-300], 20, 3)
@@ -1198,5 +1195,57 @@ class MSmState_PostProcess(MSmState):
                 self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
             else:
                 self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+        
+        #自动整理背包
+        if TempPostProcessType == 3:
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("OpenPackage",self.OpenPackage)
+            self.TryInnerJump("OpenTreasureBox",self.OpenTreasureBox)
+            self.TryInnerJump("SelectRandomTreasureBox",self.SelectRandomTreasureBox)
+            HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
+            while HasNoTreasureBoxPos is None:
+                 self.TryInnerJump("TryOpenTreasureBox",self.TryOpenTreasureBox,0.95)
+                 self.TryInnerJump("TryOpenTreasureBox2",self.DailyComfirmIdImage)
+                 self.TryLeaveJump("OpenTreasureBoxComfirm",self.DailyComfirmIdImage)
+                 self.RefreshScreenShot()
+                 HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
+            self.TryLeaveJump("CloseCommissionMain",self.OpenTreasureBox)
+            
+            #自动分解下装备
+            self.TryInnerJump("Disassemble",self.DisassembleMain,0.85)
+            for i in range(np.random.randint(2,3)):
+                self.DoHitByName("Disassemble")
+                sleep(0.2)
+            for i in range(np.random.randint(3,4)):
+                self.DoHitByName("DisassembleConfirm")
+                sleep(0.2)
+            for i in range(np.random.randint(3,4)):
+                self.DoHitByName("DisassembleConfirm1")
+                sleep(0.2)
+            self.TryLeaveJump("CloseCommissionMain",self.DisassembleMain)
+
+            self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+
+        #自动跳过委托
+        if TempPostProcessType == 4:
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("Commission",self.CommissionMain)
+            NoCommissionTicket = self.GetPicPos(self.NoCommissionTicket, 0.999, cv2.TM_CCORR_NORMED)
+            if NoCommissionTicket is None:
+                for k in range(3):
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("CommissionTask" + str(k))
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("ReciveCommission")
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("CloseCommissionRevice")
+                self.TryInnerJump("AlignCommission",self.CommisionReciveReady,0.95)
+                self.TryInnerJump("StartCommission",self.CommisionStartReady,0.95)
+                for i in range(3):
+                    self.TryInnerJump("DoCommission",self.FinishCommission,0.95)
+                    self.TryLeaveJump("ReciveReward",self.FinishCommission,0.95)
+            self.TryLeaveJump("CloseCommissionMain",self.CommissionMain)
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
 
         return True

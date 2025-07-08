@@ -90,6 +90,26 @@
         "ClickRange":[40,15]
     },
     {
+        "OpName":"SharePic",
+        "ClickPos":[80,400],
+        "ClickRange":[40,15]
+    },
+    {
+        "OpName":"MoveSharePic",
+        "ClickPos":[500,400],
+        "ClickRange":[40,40]
+    },
+    {
+        "OpName":"ShareToWeChat",
+        "ClickPos":[785,535],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"CloseSharePic",
+        "ClickPos":[927,64],
+        "ClickRange":[10,10]
+    },
+    {
         "OpName":"WeChatFriends",
         "ClickPos":[710,124],
         "ClickRange":[25,7]
@@ -303,6 +323,21 @@
         "OpName":"ActivityDoMouseWheel",
         "ClickPos":[75,325],
         "ClickRange":[30,20]
+    },
+    {
+        "OpName":"Disassemble",
+        "ClickPos":[837,540],
+        "ClickRange":[15,10]
+    },
+    {
+        "OpName":"DisassembleConfirm",
+        "ClickPos":[682,532],
+        "ClickRange":[8,8]
+    },
+    {
+        "OpName":"DisassembleConfirm1",
+        "ClickPos":[403,522],
+        "ClickRange":[15,10]
     }
 
 
