@@ -1089,7 +1089,7 @@ class MSmState_PostProcess(MSmState):
             sleep(1)
             self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
             self.TryLeaveJump("CloseDaily",self.DailyIdImage)
-
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
             if MSmState.bMainCharacter == True:
                 self.TryLeaveJump("AutoFighting",self.DailyIdImage)
                 self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)
