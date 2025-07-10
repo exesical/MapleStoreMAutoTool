@@ -35,7 +35,7 @@ if __name__ == '__main__':
     # 11 default + recive weekly reward
     # 12 default + 自动换黄图
     # 13 default + 自动开箱子
-    PostProcessType = 16 - WeekDay;
+    PostProcessType = 17 - WeekDay;
     if PostProcessType < 10 or PostProcessType > 13:
         PostProcessType = 10
     for args in sys.argv:
@@ -61,6 +61,8 @@ if __name__ == '__main__':
             FastJumpType = int(args.split("=")[1])
         if search(r'PostProcessType',args):
             PostProcessType = int(args.split("=")[1])
+        if search(r'TaskGroupIndex',args):
+            TaskGroupIndex = int(args.split("=")[1])
 
     IsMainCharacter = False
     hwd_title = "雷电模拟器"

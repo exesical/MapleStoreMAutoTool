@@ -1089,12 +1089,14 @@ class MSmState_PostProcess(MSmState):
             sleep(1)
             self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
             self.TryLeaveJump("CloseDaily",self.DailyIdImage)
-            self.TryLeaveJump("AutoFighting",self.DailyIdImage)
-            self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)
-            sleep(1)
-            for i in range(np.random.randint(1,2)):
-                self.DoHitByName("UseFreeTime")
-            self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
+
+            if MSmState.bMainCharacter == True:
+                self.TryLeaveJump("AutoFighting",self.DailyIdImage)
+                self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)
+                sleep(1)
+                for i in range(np.random.randint(1,2)):
+                    self.DoHitByName("UseFreeTime")
+                self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
             TempPostProcessType = TempPostProcessType - 10
 
         #收周任务奖励

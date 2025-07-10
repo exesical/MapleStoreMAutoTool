@@ -3,8 +3,8 @@
 	"GuildInfo",
 	"Mail",
 	"FastJump",
-	"Elite",
 	"MaterialAutoFighting",
+	"Elite",
 	"PostProcess",
 	"CharacterSelect"
 ]

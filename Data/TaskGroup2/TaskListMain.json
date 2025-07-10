@@ -2,9 +2,16 @@
 	"CharacterSelect",
 	"GuildInfo",
 	"Mail",
-	"FastJump",
 	"MaterialAutoFighting",
+	"SpecialWeekly",
+	"Weekly",
+	"Tangyun",
+	"Wulin",
+	"CharacterSelect",
 	"Elite",
+	"MonsterPark",
+	"Pirate",
+	"NitePyramid",
 	"PostProcess",
 	"CharacterSelect"
 ]
