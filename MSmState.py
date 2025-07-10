@@ -908,7 +908,7 @@ class MSmState_Weekly(MSmState):
         super().__init__(StateName)
         self.AddTimesIdImage = self.ReadPic("AddTimesIdImage")
         self.ExitIdImage = self.ReadPic("ExitIdImage")
-        self.GiveUp = self.ReadPic("GiveUp")
+        #self.GiveUp = self.ReadPic("GiveUp")
 
     def Processing(self):
         if MSmState.bMainCharacter == False:
@@ -948,6 +948,9 @@ class MSmState_Wulin(MSmState):
         self.ExitIdImage = self.ReadPic("ExitIdImage")
 
     def Processing(self):
+        for i in range(np.random.randint(2,3)):
+            self.DoHitByName("GiftConfirm")
+            sleep(0.3)
         self.TryInnerJump("Enter",self.Enter2IdImage)
         self.TryLeaveJump("Enter1", self.Enter2IdImage)
 

@@ -6,12 +6,12 @@
     },
     {
         "OpName":"CloseAutoFighting",
-        "ClickPos":[747,117],
-        "ClickRange":[10,10]
+        "ClickPos":[739,92],
+        "ClickRange":[10,5]
     },
     {
         "OpName":"UseFreeTime",
-        "ClickPos":[708,315],
+        "ClickPos":[700,294],
         "ClickRange":[30,12]
     },
     {

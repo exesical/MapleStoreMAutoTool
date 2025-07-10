@@ -138,8 +138,7 @@ if __name__ == '__main__':
 
         
         TaskJsonExpedition = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListExpedition.json", 'r', encoding='utf-8'))
-        TaskFilePath = frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskList.json" 
-        TaskJson = json.load(open(TaskFilePath, 'r', encoding='utf-8'))
+        TaskJson = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskList.json", 'r', encoding='utf-8'))
         TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListMain.json", 'r', encoding='utf-8'))
         TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListFive.json", 'r', encoding='utf-8'))
         if bTestMode:        

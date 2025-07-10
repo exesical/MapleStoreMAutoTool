@@ -28,5 +28,10 @@
         "OpName":"CloseWeekly",
         "ClickPos":[408,520],
         "ClickRange":[10,10]
+    },
+    {
+        "OpName":"GiftConfirm",
+        "ClickPos":[480,432],
+        "ClickRange":[30,15]
     }
 ]
