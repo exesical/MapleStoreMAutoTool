@@ -506,7 +506,7 @@ class MSmState_GameModeDefault(MSmState):
             for i in range(len(JumpInfoJson)):
                 self.JumpInfo[JumpInfoJson[i]["NextStateName"]] = [JumpInfoJson[i]["ClickPos"],JumpInfoJson[i]["ClickRange"]]
         self.RefreshScreenShot()
-        self.AddEnter("MaterialsMain", self.MaterialEnterIdImage)        
+        self.AddEnter("Material", self.MaterialEnterIdImage)        
         self.AddEnter("Elite", self.EliteEnterIdImage,0.85)
         for i in range(0,7):
             if "Elite" not in self.JumpInfo:
@@ -567,7 +567,7 @@ class MSmState_Mail(MSmState):
         sleep(1)
         return True
 
-class MSmState_MaterialAutoFighting(MSmState):
+class MSmState_Material(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
         Path_cur = frozen.app_path() + "\\Data\\" + StateName
@@ -577,27 +577,29 @@ class MSmState_MaterialAutoFighting(MSmState):
         MaterialExitPath = Path_cur + "\\MaterialExit.png"
         self.MaterialExitIdImage = cv2.imdecode(fromfile(MaterialExitPath, dtype=uint8), -1)
         self.MaterialExitIdImage = cv2.cvtColor(self.MaterialExitIdImage, cv2.COLOR_BGR2GRAY)
-        self.AutoFightingIdImage = self.ReadPic("AutoFightingIdImage")
-        self.DailyIdImage = self.ReadPic("DailyIdImage")
-        self.FriendsIdImage = self.ReadPic("FriendsIdImage")
-        self.SendPopularityIdImage = self.ReadPic("SendPopularityIdImage")
-        self.CanSendPopularityIdImage = self.ReadPic("CanSendPopularityIdImage")
+
+        self.Enter0 = self.ReadPic("Enter0")
+        self.Enter1 = self.ReadPic("Enter1")
+        self.AllMaterialsGotten = self.ReadPic("AllMaterialsGotten")
+        self.MaterialMain = self.ReadPic("MaterialMain")
         self.SysOpeningIdImage = self.ReadPic("SysOpeningIdImage")
-        self.WeChatFriendsIdImage = self.ReadPic("WeChatFriendsIdImage")
-        self.DailyComfirmIdImage = self.ReadPic("DailyComfirmIdImage")
-        self.GotoWeChatIdImage = self.ReadPic("GotoWeChatIdImage")
-        self.NotRemindIdImage = self.ReadPic("NotRemindIdImage")
-        self.TradeEnterIdImage = self.ReadPic("TradeEnterIdImage")
-        self.GotoGetTradeGoodsIdImage = self.ReadPic("GotoGetTradeGoodsIdImage")
-        self.GotoGetTradeGoodsEnterIdImage = self.ReadPic("GotoGetTradeGoodsEnterIdImage")
-        self.GoodsPackageOpenIdImage = self.ReadPic("GoodsPackageOpenIdImage")
-        self.LeaveGetTradeGoodsIdImage = self.ReadPic("LeaveGetTradeGoodsIdImage")
-        self.GetGoodsResultConfirmIdImage = self.ReadPic("GetGoodsResultConfirmIdImage")
-        self.GoodsPackageClosedIdImage = self.ReadPic("GoodsPackageClosedIdImage")
+
 
     def Processing(self):
-        
+        self.TryInnerJump("Enter0",self.Enter0)
+        self.TryInnerJump("Enter1",self.Enter1)
+        self.HitHandle.DoMousePull(self.HitInfo["CheckNeededPull"][0],self.HitInfo["CheckNeededPull"][1],[0,-300], 20, 3)
+        sleep(2)
+        self.RefreshScreenShot()
+        TempPos = self.GetPicPos(self.AllMaterialsGotten, 0.95)
+        if TempPos is not None:
+            self.TryLeaveJump("Cancel0",self.Enter1)
+            self.TryLeaveJump("CloseMaterial",self.MaterialMain)
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+            return True
 
+
+        self.TryLeaveJump("Enter2",self.Enter1)
         while True:
             self.RefreshScreenShot()
             if self.IsPicMatching(self.MaterialGiveUpIdImage):
@@ -605,47 +607,12 @@ class MSmState_MaterialAutoFighting(MSmState):
                 sleep(3)
             if self.IsPicMatching(self.MaterialExitIdImage):
                 self.SaveScreenShot()
-                return True
+                break
             sleep(5)
-
         
-        #self.TryLeaveJump("Leave",self.MaterialExitIdImage)
+        self.TryLeaveJump("Exit", self.MaterialExitIdImage)
+        
 
-class MSmState_MaterialEnter0(MSmState):
-    def __init__(self, StateName):
-        super().__init__(StateName)
-
-    def Processing(self):
-        self.DoAddTimes()
-        return True
-
-class MSmState_MaterialEnter1(MSmState):
-    def __init__(self, StateName):
-        super().__init__(StateName)
-        # self.HasGottenAll = self.ReadPic("HasGottenAll")
-    
-    def Processing(self):
-        # self.HitHandle.MouseWheelMove([733,333],[20,20],5)
-        # sleep(3)
-        # self.RefreshScreenShot()
-        # bHasGottenAll = self.IsPicMatching(self.HasGottenAll)
-        # if(bHasGottenAll):
-        #     GHasGottenAll = True
-        return True
-
-class MSmState_MaterialsMain(MSmState):
-    def __init__(self, StateName):
-        super().__init__(StateName)
-        self.Material160 = self.ReadPic("Material160")
-        self.Material170 = self.ReadPic("Material170")
-    
-    def Processing(self):
-        if MSmState.bMainCharacter == False:
-            b170 = self.IsPicMatching(self.Material170)
-            if b170:
-                self.TryInnerJumpByPos([[74,438],[30,10]],self.Material160)
-
-        return True
 
 class MSmState_SystemMenuOpening(MSmState):
     def __init__(self, StateName):

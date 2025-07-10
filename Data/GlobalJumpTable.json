@@ -21,7 +21,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			["Material", "Wander" ]
 		]
 	},
 	{
@@ -46,7 +46,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -71,7 +71,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -96,7 +96,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -121,7 +121,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -146,7 +146,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -171,7 +171,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -196,7 +196,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -221,7 +221,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -246,7 +246,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -271,20 +271,17 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			["Material", "Wander" ]
 		]
 	},
 	{
-		"TargetStateName":"MaterialAutoFighting",
+		"TargetStateName":"Material",
 		"TargetTable":[
 			["Login", "CharacterSelect"],
 			["CharacterSelect", "Wander"],
 			["Wander", "SystemMenuOpening"],
 			["SystemMenuOpening", "GameModeDefault"],
-			["GameModeDefault", "MaterialsMain"],
-			["MaterialsMain", "MaterialEnter0"],
-			["MaterialEnter0", "MaterialEnter1"],
-			["MaterialEnter1", "MaterialAutoFighting"],
+			["GameModeDefault", "Material"],
 			["ChangeCharacter", "SystemMenuOpening"],
 			["GuildInfo", "SystemMenuOpening"],
 			["Mail", "SystemMenuOpening"],
@@ -299,7 +296,7 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			["MaterialAutoFighting", "Wander"]
+			[ "Material", "Wander" ]
 		]
 	},
 	{
@@ -311,11 +308,8 @@
 			["SystemMenuOpening", "GuildInfo"],
 			["GameModeDefault", "SystemMenuOpening"],
 			["FastJump", "SystemMenuOpening"],
-			["MaterialsMain", "SystemMenuOpening"],
-			["MaterialEnter0", "MaterialsMain"],
-			["MaterialEnter1", "MaterialsMain"],
 			["ChangeCharacter", "SystemMenuOpening"],
-			["MaterialAutoFighting", "Wander"],
+			["Material", "Wander" ],
 			["Mail", "SystemMenuOpening"]
 		]
 	},
@@ -328,11 +322,8 @@
 			["SystemMenuOpening", "Mail"],
 			["GameModeDefault", "SystemMenuOpening"],
 			["FastJump", "SystemMenuOpening"],
-			["MaterialsMain", "SystemMenuOpening"],
-			["MaterialEnter0", "MaterialsMain"],
-			["MaterialEnter1", "MaterialsMain"],
 			["ChangeCharacter", "SystemMenuOpening"],
-			["MaterialAutoFighting", "Wander"],
+			[ "Material", "Wander" ],
 			["GuildInfo", "SystemMenuOpening"]
 		]
 	},
@@ -345,11 +336,8 @@
 			["Mail", "SystemMenuOpening"],
 			["GameModeDefault", "SystemMenuOpening"],
 			["FastJump", "SystemMenuOpening"],
-			["MaterialsMain", "SystemMenuOpening"],
-			["MaterialEnter0", "MaterialsMain"],
-			["MaterialEnter1", "MaterialsMain"],
 			["ChangeCharacter", "CharacterSelect"],
-			["MaterialAutoFighting", "Wander"],
+			["Material", "Wander"],
 			["Elite", "Wander"],
 			["GuildInfo", "SystemMenuOpening"],
 
@@ -376,13 +364,10 @@
 			["Mail", "SystemMenuOpening"],
 			["GameModeDefault", "SystemMenuOpening"],
 			["FastJump", "SystemMenuOpening"],
-			["MaterialsMain", "SystemMenuOpening"],
-			["MaterialEnter0", "MaterialsMain"],
-			["MaterialEnter1", "MaterialsMain"],
 			["ChangeCharacter", "SystemMenuOpening"],
 			
 			["GuildInfo", "SystemMenuOpening"],
-			["MaterialAutoFighting", "Wander"],
+			["Material", "Wander" ],
 			["Elite", "Wander"],
 			["Dimension", "Wander"],
 			["MonsterPark", "Wander"],

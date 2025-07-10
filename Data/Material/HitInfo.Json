@@ -1,0 +1,44 @@
+[
+    {
+        "OpName":"Enter0",
+        "ClickPos":[846,532],
+        "ClickRange":[60,20]
+    },
+    {
+        "OpName":"Enter1",
+        "ClickPos":[588,433],
+        "ClickRange":[40,15]
+    },
+    {
+        "OpName":"CheckNeededPull",
+        "ClickPos":[658,393],
+        "ClickRange":[20,20]
+    },
+    {
+        "OpName":"Enter2",
+        "ClickPos":[585,520],
+        "ClickRange":[40,15]
+    },
+    {
+        "OpName":"Exit",
+        "ClickPos":[290,452],
+        "ClickRange":[40,15]
+    },
+    {
+        "OpName":"Cancel0",
+        "ClickPos":[371,520],
+        "ClickRange":[30,15]
+    },
+    {
+        "OpName":"OpenSystemMenu",
+        "ClickPos":[930,62],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"CloseMaterial",
+        "ClickPos":[930,64],
+        "ClickRange":[10,10]
+    }
+
+
+]
