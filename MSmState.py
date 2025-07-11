@@ -1100,10 +1100,12 @@ class MSmState_PostProcess(MSmState):
         if TempPostProcessType == 2:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("OpenActivity",self.OpenActivity)
-            self.HitHandle.DoMousePull(self.HitInfo["ActivityDoMouseWheel"][0],self.HitInfo["ActivityDoMouseWheel"][1],[0,-100], 20, 3)
-            sleep(2)
-            self.RefreshScreenShot()
             ChangeEnterPos = self.GetPicPos(self.ChangeEnter, 0.85)
+            if ChangeEnterPos is None:
+                self.HitHandle.DoMousePull(self.HitInfo["ActivityDoMouseWheel"][0],self.HitInfo["ActivityDoMouseWheel"][1],[0,-100], 20, 3)
+                sleep(2)
+                self.RefreshScreenShot()
+                ChangeEnterPos = self.GetPicPos(self.ChangeEnter, 0.85)
             if ChangeEnterPos is not None:
                 ChangeEnterHitInfo = [[ChangeEnterPos[0] + 20, ChangeEnterPos[1]+45],[10,10]]
                 self.TryInnerJumpByPos(ChangeEnterHitInfo,self.ChangeMain)
