@@ -1100,7 +1100,7 @@ class MSmState_PostProcess(MSmState):
         if TempPostProcessType == 2:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("OpenActivity",self.OpenActivity)
-            self.HitHandle.DoMousePull(self.HitInfo["ActivityDoMouseWheel"][0],self.HitInfo["ActivityDoMouseWheel"][1],[0,-300], 20, 3)
+            self.HitHandle.DoMousePull(self.HitInfo["ActivityDoMouseWheel"][0],self.HitInfo["ActivityDoMouseWheel"][1],[0,-100], 20, 3)
             sleep(2)
             self.RefreshScreenShot()
             ChangeEnterPos = self.GetPicPos(self.ChangeEnter, 0.85)
@@ -1169,6 +1169,7 @@ class MSmState_PostProcess(MSmState):
                 self.TryLeaveJump("CloseCommissionMain",self.ChangeMain)
                 self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
             else:
+                self.TryLeaveJump("OpenSystemMenu",self.OpenActivity)
                 self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
         
         #自动整理背包
