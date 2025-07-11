@@ -21,6 +21,7 @@ GHasGottenAll = False
 class MSmState(object):
     """description of class"""
     bMainCharacter = False
+    bAllMaterialHasGotten = False
     CharacterIndex = 0
     bUseDebug = False
     bFastMode = False
@@ -506,7 +507,8 @@ class MSmState_GameModeDefault(MSmState):
             for i in range(len(JumpInfoJson)):
                 self.JumpInfo[JumpInfoJson[i]["NextStateName"]] = [JumpInfoJson[i]["ClickPos"],JumpInfoJson[i]["ClickRange"]]
         self.RefreshScreenShot()
-        self.AddEnter("Material", self.MaterialEnterIdImage)        
+        if MSmState.bAllMaterialHasGotten == False:
+            self.AddEnter("Material", self.MaterialEnterIdImage)        
         self.AddEnter("Elite", self.EliteEnterIdImage,0.85)
         for i in range(0,7):
             if "Elite" not in self.JumpInfo:
@@ -596,6 +598,7 @@ class MSmState_Material(MSmState):
             self.TryLeaveJump("Cancel0",self.Enter1)
             self.TryLeaveJump("CloseMaterial",self.MaterialMain)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+            MSmState.bAllMaterialHasGotten = True
             return True
 
 
@@ -609,7 +612,7 @@ class MSmState_Material(MSmState):
                 self.SaveScreenShot()
                 break
             sleep(5)
-        
+        MSmState.bAllMaterialHasGotten = False
         self.TryLeaveJump("Exit", self.MaterialExitIdImage)
         
 
