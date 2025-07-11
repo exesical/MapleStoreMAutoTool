@@ -594,7 +594,7 @@ class MSmState_Material(MSmState):
         sleep(2)
         self.RefreshScreenShot()
         TempPos = self.GetPicPos(self.AllMaterialsGotten, 0.95)
-        if TempPos is not None:
+        if TempPos is not None and MSmState_PostProcess.PostProcessType != 10:
             self.TryLeaveJump("Cancel0",self.Enter1)
             self.TryLeaveJump("CloseMaterial",self.MaterialMain)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
