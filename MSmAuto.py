@@ -23,9 +23,6 @@ if __name__ == '__main__':
     FastJumpType = 0;
     WeekDay = datetime.datetime.now().weekday()
     TaskGroupIndex = WeekDay % 2;
-    FastJumpType = TaskGroupIndex
-    if WeekDay == 3:
-        FastJumpType = 0
 
     # 10 default 
     # 1 recive weekly reward
@@ -38,6 +35,10 @@ if __name__ == '__main__':
     PostProcessType = 17 - WeekDay;
     if PostProcessType < 10 or PostProcessType > 13:
         PostProcessType = 10
+        FastJumpType = 1
+    else:
+        FastJumpType = 0
+
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
