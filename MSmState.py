@@ -1067,7 +1067,8 @@ class MSmState_PostProcess(MSmState):
                 for i in range(np.random.randint(1,2)):
                     self.DoHitByName("UseFreeTime")
                 self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
-            TempPostProcessType = TempPostProcessType - 10
+            else:
+                TempPostProcessType = TempPostProcessType - 10
 
         #收周任务奖励
         if TempPostProcessType == 1:
