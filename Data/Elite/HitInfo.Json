@@ -35,6 +35,11 @@
         "ClickRange":[80,18]
     },
     {
+        "OpName":"Exit1",
+        "ClickPos":[293,456],
+        "ClickRange":[80,18]
+    },
+    {
         "OpName":"BuyMore",
         "ClickPos":[739,445],
         "ClickRange":[20,12]
@@ -43,5 +48,17 @@
         "OpName":"BuyMoreConfirm",
         "ClickPos":[591,433],
         "ClickRange":[30,12]
+    },
+    {
+        "OpName":"SelectLevel",
+        "ClickPos":[100,400],
+        "ClickRange":[30,12]
+    },
+    {
+        "OpName":"SelectSimple",
+        "ClickPos":[100,178],
+        "ClickRange":[30,12]
     }
+
+
 ]
