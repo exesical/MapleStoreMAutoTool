@@ -793,7 +793,8 @@ class MSmState_Elite(MSmState_TeamCommon):
         self.TryInnerJump("Comfirm", self.WaitingRoomIdImage)
         #In Room
         if MSmState.bMainCharacter == False:
-            self.TryLeaveJump("Start",self.WaitingTeamIdImage)  
+            
+            self.TryLeaveJump("Start",self.WaitingRoomIdImage)  
             self.WaitingForAutoFightingFinished()
             sleep(1)
             self.TryLeaveJump("Exit1", self.ExitIdImage)
