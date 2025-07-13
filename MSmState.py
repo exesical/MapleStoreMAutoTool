@@ -1094,8 +1094,8 @@ class MSmState_PostProcess(MSmState):
             #先做一次图片分享
             self.TryInnerJump("SharePic",self.SharePic)
             self.HitHandle.DoMousePull(self.HitInfo["MoveSharePic"][0],self.HitInfo["MoveSharePic"][1],[0,-500], 30, 5)
-            self.RefreshScreenShot()
             sleep(2)
+            self.RefreshScreenShot()
             SharePicButtonPos = self.GetPicPos(self.SharePicButton, 0.8, cv2.TM_CCORR_NORMED)
             if SharePicButtonPos is not None:
                 SharePicButtonInfo = [[SharePicButtonPos[0] + 40, SharePicButtonPos[1]+55],[10,10]]
