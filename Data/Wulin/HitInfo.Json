@@ -33,5 +33,10 @@
         "OpName":"GiftConfirm",
         "ClickPos":[480,432],
         "ClickRange":[30,15]
+    },
+    {
+        "OpName":"GetLastWeekReward",
+        "ClickPos":[407,521],
+        "ClickRange":[15,12]
     }
 ]

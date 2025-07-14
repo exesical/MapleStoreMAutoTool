@@ -590,16 +590,17 @@ class MSmState_Material(MSmState):
     def Processing(self):
         self.TryInnerJump("Enter0",self.Enter0)
         self.TryInnerJump("Enter1",self.Enter1)
-        self.HitHandle.DoMousePull(self.HitInfo["CheckNeededPull"][0],self.HitInfo["CheckNeededPull"][1],[0,-300], 20, 3)
-        sleep(2)
-        self.RefreshScreenShot()
-        TempPos = self.GetPicPos(self.AllMaterialsGotten, 0.95)
-        if TempPos is not None and MSmState_PostProcess.PostProcessType != 10:
-            self.TryLeaveJump("Cancel0",self.Enter1)
-            self.TryLeaveJump("CloseMaterial",self.MaterialMain)
-            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
-            MSmState.bAllMaterialHasGotten = True
-            return True
+        if MSmState_PostProcess.PostProcessType != 10:
+            self.HitHandle.DoMousePull(self.HitInfo["CheckNeededPull"][0],self.HitInfo["CheckNeededPull"][1],[0,-300], 20, 3)
+            sleep(2)
+            self.RefreshScreenShot()
+            TempPos = self.GetPicPos(self.AllMaterialsGotten, 0.95)
+            if TempPos is not None:
+                self.TryLeaveJump("Cancel0",self.Enter1)
+                self.TryLeaveJump("CloseMaterial",self.MaterialMain)
+                self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+                MSmState.bAllMaterialHasGotten = True
+                return True
 
 
         self.TryLeaveJump("Enter2",self.Enter1)
@@ -933,8 +934,14 @@ class MSmState_Wulin(MSmState):
         super().__init__(StateName)
         self.Enter2IdImage = self.ReadPic("Enter2IdImage")
         self.ExitIdImage = self.ReadPic("ExitIdImage")
+        self.LastWeekReward = self.ReadPic("LastWeekReward")
 
     def Processing(self):
+        TempPos = self.GetPicPos(self.LastWeekReward,0.9);
+        if TempPos is not None:
+            for i in range(np.random.randint(2,3)):
+                self.DoHitByName("GetLastWeekReward")
+                sleep(0.3)
         for i in range(np.random.randint(2,3)):
             self.DoHitByName("GiftConfirm")
             sleep(0.3)
