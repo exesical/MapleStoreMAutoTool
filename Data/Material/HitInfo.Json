@@ -1,5 +1,10 @@
 [
     {
+        "OpName":"GiveUp",
+        "ClickPos":[297,515],
+        "ClickRange":[60,17]
+    },
+    {
         "OpName":"Enter0",
         "ClickPos":[846,532],
         "ClickRange":[60,20]
@@ -11,8 +16,8 @@
     },
     {
         "OpName":"CheckNeededPull",
-        "ClickPos":[658,393],
-        "ClickRange":[20,20]
+        "ClickPos":[868,410],
+        "ClickRange":[10,10]
     },
     {
         "OpName":"Enter2",

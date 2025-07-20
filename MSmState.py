@@ -1204,17 +1204,7 @@ class MSmState_PostProcess(MSmState):
         if TempPostProcessType == 3:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("OpenPackage",self.OpenPackage)
-            self.TryInnerJump("OpenTreasureBox",self.OpenTreasureBox)
-            self.TryInnerJump("SelectRandomTreasureBox",self.SelectRandomTreasureBox)
-            HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
-            while HasNoTreasureBoxPos is None:
-                 self.TryInnerJump("TryOpenTreasureBox",self.TryOpenTreasureBox,0.95)
-                 self.TryInnerJump("TryOpenTreasureBox2",self.DailyComfirmIdImage)
-                 self.TryLeaveJump("OpenTreasureBoxComfirm",self.DailyComfirmIdImage)
-                 self.RefreshScreenShot()
-                 HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
-            self.TryLeaveJump("CloseCommissionMain",self.OpenTreasureBox)
-            
+
             #自动分解下装备
             self.TryInnerJump("Disassemble",self.DisassembleMain,0.85)
             for i in range(np.random.randint(2,3)):
@@ -1228,6 +1218,18 @@ class MSmState_PostProcess(MSmState):
                 sleep(0.2)
             self.TryLeaveJump("CloseCommissionMain",self.DisassembleMain)
 
+            #自动开箱子
+            self.TryInnerJump("OpenTreasureBox",self.OpenTreasureBox)
+            self.TryInnerJump("SelectRandomTreasureBox",self.SelectRandomTreasureBox)
+            HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
+            while HasNoTreasureBoxPos is None:
+                 self.TryInnerJump("TryOpenTreasureBox",self.TryOpenTreasureBox,0.95)
+                 self.TryInnerJump("TryOpenTreasureBox2",self.DailyComfirmIdImage)
+                 self.TryLeaveJump("OpenTreasureBoxComfirm",self.DailyComfirmIdImage)
+                 self.RefreshScreenShot()
+                 HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
+            self.TryLeaveJump("CloseCommissionMain",self.OpenTreasureBox)
+            
             self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
 
