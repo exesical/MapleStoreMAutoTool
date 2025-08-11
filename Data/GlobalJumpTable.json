@@ -296,7 +296,8 @@
 			["Weekly", "Wander"],
 			["SpecialWeekly", "Wander"],
 			["Wulin", "Wander"],
-			[ "Material", "Wander" ]
+			["PostProcess", "Wander"],
+			["Material", "Wander" ]
 		]
 	},
 	{

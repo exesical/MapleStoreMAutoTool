@@ -64,6 +64,8 @@ if __name__ == '__main__':
             PostProcessType = int(args.split("=")[1])
         if search(r'TaskGroupIndex',args):
             TaskGroupIndex = int(args.split("=")[1])
+        if search(r'AdditionalMaterial',args):
+            MSmState_Material.bAdditionalMaterial = int(args.split("=")[1])
 
     IsMainCharacter = False
     hwd_title = "雷电模拟器"

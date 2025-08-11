@@ -570,6 +570,8 @@ class MSmState_Mail(MSmState):
         return True
 
 class MSmState_Material(MSmState):
+    #
+    bAdditionalMaterial = 0;
     def __init__(self, StateName):
         super().__init__(StateName)
         Path_cur = frozen.app_path() + "\\Data\\" + StateName
@@ -590,7 +592,7 @@ class MSmState_Material(MSmState):
     def Processing(self):
         self.TryInnerJump("Enter0",self.Enter0)
         self.TryInnerJump("Enter1",self.Enter1)
-        if MSmState_PostProcess.PostProcessType != 10:
+        if MSmState_PostProcess.PostProcessType != 10 or MSmState_Material.bAdditionalMaterial == 1:
             self.HitHandle.DoMousePull(self.HitInfo["CheckNeededPull"][0],self.HitInfo["CheckNeededPull"][1],[0,-300], 20, 3)
             sleep(2)
             self.RefreshScreenShot()
@@ -979,6 +981,7 @@ class MSmState_PostProcess(MSmState):
         self.NoCommissionTicket = self.ReadPic("NoCommissionTicket")
         self.CommissionMain = self.ReadPic("CommissionMain")
         self.CommisionReciveReady = self.ReadPic("CommisionReciveReady")
+        self.CommissionFinished = self.ReadPic("CommissionFinished")
 
         self.WeeklyTask= self.ReadPic("WeeklyTask")
         self.WeeklyAnyThingToRecive= self.ReadPic("WeeklyAnyThingToRecive")
@@ -1006,8 +1009,38 @@ class MSmState_PostProcess(MSmState):
         self.CompositeChangeResult = self.ReadPic("CompositeChangeResult")
         self.CompositeChangeResultMain = self.ReadPic("CompositeChangeResultMain")
 
+        self.SelectTimeLimit = self.ReadPic("SelectTimeLimit")
+        self.SelectTicket = self.ReadPic("SelectTicket")
+        self.OpenSelectTicket0 = self.ReadPic("OpenSelectTicket0")
+        self.OpenSelectTicket1 = self.ReadPic("OpenSelectTicket1")
+        self.HasTicketSelected = self.ReadPic("HasTicketSelected")
+        self.GetTicketsComfirm = self.ReadPic("GetTicketsComfirm")
+
 
     def Processing(self):
+
+        if MSmState_Material.bAdditionalMaterial!=0:
+            if MSmState.bAllMaterialHasGotten == True:
+                return True
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("OpenPackage",self.OpenPackage)
+            self.TryInnerJump("SelectTimeLimit",self.SelectTimeLimit)
+            TicketPos = self.GetPicPos(self.SelectTicket, 0.95)
+            if TicketPos is not None:
+                TicketPosHitInfo = [[TicketPos[0] + 20, TicketPos[1]+55],[10,10]]
+                self.TryInnerJumpByPos(TicketPosHitInfo, self.OpenSelectTicket0)
+                self.TryInnerJump("Disassemble",self.OpenSelectTicket1)
+                self.TryInnerJump("SelectMaterialTickets",self.HasTicketSelected,0.97)
+                self.DoHitByName("AddTicketsMax")
+                sleep(0.2)
+                self.DoHitByName("AddTicketsMax")
+                sleep(0.2)
+                self.TryLeaveJump("GetTickets",self.HasTicketSelected, 0.985)
+                self.TryLeaveJump("GetTicketsComfirm",self.GetTicketsComfirm, 0.985)    
+            self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+            return True
+
         TempPostProcessType = MSmState_PostProcess.PostProcessType 
         if TempPostProcessType > 9:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
@@ -1149,6 +1182,8 @@ class MSmState_PostProcess(MSmState):
                     self.DoHitByName("SelectFirst")
                     sleep(0.1)
                     self.DoHitByName("SelectFirst")
+                    sleep(0.1)
+                    self.DoHitByName("SelectFirst")
                     sleep(0.5)
                     self.DoHitByName("AddMatertialMax")
                     sleep(0.1)
@@ -1237,8 +1272,9 @@ class MSmState_PostProcess(MSmState):
         if TempPostProcessType == 4:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("Commission",self.CommissionMain)
+            CommissionFinished = self.GetPicPos(self.CommissionFinished, 0.95, cv2.TM_CCORR_NORMED)
             NoCommissionTicket = self.GetPicPos(self.NoCommissionTicket, 0.999, cv2.TM_CCORR_NORMED)
-            if NoCommissionTicket is None:
+            if (NoCommissionTicket is None) and (CommissionFinished is None):
                 for k in range(3):
                     for i in range(np.random.randint(2,3)):
                         self.DoHitByName("CommissionTask" + str(k))

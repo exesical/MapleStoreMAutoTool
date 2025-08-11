@@ -1,5 +1,30 @@
 [
     {
+        "OpName":"SelectTimeLimit",
+        "ClickPos":[669,168],
+        "ClickRange":[5,5]
+    },
+    {
+        "OpName":"SelectMaterialTickets",
+        "ClickPos":[665,194],
+        "ClickRange":[5,5]
+    },
+    {
+        "OpName":"AddTicketsMax",
+        "ClickPos":[604,462],
+        "ClickRange":[15,8]
+    },
+    {
+        "OpName":"GetTickets",
+        "ClickPos":[481,513],
+        "ClickRange":[2,8]
+    },
+    {
+        "OpName":"GetTicketsComfirm",
+        "ClickPos":[653,516],
+        "ClickRange":[2,2]
+    },
+    {
         "OpName":"AutoFighting",
         "ClickPos":[318,525],
         "ClickRange":[10,10]
