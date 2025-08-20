@@ -668,26 +668,9 @@ class MSmState_TeamCommon(MSmState):
 
     def Processing(self):
         #Main
-        self.TryInnerJump("CreateRoom", self.AddTimesIdImage)
-        #Add times
-        self.DoAddTimes()  
-        #Try enter waiting room
-        self.TryInnerJump("Comfirm", self.WaitingRoomIdImage)
-        #In Room
-        self.TryInnerJump("FindTeam", self.FindTeamIdImage)
-        sleep(1)
-        self.TryLeaveJump("CreateTeam", self.FindTeamIdImage)
-        #waiting 300s for finding team, 
-        self.RefreshScreenShot()
-        bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
-        Iter = 0
-        while bStillInRoom and Iter < 300:
-            sleep(1)
-            self.RefreshScreenShot()
-            bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
-            Iter = Iter + 1
-        if Iter >= 300 and bStillInRoom == True:
-            self.TryLeaveJump("Start",self.WaitingTeamIdImage)  
+        self.TryInnerJump("CreateRoom", self.FindTeamIdImage)
+        self.TryInnerJump("CreateTeam", self.AddTimesIdImage)
+        self.TryLeaveJump("Comfirm", self.AddTimesIdImage)
         self.WaitingForAutoFightingFinished()
         self.TryLeaveJump("Exit", self.ExitIdImage)
         return True
@@ -779,45 +762,20 @@ class MSmState_Elite(MSmState_TeamCommon):
         self.ExitIdImage = self.ReadPic("ExitIdImage")
         self.BuyMore = self.ReadPic("BuyMore")
         self.SelectSimpleLevel = self.ReadPic("SelectSimpleLevel")
+        self.SelectSimpleLevel = self.ReadPic("SelectSimpleLevel")
 
     def Processing(self):
         #Main
-        if MSmState.bMainCharacter == False:    
-            self.HitHandle.DoMousePull(self.HitInfo["SelectLevel"][0],self.HitInfo["SelectLevel"][1],[0,300], 20, 3)
-            sleep(2)
-            for i in range(np.random.randint(2,3)):
-                self.DoHitByName("SelectSimple")
-            
+        #if MSmState.bMainCharacter == False:    
+        #    self.HitHandle.DoMousePull(self.HitInfo["SelectLevel"][0],self.HitInfo["SelectLevel"][1],[0,300], 20, 3)
+        #    sleep(2)
+        #    for i in range(np.random.randint(2,3)):
+        #        self.DoHitByName("SelectSimple")
+        self.TryInnerJump("CreateRoom", self.FindTeamIdImage)
+        self.TryInnerJump("CreateTeam", self.AddTimesIdImage)
+        self.TryLeaveJump("Comfirm", self.AddTimesIdImage)
+        
 
-        self.TryInnerJump("CreateRoom", self.AddTimesIdImage)
-        #Add times
-        self.DoAddTimes()  
-        #Try enter waiting room
-        self.TryInnerJump("Comfirm", self.WaitingRoomIdImage)
-        #In Room
-        if MSmState.bMainCharacter == False:
-            
-            self.TryLeaveJump("Start",self.WaitingRoomIdImage)  
-            self.WaitingForAutoFightingFinished()
-            sleep(1)
-            self.TryLeaveJump("Exit1", self.ExitIdImage)
-            return True
-
-
-        self.TryInnerJump("FindTeam", self.FindTeamIdImage)
-        sleep(1)
-        self.TryLeaveJump("CreateTeam", self.FindTeamIdImage)
-        #waiting 3000s for finding team, 
-        self.RefreshScreenShot()
-        bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
-        Iter = 0
-        while bStillInRoom and Iter < 3000:
-            sleep(1)
-            self.RefreshScreenShot()
-            bStillInRoom = self.IsPicMatching(self.WaitingTeamIdImage)
-            Iter = Iter + 1
-        if Iter >= 3000 and bStillInRoom == True:
-            self.TryLeaveJump("Start",self.WaitingTeamIdImage)  
         self.WaitingForAutoFightingFinished()
         if MSmState.bMainCharacter == True:
             self.TryInnerJump("BuyMore", self.BuyMore)

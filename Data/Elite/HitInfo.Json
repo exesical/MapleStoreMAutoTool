@@ -26,8 +26,8 @@
     },
     {
         "OpName":"CreateTeam",
-        "ClickPos":[480,462],
-        "ClickRange":[80,18]
+        "ClickPos":[837,518],
+        "ClickRange":[60,18]
     },
     {
         "OpName":"Exit",

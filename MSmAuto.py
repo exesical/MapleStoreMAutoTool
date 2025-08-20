@@ -32,6 +32,7 @@ if __name__ == '__main__':
     # 11 default + recive weekly reward
     # 12 default + 自动换黄图
     # 13 default + 自动开箱子
+    ViceCharacterCount = 0;
     PostProcessType = 17 - WeekDay;
     if PostProcessType < 10 or PostProcessType > 13:
         PostProcessType = 10
@@ -66,6 +67,8 @@ if __name__ == '__main__':
             TaskGroupIndex = int(args.split("=")[1])
         if search(r'AdditionalMaterial',args):
             MSmState_Material.bAdditionalMaterial = int(args.split("=")[1])
+        if search(r'ViceCharacterCount',args):
+            ViceCharacterCount = int(args.split("=")[1])
 
     IsMainCharacter = False
     hwd_title = "雷电模拟器"
@@ -178,7 +181,7 @@ if __name__ == '__main__':
                     TaskCur = TaskJsonExpedition
                 elif CurIndex == 0:
                     TaskCur = TaskJsonMain
-                elif CurIndex <= 5:
+                elif CurIndex <= ViceCharacterCount:
                     TaskCur = TaskJsonFive
                 else:
                     TaskCur = TaskJson
