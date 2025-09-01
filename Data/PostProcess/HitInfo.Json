@@ -120,6 +120,11 @@
         "ClickRange":[40,15]
     },
     {
+        "OpName":"SharePic2",
+        "ClickPos":[80,470],
+        "ClickRange":[40,15]
+    },
+    {
         "OpName":"MoveSharePic",
         "ClickPos":[500,400],
         "ClickRange":[40,40]

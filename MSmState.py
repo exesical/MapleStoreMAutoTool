@@ -946,6 +946,7 @@ class MSmState_PostProcess(MSmState):
         self.SharePic= self.ReadPic("SharePic")
         self.SharePicButton= self.ReadPic("SharePicButton")
         self.SharePicTarget= self.ReadPic("SharePicTarget")
+        self.MoreThan200= self.ReadPic("MoreThan200")
 
         self.OpenPackage = self.ReadPic("OpenPackage")
         self.OpenTreasureBox = self.ReadPic("OpenTreasureBox")
@@ -1090,7 +1091,11 @@ class MSmState_PostProcess(MSmState):
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("Daily",self.DailyIdImage)
             #先做一次图片分享
-            self.TryInnerJump("SharePic",self.SharePic)
+            MoreThan200Pos = self.GetPicPos(self.MoreThan200, 0.95, cv2.TM_CCORR_NORMED)
+            if MoreThan200Pos is not None:
+                self.TryInnerJump("SharePic2",self.SharePic)
+            else:
+                self.TryInnerJump("SharePic",self.SharePic)
             self.HitHandle.DoMousePull(self.HitInfo["MoveSharePic"][0],self.HitInfo["MoveSharePic"][1],[0,-500], 30, 5)
             sleep(2)
             self.RefreshScreenShot()
