@@ -2,7 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 from win32api import MAKELONG, SendMessage
-from win32con import WM_LBUTTONUP, WM_LBUTTONDOWN, WM_ACTIVATE, WA_ACTIVE, WM_MOUSEMOVE, WM_MOUSEWHEEL,MK_LBUTTON
+from win32con import WM_LBUTTONUP, WM_LBUTTONDOWN, WM_ACTIVATE, WA_ACTIVE, WM_MOUSEMOVE, WM_MOUSEWHEEL,MK_LBUTTON, WM_KEYDOWN,WM_KEYUP
 from time import sleep
 class DoScreenHit(object):
     """description of class"""
@@ -96,6 +96,10 @@ class DoScreenHit(object):
         RandomPos = np.multiply(self.GaussDistribution[r], HitRange) + HitPos
         return RandomPos
 
+    def PressKeyboard(self):
+        SendMessage(self.HandleNumber, WM_KEYDOWN, 0x50, 0)
+        sleep(0.02)
+        SendMessage(self.HandleNumber, WM_KEYUP, 0x50, 0)
 
 #test
 if __name__ == '__main__':

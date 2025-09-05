@@ -31,6 +31,7 @@ class MSmState(object):
     def __init__(self, StateName):
         left, top, right, bottom = win32gui.GetWindowRect(MSmState.HandleNumber_Render)
         self.ScreenShotImage = None
+        self.ScreenShotImageRGB = None 
         self.ScreenShotWidth = right - left
         self.ScreenShotHeight = bottom - top
         
@@ -156,9 +157,12 @@ class MSmState(object):
             print("State " + self.Name + "has no methon jump to " + TargetState.Name +", please check jump table")
             return 2
     
-    def SaveScreenShot(self):
+    def SaveScreenShot(self, Prefix=""):
         #MSmState.CharacterIndex;
-        cv2.imwrite("MSmSave"+ str(MSmState.CharacterIndex)+".png", self.ScreenShotImage)
+        filedir = frozen.app_path() + "\\" + self.Name + "_AutoSave"
+        if os.path.exists(filedir) == False:
+            os.makedirs(filedir)
+        cv2.imwrite(filedir+"\\"+ Prefix + str(MSmState.CharacterIndex)+".png", self.ScreenShotImageRGB)
         #cv2.imwrite(str(MSmState.CharacterIndex)+".png", self.ScreenShotImage)
 
     def RefreshScreenShot(self):
@@ -174,6 +178,7 @@ class MSmState(object):
         save_dc.BitBlt((0, 0), (self.ScreenShotWidth, self.ScreenShotHeight), mfc_dc, (0, 0), SRCCOPY)
         signed_ints_array = save_bit_map.GetBitmapBits(True)
         self.ScreenShotImage = frombuffer(signed_ints_array, dtype='uint8')
+        self.ScreenShotImageRGB = self.ScreenShotImage;
         self.ScreenShotImage.shape = (self.ScreenShotHeight, self.ScreenShotWidth, 4)
         self.ScreenShotImage = cv2.cvtColor(self.ScreenShotImage, cv2.COLOR_BGRA2GRAY)
         #print("Refresh ScreenShot Successed")
@@ -186,6 +191,7 @@ class MSmState(object):
         #cv2.waitKey(0)
         #cv2.destroyAllWindows()
         #return self.ScreenShotImage
+        #self.SaveScreenShot()
 
     def Processing(self):
         #do Nothing
@@ -655,6 +661,7 @@ class MSmState_Wander(MSmState):
                 AdCloseMask[i] = self.IsPicMatching(self.AdImages[i])
                 if(AdCloseMask[i]):
                     HasAdExist = True
+        self.HitHandle.PressKeyboard()
         return True
 
 class MSmState_TeamCommon(MSmState):
@@ -777,6 +784,7 @@ class MSmState_Elite(MSmState_TeamCommon):
         
 
         self.WaitingForAutoFightingFinished()
+        self.SaveScreenShot()
         if MSmState.bMainCharacter == True:
             self.TryInnerJump("BuyMore", self.BuyMore)
             self.TryLeaveJump("BuyMoreConfirm", self.BuyMore)
@@ -822,6 +830,7 @@ class MSmState_MonsterPark(MSmState):
                 self.TryLeaveJump("BuyMoreExp", self.BuyMoreExp)
         self.TryLeaveJump("Enter1", self.EnterMonsterParkIdImage)
         self.WaitingForAutoFightingFinished()
+        self.SaveScreenShot()
         if MSmState.bMainCharacter == True:
             self.TryInnerJump("Spend",self.GetMoreIdImage)
             sleep(3)
@@ -909,6 +918,7 @@ class MSmState_Wulin(MSmState):
         self.TryLeaveJump("Enter1", self.Enter2IdImage)
 
         self.WaitingForAutoFightingFinished()
+        self.SaveScreenShot()
         self.TryLeaveJump("Exit", self.ExitIdImage)
         return True
 
@@ -1115,6 +1125,7 @@ class MSmState_PostProcess(MSmState):
                 sleep(1)
                 self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
                 WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
+            self.SaveScreenShot("WeeklyReward_")
             self.TryLeaveJump("CloseDaily",self.DailyIdImage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
     
@@ -1164,6 +1175,7 @@ class MSmState_PostProcess(MSmState):
                     ChangeAllPos = self.GetPicPos(self.ChangeAll, 0.98)
                     if ChangeAllPos is None:
                         ChangeAllPos = self.GetPicPos(self.ChangeAll2, 0.98)
+                self.SaveScreenShot("Charge_")
                 for i in range(0,6):
                     self.TryInnerJump("GetChange"+ str(i),self.ChangeResult)
                     self.TryLeaveJump("CloseChangeResult",self.ChangeResult)
@@ -1227,7 +1239,7 @@ class MSmState_PostProcess(MSmState):
                  self.RefreshScreenShot()
                  HasNoTreasureBoxPos = self.GetPicPos(self.HasNoTreasureBox, 0.98)
             self.TryLeaveJump("CloseCommissionMain",self.OpenTreasureBox)
-            
+            self.SaveScreenShot("Package_")
             self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
 
