@@ -516,7 +516,7 @@ class MSmState_GameModeDefault(MSmState):
         if MSmState.bAllMaterialHasGotten == False:
             self.AddEnter("Material", self.MaterialEnterIdImage)        
         self.AddEnter("Elite", self.EliteEnterIdImage,0.85)
-        for i in range(0,7):
+        for i in range(0,8):
             if "Elite" not in self.JumpInfo:
                 self.AddEnter("Elite", self.EliteEnterIdImages[i],0.85)
 
