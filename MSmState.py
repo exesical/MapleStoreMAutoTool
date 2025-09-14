@@ -484,7 +484,7 @@ class MSmState_GameModeDefault(MSmState):
         self.EliteEnterIdImage = self.ReadPic("EliteEnterIdImage")
 
         self.EliteEnterIdImages = []
-        for i in range(0,7):
+        for i in range(0,8):
             self.EliteEnterIdImages.append(self.ReadPic("EliteEnterIdImage" + str(i)))
 
         self.TangyunEnterIdImage = self.ReadPic("TangyunEnterIdImage")
