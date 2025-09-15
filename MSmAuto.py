@@ -33,12 +33,13 @@ if __name__ == '__main__':
     # 12 default + 自动换黄图
     # 13 default + 自动开箱子
     ViceCharacterCount = 0;
-    PostProcessType = 17 - WeekDay;
-    if PostProcessType < 10 or PostProcessType > 13:
-        PostProcessType = 10
+    if WeekDay <= 3:
         FastJumpType = 1
     else:
         FastJumpType = 0
+
+    if WeekDay == 6:
+        PostProcessType = 11
 
     for args in sys.argv:
         if search(r'debug', args):
