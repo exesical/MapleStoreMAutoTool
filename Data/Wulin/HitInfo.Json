@@ -1,42 +1,42 @@
 [
     {
         "OpName":"Enter",
-        "ClickPos":[863,534],
+        "ClickPos":[863,501],
         "ClickRange":[60,20]
     },
     {
         "OpName":"Enter1",
-        "ClickPos":[481,497],
+        "ClickPos":[481,464],
         "ClickRange":[80,18]
     },
     {
         "OpName":"GiveUp",
-        "ClickPos":[926,247],
+        "ClickPos":[926,214],
         "ClickRange":[10,10]
     },
     {
         "OpName":"GiveUpConfirm",
-        "ClickPos":[590,433],
+        "ClickPos":[590,400],
         "ClickRange":[30,15]
     },
     {
         "OpName":"Exit",
-        "ClickPos":[388,515],
+        "ClickPos":[388,482],
         "ClickRange":[80,18]
     },
     {
         "OpName":"CloseWeekly",
-        "ClickPos":[408,520],
+        "ClickPos":[408,487],
         "ClickRange":[10,10]
     },
     {
         "OpName":"GiftConfirm",
-        "ClickPos":[480,432],
+        "ClickPos":[480,399],
         "ClickRange":[30,15]
     },
     {
         "OpName":"GetLastWeekReward",
-        "ClickPos":[407,521],
+        "ClickPos":[407,488],
         "ClickRange":[15,12]
     }
 ]

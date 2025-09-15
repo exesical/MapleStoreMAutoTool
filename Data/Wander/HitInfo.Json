@@ -1,32 +1,32 @@
 [
     {
         "OpName":"CloseAd0",
-        "ClickPos":[919,84],
+        "ClickPos":[919,51],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseAd1",
-        "ClickPos":[861,85],
+        "ClickPos":[861,52],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseAd2",
-        "ClickPos":[793,111],
+        "ClickPos":[793,78],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseAd3",
-        "ClickPos":[857,88],
+        "ClickPos":[857,55],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseAd4",
-        "ClickPos":[862,86],
+        "ClickPos":[862,53],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseAd5",
-        "ClickPos":[862,86],
+        "ClickPos":[862,53],
         "ClickRange":[10,10]
     }
 ]

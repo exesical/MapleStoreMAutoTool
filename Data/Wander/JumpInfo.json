@@ -1,12 +1,12 @@
 [
     {
         "NextStateName":"SystemMenuOpening",
-        "ClickPos":[930,62],
+        "ClickPos":[930,29],
         "ClickRange":[10,10]
     },
     {
         "NextStateName":"PostProcess",
-        "ClickPos":[590,477],
+        "ClickPos":[590,444],
         "ClickRange":[10,10]
     }
 ]

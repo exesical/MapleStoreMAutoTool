@@ -1,27 +1,27 @@
 [
     {
         "OpName":"Enter",
-        "ClickPos":[840,530],
+        "ClickPos":[840,497],
         "ClickRange":[80,20]
     },
     {
         "OpName":"AddTimes",
-        "ClickPos":[589,364],
+        "ClickPos":[589,331],
         "ClickRange":[10,10]
     },
     {
         "OpName":"Comfirm",
-        "ClickPos":[589,434],
+        "ClickPos":[589,401],
         "ClickRange":[80,20]
     },
     {
         "OpName":"SelectSimple",
-        "ClickPos":[74,264],
+        "ClickPos":[74,231],
         "ClickRange":[20,10]
     },
     {
         "OpName":"Exit",
-        "ClickPos":[295,454],
+        "ClickPos":[295,421],
         "ClickRange":[80,18]
     }
 ]
