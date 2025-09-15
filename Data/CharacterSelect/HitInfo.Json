@@ -1,42 +1,42 @@
 [
     {
         "OpName":"SelectCharacter0",
-        "ClickPos":[206,209],
+        "ClickPos":[206,176],
         "ClickRange":[25,40]
     },
     {
         "OpName":"SelectCharacter1",
-        "ClickPos":[357,209],
+        "ClickPos":[357,176],
         "ClickRange":[25,40]
     },
     {
         "OpName":"SelectCharacter2",
-        "ClickPos":[493,209],
+        "ClickPos":[493,176],
         "ClickRange":[25,40]
     },
     {
         "OpName":"SelectCharacter3",
-        "ClickPos":[132,428],
+        "ClickPos":[132,395],
         "ClickRange":[25,40]
     },
     {
         "OpName":"SelectCharacter4",
-        "ClickPos":[275,428],
+        "ClickPos":[275,395],
         "ClickRange":[25,40]
     },
     {
         "OpName":"SelectCharacter5",
-        "ClickPos":[423,428],
+        "ClickPos":[423,395],
         "ClickRange":[25,40]
     },
     {
         "OpName":"SelectCharacter6",
-        "ClickPos":[573,428],
+        "ClickPos":[573,395],
         "ClickRange":[25,40]
     },
     {
         "OpName":"NextCharacterPage",
-        "ClickPos":[637,304],
+        "ClickPos":[637,271],
         "ClickRange":[10,15]
     }
 ]

@@ -1,42 +1,42 @@
 [
     {
         "OpName":"CreateRoom",
-        "ClickPos":[624,532],
+        "ClickPos":[624,499],
         "ClickRange":[80,20]
     },
     {
         "OpName":"AddTimes",
-        "ClickPos":[589,364],
+        "ClickPos":[589,331],
         "ClickRange":[10,10]
     },
     {
         "OpName":"Comfirm",
-        "ClickPos":[589,434],
+        "ClickPos":[589,401],
         "ClickRange":[80,20]
     },
     {
         "OpName":"FindTeam",
-        "ClickPos":[152,257],
+        "ClickPos":[152,224],
         "ClickRange":[40,14]
     },
     {
         "OpName":"Start",
-        "ClickPos":[104,197],
+        "ClickPos":[104,164],
         "ClickRange":[80,14]
     },
     {
         "OpName":"CreateTeam",
-        "ClickPos":[837,518],
+        "ClickPos":[837,485],
         "ClickRange":[60,18]
     },
     {
         "OpName":"Exit",
-        "ClickPos":[293,537],
+        "ClickPos":[293,504],
         "ClickRange":[80,18]
     },
     {
         "OpName":"CloseAuction",
-        "ClickPos":[691,78],
+        "ClickPos":[691,45],
         "ClickRange":[10,10]
     }
 ]

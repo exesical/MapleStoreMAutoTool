@@ -1,37 +1,37 @@
 [
     {
         "OpName":"SelectFood",
-        "ClickPos":[733,204],
+        "ClickPos":[733,171],
         "ClickRange":[30,30]
     },
     {
         "OpName":"Enter",
-        "ClickPos":[840,531],
+        "ClickPos":[840,398],
         "ClickRange":[80,20]
     },
     {
         "OpName":"Enter2",
-        "ClickPos":[481,517],
+        "ClickPos":[481,484],
         "ClickRange":[80,20]
     },
     {
         "OpName":"Select0",
-        "ClickPos":[398,395],
+        "ClickPos":[398,362],
         "ClickRange":[30,30]
     },
         {
         "OpName":"Select1",
-        "ClickPos":[561,399],
+        "ClickPos":[561,366],
         "ClickRange":[30,30]
     },
     {
         "OpName":"Select2",
-        "ClickPos":[645,399],
+        "ClickPos":[645,366],
         "ClickRange":[30,30]
     },
     {
         "OpName":"Exit",
-        "ClickPos":[293,454],
+        "ClickPos":[293,421],
         "ClickRange":[80,18]
     }
 ]

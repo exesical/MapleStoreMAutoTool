@@ -1,47 +1,47 @@
 [
     {
         "OpName":"GiveUp",
-        "ClickPos":[297,515],
+        "ClickPos":[297,482],
         "ClickRange":[60,17]
     },
     {
         "OpName":"Enter0",
-        "ClickPos":[846,532],
+        "ClickPos":[846,499],
         "ClickRange":[60,20]
     },
     {
         "OpName":"Enter1",
-        "ClickPos":[588,433],
+        "ClickPos":[588,400],
         "ClickRange":[40,15]
     },
     {
         "OpName":"CheckNeededPull",
-        "ClickPos":[868,410],
+        "ClickPos":[868,377],
         "ClickRange":[10,10]
     },
     {
         "OpName":"Enter2",
-        "ClickPos":[585,520],
+        "ClickPos":[585,487],
         "ClickRange":[40,15]
     },
     {
         "OpName":"Exit",
-        "ClickPos":[290,452],
+        "ClickPos":[290,419],
         "ClickRange":[40,15]
     },
     {
         "OpName":"Cancel0",
-        "ClickPos":[371,520],
+        "ClickPos":[371,487],
         "ClickRange":[30,15]
     },
     {
         "OpName":"OpenSystemMenu",
-        "ClickPos":[930,62],
+        "ClickPos":[930,29],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseMaterial",
-        "ClickPos":[930,64],
+        "ClickPos":[930,31],
         "ClickRange":[10,10]
     }
 

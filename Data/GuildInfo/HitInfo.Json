@@ -1,12 +1,12 @@
 [
     {
         "OpName":"ReciveTreeGift",
-        "ClickPos":[540,500],
+        "ClickPos":[540,467],
         "ClickRange":[20,5]
     },
     {
         "OpName":"CloseTreeGift",
-        "ClickPos":[330,485],
+        "ClickPos":[330,452],
         "ClickRange":[20,10]
     }
 ]

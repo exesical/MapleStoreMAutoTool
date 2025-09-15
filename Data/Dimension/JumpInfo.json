@@ -1,7 +1,7 @@
 [
     {
         "NextStateName":"Wander",
-        "ClickPos":[302,430],
+        "ClickPos":[302,397],
         "ClickRange":[80,18]
     }
 ]

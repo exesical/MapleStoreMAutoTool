@@ -4,7 +4,11 @@ import matplotlib.pyplot as plt
 from win32api import MAKELONG, SendMessage
 from win32con import WM_LBUTTONUP, WM_LBUTTONDOWN, WM_ACTIVATE, WA_ACTIVE, WM_MOUSEMOVE, WM_MOUSEWHEEL,MK_LBUTTON, WM_KEYDOWN,WM_KEYUP
 from time import sleep
+
+#为了兼容不容模拟器，后续所有Hitinfo 和jumpinfo坐标计算必须先去掉tile的高度
+
 class DoScreenHit(object):
+    ApplicationWindowsTitleHeight = 0
     """description of class"""
     def __init__(self, HandleNumber):
         self.HandleNumber = HandleNumber;
@@ -48,7 +52,7 @@ class DoScreenHit(object):
     def HitPosition(self, HitPos, HitRange):
         randompos_f = self.GetRandomHitPosition(HitPos, HitRange);
         randompos_x = int(randompos_f[0])
-        randompos_y = int(randompos_f[1] - 33)
+        randompos_y = int(randompos_f[1])
         long_position = MAKELONG(randompos_x, randompos_y)
         SendMessage(self.HandleNumber, WM_ACTIVATE, WA_ACTIVE, 0)
         SendMessage(self.HandleNumber, WM_LBUTTONDOWN, 0, long_position)  # press
@@ -72,7 +76,7 @@ class DoScreenHit(object):
         randompos_f = self.GetRandomHitPosition(HitPos, HitRange);
         randompos_x_start = int(randompos_f[0])
         randompos_x_end = randompos_x_start + Dir[0]
-        randompos_y_start = int(randompos_f[1] - 33)
+        randompos_y_start = int(randompos_f[1])
         randompos_y_end = randompos_y_start + Dir[1]
         long_position_start = MAKELONG(randompos_x_start, randompos_y_start)
         long_position_end = MAKELONG(randompos_x_end, randompos_y_end)

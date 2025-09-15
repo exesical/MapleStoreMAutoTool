@@ -286,12 +286,12 @@ class MSmState(object):
         AutoPos = self.GetPicPos(CheckPic, 0.9,cv2.TM_CCORR_NORMED)
         if AutoPos is None:
             return
-        self.DoHit([AutoPos[0] + HitOffset[0], AutoPos[1] + HitOffset[1] + 33], HitRange);
+        self.DoHit([AutoPos[0] + HitOffset[0], AutoPos[1] + HitOffset[1] + DoScreenHit.ApplicationWindowsTitleHeight], HitRange);
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic)
         while bSuccess == True:
-            self.DoHit([AutoPos[0] + HitOffset[0], AutoPos[1] + HitOffset[1] + 33],HitRange);
+            self.DoHit([AutoPos[0] + HitOffset[0], AutoPos[1] + HitOffset[1] + DoScreenHit.ApplicationWindowsTitleHeight],HitRange);
             sleep(1)
             self.RefreshScreenShot();
             bSuccess = bSuccess and self.IsPicMatching(CheckPic)
@@ -416,7 +416,7 @@ class MSmState_FastJump(MSmState):
         
             if FastMPPos is not None:
                 self.TryInnerJump("OpenTable", self.OpenTableIdenty)
-                FastMPEnterPos = [[FastMPPos[0] + 360, FastMPPos[1]+49],[12,5]]
+                FastMPEnterPos = [[FastMPPos[0] + 360, FastMPPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 16],[12,5]]
                 self.TryInnerJumpByPos(FastMPEnterPos, self.Enter2)
                 self.RefreshScreenShot();
                 FastMPPos = None
@@ -427,7 +427,7 @@ class MSmState_FastJump(MSmState):
                 if FastMPPos is None:
                     FastMPPos = self.GetPicPos(self.MPEnterDefault, 0.998, cv2.TM_CCORR_NORMED)
                 if FastMPPos is not None:
-                    FastMPEnterPos = [[FastMPPos[0] + 40, FastMPPos[1]+33],[10,10]]
+                    FastMPEnterPos = [[FastMPPos[0] + 40, FastMPPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight],[10,10]]
                     for i in range(np.random.randint(2,4)):
                         self.DoHit(FastMPEnterPos[0],FastMPEnterPos[1])
                     self.RefreshScreenShot();
@@ -452,7 +452,7 @@ class MSmState_FastJump(MSmState):
                if FastNPPos is None:
                     FastNPPos = self.GetPicPos(self.NPIdenty[i], 0.982, cv2.TM_CCORR_NORMED)     
             if FastNPPos is not None:
-                FastNPEnterPos = [[FastNPPos[0] + 360, FastNPPos[1]+49],[12,5]]
+                FastNPEnterPos = [[FastNPPos[0] + 360, FastNPPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight +16],[12,5]]
                 self.TryInnerJumpByPos(FastNPEnterPos, self.NPEnter)
                 self.RefreshScreenShot();
                 FastNPPos = None
@@ -501,7 +501,7 @@ class MSmState_GameModeDefault(MSmState):
         if Pos is None:
             print("Cannot find "+ ModeName + " Enter")
         else:
-            self.JumpInfo[ModeName] = [[Pos[0]+ 75, Pos[1]+ 80],[15, 15]]
+            self.JumpInfo[ModeName] = [[Pos[0]+ 75, Pos[1]+ 47 + DoScreenHit.ApplicationWindowsTitleHeight],[15, 15]]
 
     def Processing(self):
         #reload jump info
@@ -996,7 +996,7 @@ class MSmState_PostProcess(MSmState):
             self.TryInnerJump("SelectTimeLimit",self.SelectTimeLimit)
             TicketPos = self.GetPicPos(self.SelectTicket, 0.95)
             if TicketPos is not None:
-                TicketPosHitInfo = [[TicketPos[0] + 20, TicketPos[1]+55],[10,10]]
+                TicketPosHitInfo = [[TicketPos[0] + 20, TicketPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 22],[10,10]]
                 self.TryInnerJumpByPos(TicketPosHitInfo, self.OpenSelectTicket0)
                 self.TryInnerJump("Disassemble",self.OpenSelectTicket1)
                 self.TryInnerJump("SelectMaterialTickets",self.HasTicketSelected,0.97)
@@ -1018,7 +1018,7 @@ class MSmState_PostProcess(MSmState):
             self.RefreshScreenShot();
             SetPopularityPos = self.GetPicPos(self.CanSendPopularityIdImage, 0.997, cv2.TM_CCORR_NORMED)     
             if SetPopularityPos is not None:
-                SetPopularityHitInfo = [[SetPopularityPos[0] + 20, SetPopularityPos[1]+53],[10,10]]
+                SetPopularityHitInfo = [[SetPopularityPos[0] + 20, SetPopularityPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 20],[10,10]]
                 self.TryInnerJumpByPos(SetPopularityHitInfo,self.SendPopularityIdImage)
                 sleep(1)
                 self.DoHitByName("SelectFreeGift")
@@ -1032,7 +1032,7 @@ class MSmState_PostProcess(MSmState):
             bGotoTrade = False;
             GotoTradePos = self.GetPicPos(self.TradeEnterIdImage, 0.9)
             if GotoTradePos is not None:
-                GotoTradePosHitInfo = [[GotoTradePos[0] + 20, GotoTradePos[1]+55],[10,10]]
+                GotoTradePosHitInfo = [[GotoTradePos[0] + 20, GotoTradePos[1]+DoScreenHit.ApplicationWindowsTitleHeight+22],[10,10]]
                 self.TryInnerJumpByPos(GotoTradePosHitInfo, self.GotoGetTradeGoodsIdImage)
                 self.TryLeaveJump("GotoGetTradeGoods", self.GotoGetTradeGoodsIdImage)
                 EnterTradePos = self.GetPicPos(self.GotoGetTradeGoodsEnterIdImage,0.9)
@@ -1068,7 +1068,7 @@ class MSmState_PostProcess(MSmState):
             GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
             if GotoWeChatHitPos is not None:
                 print("Find Goto WeChat")
-                GotoWeChatHitInfo = [[GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+65],[10,10]]
+                GotoWeChatHitInfo = [[GotoWeChatHitPos[0] + 311,GotoWeChatHitPos[1]+DoScreenHit.ApplicationWindowsTitleHeight+32],[10,10]]
                 self.TryLeaveJumpByPos(GotoWeChatHitInfo,self.DailyIdImage)
                 #now is under state system menu open
                 self.TryInnerJump("CloseGotoWeChat",self.SysOpeningIdImage)
@@ -1111,7 +1111,7 @@ class MSmState_PostProcess(MSmState):
             self.RefreshScreenShot()
             SharePicButtonPos = self.GetPicPos(self.SharePicButton, 0.8, cv2.TM_CCORR_NORMED)
             if SharePicButtonPos is not None:
-                SharePicButtonInfo = [[SharePicButtonPos[0] + 40, SharePicButtonPos[1]+55],[10,10]]
+                SharePicButtonInfo = [[SharePicButtonPos[0] + 40, SharePicButtonPos[1]+DoScreenHit.ApplicationWindowsTitleHeight+22],[10,10]]
                 self.TryInnerJumpByPos(SharePicButtonInfo,self.SharePicTarget)
                 for i in range(np.random.randint(2,3)):
                     self.DoHitByName("ShareToWeChat")
@@ -1140,7 +1140,7 @@ class MSmState_PostProcess(MSmState):
                 self.RefreshScreenShot()
                 ChangeEnterPos = self.GetPicPos(self.ChangeEnter, 0.85)
             if ChangeEnterPos is not None:
-                ChangeEnterHitInfo = [[ChangeEnterPos[0] + 20, ChangeEnterPos[1]+45],[10,10]]
+                ChangeEnterHitInfo = [[ChangeEnterPos[0] + 20, ChangeEnterPos[1]+DoScreenHit.ApplicationWindowsTitleHeight+12],[10,10]]
                 self.TryInnerJumpByPos(ChangeEnterHitInfo,self.ChangeMain)
                 self.TryInnerJump("SelectNite",self.SelectNite)
                 self.TryInnerJump("SelectEssence",self.SelectEssence)

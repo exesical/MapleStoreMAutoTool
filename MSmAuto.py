@@ -71,9 +71,16 @@ if __name__ == '__main__':
             ViceCharacterCount = int(args.split("=")[1])
 
     IsMainCharacter = False
-    hwd_title = "雷电模拟器"
+    hwd_title = "MuMu安卓设备"
     MSmState.HandleNumber_Main = FindWindow(None, hwd_title)
-    MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "TheRender")
+    if MSmState.HandleNumber_Main != 0:
+        MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "MuMuNxDevice")
+        DoScreenHit.ApplicationWindowsTitleHeight = 44
+    else:
+        hwd_title = "雷电模拟器"
+        MSmState.HandleNumber_Main = FindWindow(None, hwd_title)
+        MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "TheRender")
+        DoScreenHit.ApplicationWindowsTitleHeight = 33
     if MSmState.HandleNumber_Main  == MSmState.HandleNumber_Render:
         print("Warning: HandleNumber_Main is equal to HandleNumber_Render, considier run with -MainWindowsCapture")
     today = datetime.date.today()

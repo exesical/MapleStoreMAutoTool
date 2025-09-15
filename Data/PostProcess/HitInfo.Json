@@ -1,372 +1,372 @@
 [
     {
         "OpName":"SelectTimeLimit",
-        "ClickPos":[669,168],
+        "ClickPos":[669,135],
         "ClickRange":[5,5]
     },
     {
         "OpName":"SelectMaterialTickets",
-        "ClickPos":[665,194],
+        "ClickPos":[665,161],
         "ClickRange":[5,5]
     },
     {
         "OpName":"AddTicketsMax",
-        "ClickPos":[604,462],
+        "ClickPos":[604,429],
         "ClickRange":[15,8]
     },
     {
         "OpName":"GetTickets",
-        "ClickPos":[481,513],
+        "ClickPos":[481,480],
         "ClickRange":[2,8]
     },
     {
         "OpName":"GetTicketsComfirm",
-        "ClickPos":[653,516],
+        "ClickPos":[653,483],
         "ClickRange":[2,2]
     },
     {
         "OpName":"AutoFighting",
-        "ClickPos":[318,525],
+        "ClickPos":[318,492],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseAutoFighting",
-        "ClickPos":[739,92],
+        "ClickPos":[739,59],
         "ClickRange":[10,5]
     },
     {
         "OpName":"UseFreeTime",
-        "ClickPos":[700,294],
+        "ClickPos":[700,261],
         "ClickRange":[30,12]
     },
     {
         "OpName":"OpenSystemMenu",
-        "ClickPos":[930,62],
+        "ClickPos":[930,29],
         "ClickRange":[10,10]
     },
     {
         "OpName":"Communication",
-        "ClickPos":[645,394],
+        "ClickPos":[645,361],
         "ClickRange":[35,25]
     },
     {
         "OpName":"Commission",
-        "ClickPos":[645,457],
+        "ClickPos":[645,424],
         "ClickRange":[35,25]
     },
     {
         "OpName":"CommissionTask0",
-        "ClickPos":[134,237],
+        "ClickPos":[134,204],
         "ClickRange":[55,55]
     },
     {
         "OpName":"CommissionTask1",
-        "ClickPos":[134,416],
+        "ClickPos":[134,383],
         "ClickRange":[55,55]
     },
     {
         "OpName":"CommissionTask2",
-        "ClickPos":[335,308],
+        "ClickPos":[335,275],
         "ClickRange":[55,55]
     },
     {
         "OpName":"ReciveCommission",
-        "ClickPos":[412,418],
+        "ClickPos":[412,383],
         "ClickRange":[5,5]
     },
     {
         "OpName":"CloseCommissionRevice",
-        "ClickPos":[660,181],
+        "ClickPos":[660,148],
         "ClickRange":[5,5]
     },
     {
         "OpName":"CloseCommissionMain",
-        "ClickPos":[934,66],
+        "ClickPos":[934,33],
         "ClickRange":[5,5]
     },
     {
         "OpName":"AlignCommission",
-        "ClickPos":[689,179],
+        "ClickPos":[689,146],
         "ClickRange":[15,15]
     },
     {
         "OpName":"StartCommission",
-        "ClickPos":[689,336],
+        "ClickPos":[689,303],
         "ClickRange":[15,15]
     },
     {
         "OpName":"DoCommission",
-        "ClickPos":[790,498],
+        "ClickPos":[790,465],
         "ClickRange":[50,10]
     },
     {
         "OpName":"ReciveReward",
-        "ClickPos":[477,515],
+        "ClickPos":[477,482],
         "ClickRange":[20,10]
     },
     {
         "OpName":"Daily",
-        "ClickPos":[818,124],
+        "ClickPos":[818,91],
         "ClickRange":[35,25]
     },
     {
         "OpName":"WeeklyTask",
-        "ClickPos":[80,200],
+        "ClickPos":[80,167],
         "ClickRange":[40,15]
     },
     {
         "OpName":"SharePic",
-        "ClickPos":[80,400],
+        "ClickPos":[80,367],
         "ClickRange":[40,15]
     },
     {
         "OpName":"SharePic2",
-        "ClickPos":[80,470],
+        "ClickPos":[80,437],
         "ClickRange":[40,15]
     },
     {
         "OpName":"MoveSharePic",
-        "ClickPos":[500,400],
+        "ClickPos":[500,367],
         "ClickRange":[40,40]
     },
     {
         "OpName":"ShareToWeChat",
-        "ClickPos":[785,535],
+        "ClickPos":[785,502],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseSharePic",
-        "ClickPos":[927,64],
+        "ClickPos":[927,31],
         "ClickRange":[10,10]
     },
     {
         "OpName":"WeChatFriends",
-        "ClickPos":[710,124],
+        "ClickPos":[710,91],
         "ClickRange":[25,7]
     },
     {
         "OpName":"SendPopularity",
-        "ClickPos":[919,231],
+        "ClickPos":[919,198],
         "ClickRange":[10,10]
     },
     {
         "OpName":"SelectFreeGift",
-        "ClickPos":[378,320],
+        "ClickPos":[378,287],
         "ClickRange":[40,40]
     },
     {
         "OpName":"Comfirm",
-        "ClickPos":[478,439],
+        "ClickPos":[478,406],
         "ClickRange":[60,20]
     },
     {
         "OpName":"CloseSelectFreeGift",
-        "ClickPos":[695,143],
+        "ClickPos":[695,110],
         "ClickRange":[10,10]
     },
     {
         "OpName":"NotRemind",
-        "ClickPos":[367,431],
+        "ClickPos":[367,398],
         "ClickRange":[60,18]
     },
     {
         "OpName":"DailyReciveAll",
-        "ClickPos":[890,534],
+        "ClickPos":[890,501],
         "ClickRange":[40,15]
     },
     {
         "OpName":"DailyComfirm",
-        "ClickPos":[563,416],
+        "ClickPos":[563,383],
         "ClickRange":[15,22]
     },
     {
         "OpName":"CloseDaily",
-        "ClickPos":[934,63],
+        "ClickPos":[934,30],
         "ClickRange":[10,10]
     },
     {
         "OpName":"CloseGotoWeChat",
-        "ClickPos":[868,555],
+        "ClickPos":[868,522],
         "ClickRange":[10,10]
     },
     {
         "OpName":"GotoGetTradeGoods",
-        "ClickPos":[323,524],
+        "ClickPos":[323,491],
         "ClickRange":[50,10]
     },
     {
         "OpName":"GotoGetTradeGoodsEnter",
-        "ClickPos":[834,515],
+        "ClickPos":[834,482],
         "ClickRange":[60,18]
     },
     {
         "OpName":"CloseGoodsPackage",
-        "ClickPos":[479,166],
+        "ClickPos":[479,133],
         "ClickRange":[10,10]
     },
     {
         "OpName":"LeaveGetTradeGoods",
-        "ClickPos":[927,247],
+        "ClickPos":[927,214],
         "ClickRange":[10,10]
     },
     {
         "OpName":"LeaveGetTradeGoods2",
-        "ClickPos":[592,433],
+        "ClickPos":[592,400],
         "ClickRange":[60,18]
     },
     {
         "OpName":"GetGoodsResultConfirm",
-        "ClickPos":[481,460],
+        "ClickPos":[481,427],
         "ClickRange":[60,18]
     },
     {
         "OpName":"OpenPackage",
-        "ClickPos":[838,59],
+        "ClickPos":[838,26],
         "ClickRange":[8,8]
     },
     {
         "OpName":"OpenTreasureBox",
-        "ClickPos":[692,541],
+        "ClickPos":[692,508],
         "ClickRange":[8,8]
     },
     {
         "OpName":"SelectRandomTreasureBox",
-        "ClickPos":[166,539],
+        "ClickPos":[166,506],
         "ClickRange":[5,5]
     },
     {
         "OpName":"TryOpenTreasureBox",
-        "ClickPos":[875,539],
+        "ClickPos":[875,506],
         "ClickRange":[25,5]
     },
     {
         "OpName":"TryOpenTreasureBox2",
-        "ClickPos":[588,436],
+        "ClickPos":[588,403],
         "ClickRange":[35,15]
     },
     {
         "OpName":"OpenTreasureBoxComfirm",
-        "ClickPos":[479,510],
+        "ClickPos":[479,477],
         "ClickRange":[35,15]
     },
     {
         "OpName":"OpenActivity",
-        "ClickPos":[903,325],
+        "ClickPos":[903,292],
         "ClickRange":[20,5]
     },
     {
         "OpName":"SelectNite",
-        "ClickPos":[820,362],
+        "ClickPos":[820,329],
         "ClickRange":[5,5]
     },
     {
         "OpName":"SelectEssence",
-        "ClickPos":[820,395],
+        "ClickPos":[820,362],
         "ClickRange":[5,5]
     },
     {
         "OpName":"SelectFirst",
-        "ClickPos":[447,274],
+        "ClickPos":[447,241],
         "ClickRange":[15,15]
     },
     {
         "OpName":"AddMatertialMax",
-        "ClickPos":[663,373],
+        "ClickPos":[663,340],
         "ClickRange":[15,8]
     },
     {
         "OpName":"AddMatertialConfirm",
-        "ClickPos":[591,447],
+        "ClickPos":[591,414],
         "ClickRange":[15,4]
     },
     {
         "OpName":"DoChange",
-        "ClickPos":[857,538],
+        "ClickPos":[857,505],
         "ClickRange":[30,12]
     },
     {
         "OpName":"GetChange0",
-        "ClickPos":[287,504],
+        "ClickPos":[287,471],
         "ClickRange":[10,10]
     },
     {
         "OpName":"GetChange1",
-        "ClickPos":[327,504],
+        "ClickPos":[327,471],
         "ClickRange":[10,10]
     },
     {
         "OpName":"GetChange2",
-        "ClickPos":[375,504],
+        "ClickPos":[375,471],
         "ClickRange":[10,10]
     },
     {
         "OpName":"GetChange3",
-        "ClickPos":[440,504],
+        "ClickPos":[440,471],
         "ClickRange":[10,10]
     },
     {
         "OpName":"GetChange4",
-        "ClickPos":[519,514],
+        "ClickPos":[519,481],
         "ClickRange":[10,3]
     },
     {
         "OpName":"GetChange5",
-        "ClickPos":[603,518],
+        "ClickPos":[603,485],
         "ClickRange":[2,2]
     },
     {
         "OpName":"GetChange6",
-        "ClickPos":[745,514],
+        "ClickPos":[745,481],
         "ClickRange":[10,3]
     },
     {
         "OpName":"CloseChangeResult",
-        "ClickPos":[910,76],
+        "ClickPos":[910,43],
         "ClickRange":[3,3]
     },
     {
         "OpName":"StartCompositeChangeResult",
-        "ClickPos":[321,217],
+        "ClickPos":[321,184],
         "ClickRange":[8,3]
     },
     {
         "OpName":"CompositeMax",
-        "ClickPos":[696,537],
+        "ClickPos":[696,504],
         "ClickRange":[15,10]
     },
     {
         "OpName":"DoComposite",
-        "ClickPos":[834,534],
+        "ClickPos":[834,501],
         "ClickRange":[15,10]
     },
     {
         "OpName":"DoComposite2",
-        "ClickPos":[678,434],
+        "ClickPos":[678,401],
         "ClickRange":[10,10]
     },
     {
         "OpName":"DoComposite3",
-        "ClickPos":[449,454],
+        "ClickPos":[449,421],
         "ClickRange":[10,10]
     },
     {
         "OpName":"ActivityDoMouseWheel",
-        "ClickPos":[75,325],
+        "ClickPos":[75,292],
         "ClickRange":[30,20]
     },
     {
         "OpName":"Disassemble",
-        "ClickPos":[837,540],
+        "ClickPos":[837,507],
         "ClickRange":[15,10]
     },
     {
         "OpName":"DisassembleConfirm",
-        "ClickPos":[682,532],
+        "ClickPos":[682,499],
         "ClickRange":[8,8]
     },
     {
         "OpName":"DisassembleConfirm1",
-        "ClickPos":[403,522],
+        "ClickPos":[403,489],
         "ClickRange":[15,10]
     }
 

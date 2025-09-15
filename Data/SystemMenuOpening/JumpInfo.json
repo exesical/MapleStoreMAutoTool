@@ -1,32 +1,32 @@
 [
     {
         "NextStateName":"Wander",
-        "ClickPos":[926,56],
+        "ClickPos":[926,23],
         "ClickRange":[10,10]
     },
     {
         "NextStateName":"GuildInfo",
-        "ClickPos":[646,259],
+        "ClickPos":[646,226],
         "ClickRange":[30,25]
     },
     {
         "NextStateName":"GameModeDefault",
-        "ClickPos":[860,257],
+        "ClickPos":[860,224],
         "ClickRange":[60,25]
     },
     {
         "NextStateName":"FastJump",
-        "ClickPos":[860,257],
+        "ClickPos":[860,224],
         "ClickRange":[60,25]
     },
     {
         "NextStateName":"Mail",
-        "ClickPos":[796,58],
+        "ClickPos":[796,25],
         "ClickRange":[10,10]
     },
     {
         "NextStateName":"ChangeCharacter",
-        "ClickPos":[882,532],
+        "ClickPos":[882,499],
         "ClickRange":[10,10]
         
     }

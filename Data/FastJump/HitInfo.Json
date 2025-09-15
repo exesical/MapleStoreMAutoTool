@@ -1,37 +1,37 @@
 [
     {
         "OpName":"OpenTable",
-        "ClickPos":[736,125],
+        "ClickPos":[736,92],
         "ClickRange":[40,12]
     },
     {
         "OpName":"DoMouseWheel",
-        "ClickPos":[630,370],
+        "ClickPos":[630,337],
         "ClickRange":[40,40]
     },
     {
         "OpName":"CloseTable",
-        "ClickPos":[859,173],
+        "ClickPos":[859,140],
         "ClickRange":[8,8]
     },
     {
         "OpName":"GiveUp",
-        "ClickPos":[777,83],
+        "ClickPos":[777,50],
         "ClickRange":[8,8]
     },
     {
         "OpName":"UseJump",
-        "ClickPos":[480,520],
+        "ClickPos":[480,487],
         "ClickRange":[30,16]
     },
     {
         "OpName":"FinalComfirm",
-        "ClickPos":[588,432],
+        "ClickPos":[588,399],
         "ClickRange":[50,15]
     },
     {
         "OpName":"Finish",
-        "ClickPos":[514,462],
+        "ClickPos":[514,429],
         "ClickRange":[6,6]
     }
 ]

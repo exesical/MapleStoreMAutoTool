@@ -1,42 +1,42 @@
 [
     {
         "OpName":"Enter0",
-        "ClickPos":[856,532],
+        "ClickPos":[856,499],
         "ClickRange":[40,20]
     },
     {
         "OpName":"AddTimes",
-        "ClickPos":[589,364],
+        "ClickPos":[589,331],
         "ClickRange":[10,10]
     },
     {
         "OpName":"Comfirm0",
-        "ClickPos":[589,434],
+        "ClickPos":[589,401],
         "ClickRange":[60,20]
     },
     {
         "OpName":"Enter1",
-        "ClickPos":[590,515],
+        "ClickPos":[590,482],
         "ClickRange":[40,14]
     },
     {
         "OpName":"Spend",
-        "ClickPos":[639,419],
+        "ClickPos":[639,387],
         "ClickRange":[60,18]
     },
     {
         "OpName":"SpendComfirm",
-        "ClickPos":[593,432],
+        "ClickPos":[593,399],
         "ClickRange":[60,18]
     },
     {
         "OpName":"Exit",
-        "ClickPos":[287,518],
+        "ClickPos":[287,485],
         "ClickRange":[70,18]
     },
     {
         "OpName":"BuyMoreExp",
-        "ClickPos":[624,385],
+        "ClickPos":[624,352],
         "ClickRange":[20,20]
     }
 ]
