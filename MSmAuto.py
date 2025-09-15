@@ -76,11 +76,13 @@ if __name__ == '__main__':
     MSmState.HandleNumber_Main = FindWindow(None, hwd_title)
     if MSmState.HandleNumber_Main != 0:
         MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "MuMuNxDevice")
+        MSmState.HandleNumber_Keyboard = FindWindowEx(MSmState.HandleNumber_Render, None, None, "nemudisplay")
         DoScreenHit.ApplicationWindowsTitleHeight = 44
     else:
         hwd_title = "雷电模拟器"
         MSmState.HandleNumber_Main = FindWindow(None, hwd_title)
         MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "TheRender")
+        MSmState.HandleNumber_Keyboard = MSmState.HandleNumber_Render
         DoScreenHit.ApplicationWindowsTitleHeight = 33
     if MSmState.HandleNumber_Main  == MSmState.HandleNumber_Render:
         print("Warning: HandleNumber_Main is equal to HandleNumber_Render, considier run with -MainWindowsCapture")

@@ -10,8 +10,9 @@ from time import sleep
 class DoScreenHit(object):
     ApplicationWindowsTitleHeight = 0
     """description of class"""
-    def __init__(self, HandleNumber):
+    def __init__(self, HandleNumber, HandleNumber_Keyboard):
         self.HandleNumber = HandleNumber;
+        self.HandleNumber_Keyboard = HandleNumber_Keyboard;
         self.GaussDistributionSize = 5000;
         #random gauss list generate
         mx, my = zip(*np.random.normal(loc = 0.0, scale = 0.45, size = (self.GaussDistributionSize, 2)))
@@ -101,9 +102,9 @@ class DoScreenHit(object):
         return RandomPos
 
     def PressKeyboard(self):
-        SendMessage(self.HandleNumber, WM_KEYDOWN, 0x50, 0)
+        SendMessage(self.HandleNumber_Keyboard, WM_KEYDOWN, 0x50, 0)
         sleep(0.02)
-        SendMessage(self.HandleNumber, WM_KEYUP, 0x50, 0)
+        SendMessage(self.HandleNumber_Keyboard, WM_KEYUP, 0x50, 0)
 
 #test
 if __name__ == '__main__':

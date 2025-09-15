@@ -28,5 +28,10 @@
         "OpName":"CloseAd5",
         "ClickPos":[862,53],
         "ClickRange":[10,10]
+    },
+    {
+        "OpName":"AutoSkill",
+        "ClickPos":[709,418],
+        "ClickRange":[10,10]
     }
 ]

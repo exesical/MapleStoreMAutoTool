@@ -28,6 +28,7 @@ class MSmState(object):
     bUseMainWindowCapture = False
     HandleNumber_Main = 0
     HandleNumber_Render = 0
+    HandleNumber_Keyboard = 0
     def __init__(self, StateName):
         left, top, right, bottom = win32gui.GetWindowRect(MSmState.HandleNumber_Render)
         self.ScreenShotImage = None
@@ -40,7 +41,7 @@ class MSmState(object):
             self.ScreenShotHeight +=50
 
         #self.HandleNumber = HandleNumber
-        self.HitHandle = DoScreenHit(MSmState.HandleNumber_Render)
+        self.HitHandle = DoScreenHit(MSmState.HandleNumber_Render, MSmState.HandleNumber_Keyboard)
         self.Name = StateName
         Path_cur = frozen.app_path() + "\\Data\\" + StateName
         Path_Identification = Path_cur + "\\Identification\\" 
@@ -661,7 +662,8 @@ class MSmState_Wander(MSmState):
                 AdCloseMask[i] = self.IsPicMatching(self.AdImages[i])
                 if(AdCloseMask[i]):
                     HasAdExist = True
-        self.HitHandle.PressKeyboard()
+        #self.HitHandle.PressKeyboard()
+        self.DoHitByName("AutoSkill")
         return True
 
 class MSmState_TeamCommon(MSmState):
