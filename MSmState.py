@@ -338,8 +338,8 @@ class MSmState(object):
             bAutoFightingFinished = self.IsPicMatching(self.ExitIdImage);
 
 class MSmState_CharacterSelect(MSmState):
-
     CurrentSelectedCharacterIndex = 0
+    bUseInverseSelect=0
     def __init__(self, StateName):
         super().__init__(StateName)
         Path_cur = frozen.app_path() + "\\Data\\" + StateName
@@ -1103,22 +1103,22 @@ class MSmState_PostProcess(MSmState):
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("Daily",self.DailyIdImage)
             #先做一次图片分享
-            MoreThan200Pos = self.GetPicPos(self.MoreThan200, 0.95, cv2.TM_CCORR_NORMED)
-            if MoreThan200Pos is not None:
-                self.TryInnerJump("SharePic2",self.SharePic)
-            else:
-                self.TryInnerJump("SharePic",self.SharePic)
-            self.HitHandle.DoMousePull(self.HitInfo["MoveSharePic"][0],self.HitInfo["MoveSharePic"][1],[0,-500], 30, 5)
-            sleep(2)
-            self.RefreshScreenShot()
-            SharePicButtonPos = self.GetPicPos(self.SharePicButton, 0.8, cv2.TM_CCORR_NORMED)
-            if SharePicButtonPos is not None:
-                SharePicButtonInfo = [[SharePicButtonPos[0] + 40, SharePicButtonPos[1]+DoScreenHit.ApplicationWindowsTitleHeight+22],[10,10]]
-                self.TryInnerJumpByPos(SharePicButtonInfo,self.SharePicTarget)
-                for i in range(np.random.randint(2,3)):
-                    self.DoHitByName("ShareToWeChat")
-                self.TryLeaveJump("CloseSharePic",self.SharePicTarget)
-                sleep(0.2)
+            #MoreThan200Pos = self.GetPicPos(self.MoreThan200, 0.95, cv2.TM_CCORR_NORMED)
+            #if MoreThan200Pos is not None:
+            #    self.TryInnerJump("SharePic2",self.SharePic)
+            #else:
+            #    self.TryInnerJump("SharePic",self.SharePic)
+            #self.HitHandle.DoMousePull(self.HitInfo["MoveSharePic"][0],self.HitInfo["MoveSharePic"][1],[0,-500], 30, 5)
+            #sleep(2)
+            #self.RefreshScreenShot()
+            #SharePicButtonPos = self.GetPicPos(self.SharePicButton, 0.8, cv2.TM_CCORR_NORMED)
+            #if SharePicButtonPos is not None:
+            #    SharePicButtonInfo = [[SharePicButtonPos[0] + 40, SharePicButtonPos[1]+DoScreenHit.ApplicationWindowsTitleHeight+22],[10,10]]
+            #    self.TryInnerJumpByPos(SharePicButtonInfo,self.SharePicTarget)
+            #    for i in range(np.random.randint(2,3)):
+            #        self.DoHitByName("ShareToWeChat")
+            #    self.TryLeaveJump("CloseSharePic",self.SharePicTarget)
+            #    sleep(0.2)
             self.TryInnerJump("WeeklyTask",self.WeeklyTask)
             WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
             while WeeklyAnyThingToRecive is not None:

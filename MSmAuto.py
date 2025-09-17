@@ -23,7 +23,7 @@ if __name__ == '__main__':
     FastJumpType = 0;
     WeekDay = datetime.datetime.now().weekday()
     TaskGroupIndex = WeekDay % 2;
-
+    MSmState_CharacterSelect.bUseInverseSelect = TaskGroupIndex
     # 10 default 
     # 1 recive weekly reward
     # 2 自动换黄图
@@ -32,6 +32,7 @@ if __name__ == '__main__':
     # 11 default + recive weekly reward
     # 12 default + 自动换黄图
     # 13 default + 自动开箱子
+    PostProcessType =10
     ViceCharacterCount = 0;
     if WeekDay <= 3:
         FastJumpType = 1
@@ -77,7 +78,7 @@ if __name__ == '__main__':
     if MSmState.HandleNumber_Main != 0:
         MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "MuMuNxDevice")
         MSmState.HandleNumber_Keyboard = FindWindowEx(MSmState.HandleNumber_Render, None, None, "nemudisplay")
-        DoScreenHit.ApplicationWindowsTitleHeight = 44
+        DoScreenHit.ApplicationWindowsTitleHeight = 0
     else:
         hwd_title = "雷电模拟器"
         MSmState.HandleNumber_Main = FindWindow(None, hwd_title)
