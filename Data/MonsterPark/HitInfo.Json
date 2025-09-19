@@ -38,5 +38,10 @@
         "OpName":"BuyMoreExp",
         "ClickPos":[624,352],
         "ClickRange":[20,20]
+    },
+    {
+        "OpName":"SelectSimple",
+        "ClickPos":[129,144],
+        "ClickRange":[30,20]
     }
 ]

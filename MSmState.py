@@ -821,6 +821,13 @@ class MSmState_MonsterPark(MSmState):
         self.BuyMoreExp = self.ReadPic("BuyMoreExp")
 
     def Processing(self):
+        if MSmState.bMainCharacter == False:
+            self.HitHandle.DoMousePull(self.HitInfo["SelectSimple"][0],self.HitInfo["SelectSimple"][1],[500,0], 30, 5)
+            sleep(1.5)
+            self.DoHitByName("SelectSimple")
+            sleep(0.2)
+            self.DoHitByName("SelectSimple")
+            sleep(0.2)
         self.TryInnerJump("Enter0", self.AddTimesIdImage)
         self.DoAddTimes()   
         self.TryInnerJump("Comfirm0", self.EnterMonsterParkIdImage)
