@@ -292,6 +292,9 @@ class MSmState(object):
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic)
         while bSuccess == True:
+            AutoPos = self.GetPicPos(CheckPic, 0.9,cv2.TM_CCORR_NORMED)
+            if AutoPos is None:
+                return
             self.DoHit([AutoPos[0] + HitOffset[0], AutoPos[1] + HitOffset[1] + DoScreenHit.ApplicationWindowsTitleHeight],HitRange);
             sleep(1)
             self.RefreshScreenShot();
@@ -819,15 +822,21 @@ class MSmState_MonsterPark(MSmState):
         self.GetMoreIdImage = self.ReadPic("GetMoreIdImage")
         self.ExitIdImage = self.ReadPic("ExitIdImage")
         self.BuyMoreExp = self.ReadPic("BuyMoreExp")
+        self.SimpleSelected = self.ReadPic("SimpleSelected")
 
     def Processing(self):
         if MSmState.bMainCharacter == False:
-            self.HitHandle.DoMousePull(self.HitInfo["SelectSimple"][0],self.HitInfo["SelectSimple"][1],[500,0], 30, 5)
-            sleep(1.5)
-            self.DoHitByName("SelectSimple")
-            sleep(0.2)
-            self.DoHitByName("SelectSimple")
-            sleep(0.2)
+            SimpleSelected = self.GetPicPos(self.SimpleSelected, 0.95)
+            while SimpleSelected is None:
+                self.HitHandle.DoMousePull(self.HitInfo["SelectSimple"][0],self.HitInfo["SelectSimple"][1],[500,0], 30, 5)
+                sleep(1.5)
+                self.DoHitByName("SelectSimple")
+                sleep(0.2)
+                self.DoHitByName("SelectSimple")
+                sleep(0.2)
+                self.RefreshScreenShot()
+                SimpleSelected = self.GetPicPos(self.SimpleSelected)
+
         self.TryInnerJump("Enter0", self.AddTimesIdImage)
         self.DoAddTimes()   
         self.TryInnerJump("Comfirm0", self.EnterMonsterParkIdImage)
@@ -1003,7 +1012,7 @@ class MSmState_PostProcess(MSmState):
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("OpenPackage",self.OpenPackage)
             self.TryInnerJump("SelectTimeLimit",self.SelectTimeLimit)
-            TicketPos = self.GetPicPos(self.SelectTicket, 0.95)
+            TicketPos = self.GetPicPos(self.SelectTicket, 0.9)
             if TicketPos is not None:
                 TicketPosHitInfo = [[TicketPos[0] + 20, TicketPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 22],[10,10]]
                 self.TryInnerJumpByPos(TicketPosHitInfo, self.OpenSelectTicket0)
@@ -1066,13 +1075,21 @@ class MSmState_PostProcess(MSmState):
 
             self.TryInnerJump("Daily",self.DailyIdImage)
             sleep(0.5)
-            for i in range(np.random.randint(2,4)):
-                self.DoHitByName("DailyReciveAll")
-            sleep(1)
 
-            #self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
-            self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
-            sleep(1)
+            #for i in range(np.random.randint(2,4)):
+            #    self.DoHitByName("DailyReciveAll")
+            #sleep(1)
+
+            ##self.TryLeaveJump("DailyComfirm",self.DailyComfirmIdImage)
+            #self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+            #sleep(1)
+            self.RefreshScreenShot()
+            WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
+            while WeeklyAnyThingToRecive is not None:
+                self.TryInnerJump("DailyReciveAll",self.DailyComfirmIdImage)
+                self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+                WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
+
             #goto wechat
             GotoWeChatHitPos = self.GetPicPos(self.GotoWeChatIdImage, 0.9)
             if GotoWeChatHitPos is not None:
@@ -1083,16 +1100,23 @@ class MSmState_PostProcess(MSmState):
                 self.TryInnerJump("CloseGotoWeChat",self.SysOpeningIdImage)
                 self.TryInnerJump("Daily",self.DailyIdImage)
                 sleep(0.5)
-                for i in range(np.random.randint(2,4)):
-                    self.DoHitByName("DailyReciveAll")
-                sleep(1)
-                self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
-                sleep(1)
+                #for i in range(np.random.randint(2,4)):
+                #    self.DoHitByName("DailyReciveAll")
+                #sleep(1)
+                #self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+                #sleep(1)
 
-            for i in range(np.random.randint(2,4)):
-                self.DoHitByName("DailyReciveAll")
-            sleep(1)
-            self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+            #for i in range(np.random.randint(2,4)):
+            #    self.DoHitByName("DailyReciveAll")
+            #sleep(1)
+            #self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+            self.RefreshScreenShot()
+            WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
+            while WeeklyAnyThingToRecive is not None:
+                self.TryInnerJump("DailyReciveAll",self.DailyComfirmIdImage)
+                self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+                WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
+
             self.TryLeaveJump("CloseDaily",self.DailyIdImage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
             if MSmState.bMainCharacter == True:
@@ -1129,9 +1153,7 @@ class MSmState_PostProcess(MSmState):
             self.TryInnerJump("WeeklyTask",self.WeeklyTask)
             WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
             while WeeklyAnyThingToRecive is not None:
-                for i in range(np.random.randint(2,3)):
-                    self.DoHitByName("DailyReciveAll")
-                sleep(1)
+                self.TryInnerJump("DailyReciveAll",self.DailyComfirmIdImage)
                 self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
                 WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
             self.SaveScreenShot("WeeklyReward_")
