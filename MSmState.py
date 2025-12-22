@@ -122,6 +122,11 @@ class MSmState(object):
         print("Hit position by Name - " + hitname)
         self.DoHit(self.HitInfo[hitname][0],self.HitInfo[hitname][1])
 
+    def DoHitByNameFast(self, hitname):
+        print("Hit position by Name - " + hitname)
+        self.HitHandle.HitPosition(self.HitInfo[hitname][0], self.HitInfo[hitname][1])
+        #self.DoHit(self.HitInfo[hitname][0],self.HitInfo[hitname][1])
+
     #return error code: 
     #0 - successed leave current state
     #1 - can not leave current state
@@ -197,6 +202,18 @@ class MSmState(object):
     def Processing(self):
         #do Nothing
         return True
+
+    def ReadPicArray(self, PicName):
+        Path_cur = frozen.app_path() + "\\Data\\" + self.Name
+        PicArray = []
+        for cur_dir, sub_dir, included_file in walk(Path_cur):
+            if included_file:
+                for file in included_file:
+                    if search(PicName, file):
+                        img = cv2.imdecode(fromfile(Path_cur + "\\" + file, dtype=uint8), -1)
+                        PicArray.append(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
+
+        return PicArray
 
     def ReadPic(self, PicName):
         Path_cur = frozen.app_path() + "\\Data\\" + self.Name
@@ -480,6 +497,54 @@ class MSmState_FastJump(MSmState):
         return True
     
 
+
+class MSmState_Exchange(MSmState):
+    def __init__(self, StateName):
+        super().__init__(StateName)
+        self.SoldPage = self.ReadPic("SoldPage")
+        self.ShowCaseFull = self.ReadPic("ShowCaseFull")
+        self.GoodsPics = self.ReadPicArray("Goods")
+        self.GetBackAndGetMoney = self.ReadPic("GetBackAndGetMoney")
+        self.SoldSetting = self.ReadPic("SoldSetting")
+        self.SetLowestPrice = self.ReadPic("SetLowestPrice")
+        self.SoldConfirm = self.ReadPic("SoldConfirm")
+        self.FinalConfirm = self.ReadPic("FinalConfirm")
+
+
+    def Processing(self): 
+        self.TryInnerJump("SoldPage", self.SoldPage)
+        self.TryInnerJump("GetBackAndGetMoney", self.GetBackAndGetMoney)
+        for i in range(0,2):
+            self.DoHitByName("GetBack")
+        for i in range(0,4):
+            self.DoHitByName("GetMoney")
+
+        #ShowCaseFullPos = self.GetPicPos(self.ShowCaseFull, 0.99, cv2.TM_CCORR_NORMED)
+        #if ShowCaseFullPos is not None:
+        #    return True
+        sleep(1)
+        self.RefreshScreenShot();
+        self.SaveScreenShot()
+        for i in range(len(self.GoodsPics)):
+            GoodsPos = self.GetPicPos(self.GoodsPics[i], 0.95, cv2.TM_CCORR_NORMED)
+            if GoodsPos is not None:
+                if GoodsPos[0] < 450:
+                    continue
+                GoodsPosHitInfo = [[GoodsPos[0] + 20, GoodsPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 20],[5,5]]
+                self.TryInnerJumpByPos(GoodsPosHitInfo, self.SoldSetting)
+                for i in range(0,2):
+                    self.DoHitByName("SetMax")
+                for i in range(0,20):
+                     self.DoHitByNameFast("SetLowestPrice")
+                     sleep(np.random.randint(20,80) / 1000)
+                self.TryInnerJump("SetLowestPrice", self.SetLowestPrice)
+                self.TryInnerJump("DoSold", self.SoldConfirm)
+                self.TryInnerJump("SoldConfirm", self.FinalConfirm)
+                self.TryLeaveJump("FinalConfirm", self.FinalConfirm)
+
+
+
+        return True
 
 class MSmState_GameModeDefault(MSmState):
     def __init__(self, StateName):
@@ -903,9 +968,12 @@ class MSmState_SpecialWeekly(MSmState):
         self.ExitIdImage = self.ReadPic("ExitIdImage")
         self.NoTimes = self.ReadPic("NoTimes")
         self.SwithSpecial = self.ReadPic("SwithSpecial")
+        self.SelectNormal = self.ReadPic("SelectNormal")
 
     def Processing(self):
         self.TryInnerJump("SwithSpecial",self.SwithSpecial)
+        if MSmState.bMainCharacter == True:
+            self.TryInnerJump("SelectNormal",self.SelectNormal)
         if self.IsPicMatching(self.NoTimes,0.985):
             self.TryLeaveJump("CloseToWander", self.SwithSpecial)
             return True

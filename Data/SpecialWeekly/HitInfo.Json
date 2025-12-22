@@ -28,5 +28,10 @@
         "OpName":"CloseToWander",
         "ClickPos":[933,32],
         "ClickRange":[10,10]
+    },
+    {
+        "OpName":"SelectNormal",
+        "ClickPos":[72,282],
+        "ClickRange":[10,10]
     }
 ]

@@ -29,5 +29,11 @@
         "ClickPos":[882,499],
         "ClickRange":[10,10]
         
+    },
+    {
+        "NextStateName":"Exchange",
+        "ClickPos":[734,292],
+        "ClickRange":[10,10]
+        
     }
 ]

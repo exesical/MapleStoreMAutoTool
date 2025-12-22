@@ -119,6 +119,7 @@ if __name__ == '__main__':
         StateTable["CharacterSelect"]      = MSmState_CharacterSelect("CharacterSelect")
         StateTable["ChangeCharacter"]      = MSmState_ChangeCharacter("ChangeCharacter")
         StateTable["GameModeDefault"]      = MSmState_GameModeDefault("GameModeDefault")
+        StateTable["Exchange"]             = MSmState_Exchange("Exchange")
         StateTable["GuildInfo"]            = MSmState_GuildInfo("GuildInfo")
         StateTable["Loading"]              = MSmState_Loading("Loading")
         StateTable["Login"]                = MSmState_Login("Login")
