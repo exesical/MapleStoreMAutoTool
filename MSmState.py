@@ -1036,6 +1036,7 @@ class MSmState_PostProcess(MSmState):
         self.CommissionMain = self.ReadPic("CommissionMain")
         self.CommisionReciveReady = self.ReadPic("CommisionReciveReady")
         self.CommissionFinished = self.ReadPic("CommissionFinished")
+        self.CommissionAllFinished = self.ReadPic("CommissionAllFinished")
 
         self.WeeklyTask= self.ReadPic("WeeklyTask")
         self.WeeklyAnyThingToRecive= self.ReadPic("WeeklyAnyThingToRecive")
@@ -1358,9 +1359,7 @@ class MSmState_PostProcess(MSmState):
                         self.DoHitByName("CloseCommissionRevice")
                 self.TryInnerJump("AlignCommission",self.CommisionReciveReady,0.95)
                 self.TryInnerJump("StartCommission",self.CommisionStartReady,0.95)
-                for i in range(3):
-                    self.TryInnerJump("DoCommission",self.FinishCommission,0.95)
-                    self.TryLeaveJump("ReciveReward",self.FinishCommission,0.95)
+                self.TryInnerJump("DoCommission",self.CommissionAllFinished,0.95)
             self.TryLeaveJump("CloseCommissionMain",self.CommissionMain)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
 
