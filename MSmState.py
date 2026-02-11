@@ -551,9 +551,9 @@ class MSmState_GameModeDefault(MSmState):
         super().__init__(StateName)
         self.MaterialEnterIdImage = self.ReadPic("MaterialEnterIdentify")
         self.EliteEnterIdImage = self.ReadPic("EliteEnterIdImage")
-
+        self.EliteCount = 9
         self.EliteEnterIdImages = []
-        for i in range(0,8):
+        for i in range(0, self.EliteCount ):
             self.EliteEnterIdImages.append(self.ReadPic("EliteEnterIdImage" + str(i)))
 
         self.TangyunEnterIdImage = self.ReadPic("TangyunEnterIdImage")
@@ -585,7 +585,7 @@ class MSmState_GameModeDefault(MSmState):
         if MSmState.bAllMaterialHasGotten == False:
             self.AddEnter("Material", self.MaterialEnterIdImage)        
         self.AddEnter("Elite", self.EliteEnterIdImage,0.85)
-        for i in range(0,8):
+        for i in range(0, self.EliteCount ):
             if "Elite" not in self.JumpInfo:
                 self.AddEnter("Elite", self.EliteEnterIdImages[i],0.85)
 
@@ -1039,6 +1039,7 @@ class MSmState_PostProcess(MSmState):
         self.CommissionAllFinished = self.ReadPic("CommissionAllFinished")
 
         self.WeeklyTask= self.ReadPic("WeeklyTask")
+        self.ChangeToWeeklyTask= self.ReadPic("ChangeToWeeklyTask")
         self.WeeklyAnyThingToRecive= self.ReadPic("WeeklyAnyThingToRecive")
         self.SharePic= self.ReadPic("SharePic")
         self.SharePicButton= self.ReadPic("SharePicButton")
@@ -1219,13 +1220,17 @@ class MSmState_PostProcess(MSmState):
             #        self.DoHitByName("ShareToWeChat")
             #    self.TryLeaveJump("CloseSharePic",self.SharePicTarget)
             #    sleep(0.2)
-            self.TryInnerJump("WeeklyTask",self.WeeklyTask)
-            WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
-            while WeeklyAnyThingToRecive is not None:
-                self.TryInnerJump("DailyReciveAll",self.DailyComfirmIdImage)
-                self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+            ChangeToWeeklyTaskPos = self.GetPicPos(self.ChangeToWeeklyTask, 0.8)
+            if ChangeToWeeklyTaskPos is not None:
+                ChangeToWeeklyTaskHitInfo = [[ChangeToWeeklyTaskPos[0] + 40, ChangeToWeeklyTaskPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 22],[10,10]]
+
+                self.TryInnerJumpByPos(ChangeToWeeklyTaskHitInfo,self.WeeklyTask)
                 WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
-            self.SaveScreenShot("WeeklyReward_")
+                while WeeklyAnyThingToRecive is not None:
+                    self.TryInnerJump("DailyReciveAll",self.DailyComfirmIdImage)
+                    self.TryLeaveJumpAuto(self.DailyComfirmIdImage,[100,30],[10,10])
+                    WeeklyAnyThingToRecive = self.GetPicPos(self.WeeklyAnyThingToRecive, 0.995, cv2.TM_CCORR_NORMED)
+                self.SaveScreenShot("WeeklyReward_")
             self.TryLeaveJump("CloseDaily",self.DailyIdImage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
     
