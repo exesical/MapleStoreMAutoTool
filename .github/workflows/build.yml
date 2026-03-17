@@ -1,0 +1,84 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+    
+    - name: 设置Python环境
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: 安装系统依赖
+      run: |
+        sudo apt update
+        sudo apt install -y \
+          git zip unzip openjdk-8-jdk python3-pip autoconf libtool pkg-config \
+          zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev \
+          libssl-dev build-essential ccache m4
+    
+    - name: 安装Python依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install buildozer cython
+        pip install -r requirements.txt
+    
+    - name: 设置Java环境
+      run: |
+        echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $GITHUB_ENV
+        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    
+    - name: 缓存Buildozer目录
+      uses: actions/cache@v3
+      with:
+        path: .buildozer
+        key: buildozer-${{ hashFiles('buildozer.spec') }}
+    
+    - name: 构建APK
+      run: |
+        buildozer android debug
+        
+    - name: 上传APK到Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: 冒险岛M自动助手-v1.0.0
+        path: bin/*.apk
+        
+    - name: 创建Release (如果是标签推送)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: bin/*.apk
+        name: 冒险岛M自动助手 ${{ github.ref_name }}
+        body: |
+          ## 📱 Android APK 下载
+          
+          ### 安装说明
+          1. 下载下方的APK文件
+          2. 在Android设备上启用"未知来源"应用安装
+          3. 安装APK文件
+          4. 启动应用并申请必要权限
+          
+          ### 功能特性
+          - ✅ 日常副本自动化
+          - ✅ 材料副本刷取
+          - ✅ 精英副本挑战
+          - ✅ 怪物公园自动化
+          - ✅ 快速副本功能
+          - ✅ 完整流程自动化
+          
+          ### ⚠️ 免责声明
+          本工具仅供学习研究使用，使用风险自负。
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
