@@ -1,0 +1,39 @@
+{
+  "main_character_tasks": [
+    "CharacterSelect",
+    "GuildInfo",
+    "Mail",
+    "Material",
+    "MonsterPark",
+    "Elite",
+    "Weekly",
+    "PostProcess",
+    "CharacterSelect"
+  ],
+  "other_character_tasks": [
+    "CharacterSelect",
+    "GuildInfo",
+    "Mail",
+    "FastJump",
+    "Material",
+    "Weekly",
+    "PostProcess",
+    "CharacterSelect"
+  ],
+  "five_character_tasks": [
+    "CharacterSelect",
+    "GuildInfo",
+    "Mail",
+    "MonsterPark",
+    "FastJump",
+    "Material",
+    "Weekly",
+    "PostProcess",
+    "CharacterSelect"
+  ],
+  "current_task_group": 0,
+  "character_count": 5,
+  "vice_character_count": 0,
+  "start_character_index": 0,
+  "last_updated": "2026-03-17T20:36:44.113351"
+}

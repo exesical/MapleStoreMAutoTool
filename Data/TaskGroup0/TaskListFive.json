@@ -1,12 +1,11 @@
 [
-	"CharacterSelect",
-	"GuildInfo",
-	"Mail",
-	"MonsterPark",
-	"FastJump",
-	"Material",
-	"Wulin",
-	"Weekly",
-	"PostProcess",
-	"CharacterSelect"
+  "CharacterSelect",
+  "GuildInfo",
+  "Mail",
+  "MonsterPark",
+  "FastJump",
+  "Material",
+  "Weekly",
+  "PostProcess",
+  "CharacterSelect"
 ]

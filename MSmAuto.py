@@ -10,7 +10,22 @@ import sys
 import datetime
 import time
 
+def load_task_config():
+    """加载任务配置文件"""
+    try:
+        config_path = frozen.app_path() + "\\task_config.json"
+        if os.path.exists(config_path):
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+                return config
+    except Exception as e:
+        print(f"加载任务配置失败: {e}")
+    return None
+
 if __name__ == '__main__':
+    # 加载任务配置
+    task_config = load_task_config()
+    
     bExpeditionMode = False
     bExpeditionModeEnable = False;
     CharacterCount = 100000
@@ -23,6 +38,17 @@ if __name__ == '__main__':
     FastJumpType = 0;
     WeekDay = datetime.datetime.now().weekday()
     TaskGroupIndex = WeekDay % 2;
+    
+    # 如果有任务配置文件，使用配置文件中的设置
+    if task_config:
+        print("发现任务配置文件，正在加载配置...")
+        TaskGroupIndex = task_config.get("current_task_group", TaskGroupIndex)
+        CharacterCount = task_config.get("character_count", 100000)
+        ViceCharacterCount = task_config.get("vice_character_count", 0)
+        print(f"配置已加载 - TaskGroup: {TaskGroupIndex}, 角色数: {CharacterCount}, 前五号: {ViceCharacterCount}")
+    else:
+        ViceCharacterCount = 0
+    
     MSmState_CharacterSelect.bUseInverseSelect = TaskGroupIndex
     # 10 default 
     # 1 recive weekly reward
@@ -33,7 +59,6 @@ if __name__ == '__main__':
     # 12 default + 自动换黄图
     # 13 default + 自动开箱子
     PostProcessType =10
-    ViceCharacterCount = 0;
     if WeekDay <= 3:
         FastJumpType = 1
     else:
