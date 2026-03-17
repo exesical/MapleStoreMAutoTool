@@ -1,0 +1,5 @@
+build/**
+build/MSmAuto/*.toc
+build/MSmAuto/*.zip
+build/MSmAuto/MSmAuto.exe.manifest
+ 
