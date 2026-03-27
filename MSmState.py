@@ -19,7 +19,7 @@ import random
 GHasGottenAll = False
 
 WaittingMaxTimes = 6000
-HitMaxTimes = 600
+HitMaxTimes = 10
 
 class MSmState(object):
     """description of class"""
@@ -37,7 +37,7 @@ class MSmState(object):
     GlobalExitHitPos = [749,20]
     GlobalExitHitRect = [8, 8]
     
-    ReturnChachaterSelectHitPos = [482,439]
+    ReturnChachaterSelectHitPos = [482,400]
     ReturnChachaterSelectHitRect = [20, 10]
     
     GlobalExitPic = cv2.imdecode(fromfile(frozen.app_path() + "\\Data\\Global\\GameEnd.png" , dtype=uint8), -1)
@@ -238,7 +238,17 @@ class MSmState(object):
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY);
 
     def ForceReturnTocharacterSelect(self):
-        self.TryInnerJumpByPos([MSmState.GlobalExitHitPos, MSmState.GlobalExitHitRect], MSmState.GlobalExitPic)
+        if self.IsUnderState():
+            return
+        self.HitHandle.PressKeyboardESC()
+        sleep(1)
+        self.RefreshScreenShot();
+        bSuccess = self.IsPicMatching(MSmState.GlobalExitPic)
+        while bSuccess == False:
+            self.HitHandle.PressKeyboardESC()
+            sleep(1)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(MSmState.GlobalExitPic)
         self.TryInnerJumpByPos([MSmState.ReturnChachaterSelectHitPos, MSmState.ReturnChachaterSelectHitRect], MSmState.CharacterSelectIdPic)
 
     def WaitUntil(self, CheckPic):

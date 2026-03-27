@@ -70,7 +70,7 @@ def main():
     FastJumpType = 0  # 默认值
     AdditionalMaterial = 0  # 默认值
     
-    
+    #MSmState.bUseDebug = True
 
     # 先处理命令行参数，确定TaskGroupIndex
     for args in sys.argv:
@@ -181,7 +181,7 @@ def main():
         MSmState.HandleNumber_Main = FindWindow(None, hwd_title)
         MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "TheRender")
         MSmState.HandleNumber_Keyboard = MSmState.HandleNumber_Render
-        DoScreenHit.ApplicationWindowsTitleHeight = 33
+        DoScreenHit.ApplicationWindowsTitleHeight = 0
     if MSmState.HandleNumber_Main  == MSmState.HandleNumber_Render:
         print("Warning: HandleNumber_Main is equal to HandleNumber_Render, considier run with -MainWindowsCapture")
 
@@ -240,7 +240,6 @@ def main():
         StateTable["Wulin"]                = MSmState_Wulin("Wulin")
         StateTable["PostProcess"]          = MSmState_PostProcess("PostProcess")
         StateTable["Expedition"]           = MSmState_Expedition("Expedition")
-
 
         
         #global jump table means 
@@ -347,10 +346,11 @@ def main():
                         MSmState.bFastMode = True
    
                 TaskLen = len(TaskCur)
-
-                for StateIndex in range(TaskLen):
+                StateIndex = 0
+                while StateIndex < TaskLen:
                     TargetStateName = TaskCur[StateIndex]
                     TargetState = StateTable[TargetStateName]
+                    StateIndex = StateIndex + 1
                     try:
                         while CurrentState.Name != TargetStateName:
                             #Processing state
@@ -364,7 +364,7 @@ def main():
                             NextState = StateTable[NextStateName]
                             res = CurrentState.JumpToTarget(NextState)
                             if res == 0:
-                                MaxIter = 500
+                                MaxIter = 10
                                 Iter = 0
                                 while NextState.IsUnderState() == False and Iter < MaxIter:
                                     sleep(1)
@@ -382,9 +382,9 @@ def main():
                                 break
                     except RuntimeError:
                         StateIndex = 0
-                        StartStateName = TaskCur[StateIndex]
-                        StartState = StateTable[StartStateName]
-                        StartState.ForceReturnTocharacterSelect()
+                        CurrentState = StateTable["CharacterSelect"]
+                        print("Error happened, return to character select and restart task")
+                        StateTable["CharacterSelect"].ForceReturnTocharacterSelect()
 
 
     else:
