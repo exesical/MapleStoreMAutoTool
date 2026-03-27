@@ -18,9 +18,13 @@ import random
 
 GHasGottenAll = False
 
+WaittingMaxTimes = 6000
+HitMaxTimes = 600
+
 class MSmState(object):
     """description of class"""
     bMainCharacter = False
+    bViceCharacter = False
     bAllMaterialHasGotten = False
     CharacterIndex = 0
     bUseDebug = False
@@ -29,6 +33,20 @@ class MSmState(object):
     HandleNumber_Main = 0
     HandleNumber_Render = 0
     HandleNumber_Keyboard = 0
+
+    GlobalExitHitPos = [749,20]
+    GlobalExitHitRect = [8, 8]
+    
+    ReturnChachaterSelectHitPos = [482,439]
+    ReturnChachaterSelectHitRect = [20, 10]
+    
+    GlobalExitPic = cv2.imdecode(fromfile(frozen.app_path() + "\\Data\\Global\\GameEnd.png" , dtype=uint8), -1)
+    GlobalExitPic = cv2.cvtColor(GlobalExitPic, cv2.COLOR_BGR2GRAY)
+
+    CharacterSelectIdPic = cv2.imdecode(fromfile(frozen.app_path() + "\\Data\\CharacterSelect\\Identification\\0.png" , dtype=uint8), -1)
+    CharacterSelectIdPic = cv2.cvtColor(CharacterSelectIdPic, cv2.COLOR_BGR2GRAY)
+
+
     def __init__(self, StateName):
         left, top, right, bottom = win32gui.GetWindowRect(MSmState.HandleNumber_Render)
         self.ScreenShotImage = None
@@ -75,6 +93,7 @@ class MSmState(object):
             JumpInfoJson = json.load(open(JumpInfoPath, 'r', encoding='utf-8'))
             for i in range(len(JumpInfoJson)):
                 self.JumpInfo[JumpInfoJson[i]["NextStateName"]] = [JumpInfoJson[i]["ClickPos"],JumpInfoJson[i]["ClickRange"]]
+
 
     def IsUnderState(self, MatchingThreshold = 0.8):
         self.RefreshScreenShot()
@@ -138,7 +157,7 @@ class MSmState(object):
             HitRange = self.JumpInfo[TargetState.Name][1]
             #make sure leave current state
             #try 30 times
-            MaxOpTimes = 300
+            MaxOpTimes = HitMaxTimes
             OpTimes = 0
             sleeptime = 1
             if(self.Name == "SystemMenuOpening" and TargetState.Name == "GameModeDefault"):
@@ -146,19 +165,17 @@ class MSmState(object):
             if(self.Name == "SystemMenuOpening" and TargetState.Name == "FastJump"):
                 sleeptime = 3
 
-            while(self.IsUnderState() and OpTimes != MaxOpTimes ):
+            while(True):
                 self.DoHit(HitPos, HitRange)
                 sleep(sleeptime)
+                OpTimes += 1
                 if TargetState.IsUnderState():
                     print("Jump success by reaching taget state " + TargetState.Name)
                     sleep(WaitingTime)
                     return 0
-            if OpTimes < 300:
-                print("Jump success by leaving current state "+ self.Name)
-                return 0
-            else:
-                print("State {self.Name} can not leave current state, please check jump table")
-                return 1
+                if OpTimes > MaxOpTimes:
+                    raise RuntimeError("Can not leave current state " + self.Name)
+
         else:
             print("State " + self.Name + "has no methon jump to " + TargetState.Name +", please check jump table")
             return 2
@@ -220,20 +237,29 @@ class MSmState(object):
         img = cv2.imdecode(fromfile(Path_cur + "\\" + PicName + ".png", dtype=uint8), -1)
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY);
 
+    def ForceReturnTocharacterSelect(self):
+        self.TryInnerJumpByPos([MSmState.GlobalExitHitPos, MSmState.GlobalExitHitRect], MSmState.GlobalExitPic)
+        self.TryInnerJumpByPos([MSmState.ReturnChachaterSelectHitPos, MSmState.ReturnChachaterSelectHitRect], MSmState.CharacterSelectIdPic)
+
     def WaitUntil(self, CheckPic):
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic)
+        CurLoop = 0
         while bSuccess == False:
             sleep(1)
             self.RefreshScreenShot();
             bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            CurLoop += 1
+            if CurLoop > WaittingMaxTimes:
+                raise RuntimeError("InfiniteLoop")
 
     def TryInnerJumpByPos(self, HitPos, CheckPic):
         self.DoHit(HitPos[0],HitPos[1])
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic)
+        CurLoop = 0
         while bSuccess == False:
             self.DoHit(HitPos[0],HitPos[1])
             sleep(1)
@@ -245,12 +271,16 @@ class MSmState(object):
             sleep(0.3)
             self.RefreshScreenShot();
             bSuccess = bSuccess or self.IsPicMatching(CheckPic)
+            CurLoop += 1
+            if CurLoop > HitMaxTimes:
+                raise RuntimeError("InfiniteLoop")
 
     def TryInnerJump(self, HitName, CheckPic, MatchingThreshold = 0.8):
         self.DoHitByName(HitName);
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic, MatchingThreshold)
+        CurLoop = 0
         while bSuccess == False:
             self.DoHitByName(HitName);
             sleep(1)
@@ -262,12 +292,16 @@ class MSmState(object):
             sleep(0.3)
             self.RefreshScreenShot();
             bSuccess = bSuccess or self.IsPicMatching(CheckPic, MatchingThreshold)
+            CurLoop += 1
+            if CurLoop > HitMaxTimes:
+                raise RuntimeError("InfiniteLoop")
 
     def TryLeaveJumpByPos(self, HitPos, CheckPic):
         self.DoHit(HitPos[0],HitPos[1])
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic)
+        CurLoop = 0
         while bSuccess == True:
             self.DoHit(HitPos[0],HitPos[1])
             sleep(1)
@@ -279,12 +313,16 @@ class MSmState(object):
             sleep(0.3)
             self.RefreshScreenShot();
             bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            CurLoop += 1
+            if CurLoop > HitMaxTimes:
+                raise RuntimeError("InfiniteLoop")
 
     def TryLeaveJump(self, HitName, CheckPic, MatchingThreshold = 0.8):
         self.DoHitByName(HitName);
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic, MatchingThreshold)
+        CurLoop = 0
         while bSuccess == True:
             self.DoHitByName(HitName);
             sleep(1)
@@ -296,6 +334,9 @@ class MSmState(object):
             sleep(0.3)
             self.RefreshScreenShot();
             bSuccess = bSuccess and self.IsPicMatching(CheckPic, MatchingThreshold)
+            CurLoop += 1
+            if CurLoop > HitMaxTimes:
+                raise RuntimeError("InfiniteLoop")
     
             
     def TryLeaveJumpAuto(self, CheckPic, HitOffset, HitRange):
@@ -308,6 +349,7 @@ class MSmState(object):
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic)
+        CurLoop = 0
         while bSuccess == True:
             AutoPos = self.GetPicPos(CheckPic, 0.9,cv2.TM_CCORR_NORMED)
             if AutoPos is None:
@@ -322,12 +364,16 @@ class MSmState(object):
             sleep(0.3)
             self.RefreshScreenShot();
             bSuccess = bSuccess and self.IsPicMatching(CheckPic)
+            CurLoop += 1
+            if CurLoop > HitMaxTimes:
+                raise RuntimeError("InfiniteLoop")
 
     def TryLeaveJump2(self, HitName, CheckPic, CheckPic2):
         self.DoHitByName(HitName);
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = (self.IsPicMatching(CheckPic) or self.IsPicMatching(CheckPic2))
+        CurLoop = 0
         while bSuccess == True:
             self.DoHitByName(HitName);
             sleep(1)
@@ -339,6 +385,9 @@ class MSmState(object):
             sleep(0.3)
             self.RefreshScreenShot();
             bSuccess = bSuccess and (self.IsPicMatching(CheckPic) or self.IsPicMatching(CheckPic2))
+            CurLoop += 1
+            if CurLoop > HitMaxTimes:
+                raise RuntimeError("InfiniteLoop")
 
     def DoAddTimes(self):
         return
@@ -351,11 +400,15 @@ class MSmState(object):
     def WaitingForAutoFightingFinished(self):
         self.RefreshScreenShot()
         bAutoFightingFinished = self.IsPicMatching(self.ExitIdImage);
+        CurLoop = 0
         while bAutoFightingFinished == False:
             sleep(5)
             self.RefreshScreenShot()
             self.CloseAuction()
             bAutoFightingFinished = self.IsPicMatching(self.ExitIdImage);
+            CurLoop += 1
+            if CurLoop > WaittingMaxTimes:
+                raise RuntimeError("InfiniteLoop")
 
 class MSmState_CharacterSelect(MSmState):
     CurrentSelectedCharacterIndex = 0
@@ -681,6 +734,7 @@ class MSmState_Material(MSmState):
 
 
         self.TryLeaveJump("Enter2",self.Enter1)
+        curloop = 0
         while True:
             self.RefreshScreenShot()
             if self.IsPicMatching(self.MaterialGiveUpIdImage):
@@ -690,6 +744,10 @@ class MSmState_Material(MSmState):
                 self.SaveScreenShot()
                 break
             sleep(5)
+            curloop = curloop + 1
+            if curloop > 100:
+                raise RuntimeError("Material exit timeout")
+            
         MSmState.bAllMaterialHasGotten = False
         self.TryLeaveJump("Exit", self.MaterialExitIdImage)
         

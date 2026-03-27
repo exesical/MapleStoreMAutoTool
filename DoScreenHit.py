@@ -106,6 +106,10 @@ class DoScreenHit(object):
         sleep(0.02)
         SendMessage(self.HandleNumber_Keyboard, WM_KEYUP, 0x50, 0)
 
+    def PressKeyboardESC(self):
+        SendMessage(self.HandleNumber_Keyboard, WM_KEYDOWN, 0x1B, 0)
+        SendMessage(self.HandleNumber_Keyboard, WM_KEYUP, 0x1B, 0)
+
 #test
 if __name__ == '__main__':
     hit = DoScreenHit(0)

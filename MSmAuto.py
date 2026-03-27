@@ -9,23 +9,51 @@ import sys
 #from datatime import datatime
 import datetime
 import time
+import win32api
+import win32con
 
-def load_task_config():
-    """加载任务配置文件"""
+def load_config_from_savetaskgroup(task_group):
+    """从SaveTaskGroup加载配置信息"""
     try:
-        config_path = frozen.app_path() + "\\task_config.json"
-        if os.path.exists(config_path):
-            with open(config_path, 'r', encoding='utf-8') as f:
+        config_info_path = frozen.app_path() + f"\\Data\\SaveTaskGroup\\TaskGroup{task_group}\\config_info.json"
+        if os.path.exists(config_info_path):
+            with open(config_info_path, 'r', encoding='utf-8') as f:
                 config = json.load(f)
+                print(f"从SaveTaskGroup{task_group}加载配置信息")
                 return config
     except Exception as e:
-        print(f"加载任务配置失败: {e}")
+        print(f"加载SaveTaskGroup配置信息失败: {e}")
     return None
 
-if __name__ == '__main__':
-    # 加载任务配置
-    task_config = load_task_config()
+def load_task_json_file(task_group, filename):
+    """加载任务JSON文件，优先从SaveTaskGroup读取，否则从Data/TaskGroup读取"""
+    save_path = frozen.app_path() + f"\\Data\\SaveTaskGroup\\TaskGroup{task_group}\\{filename}"
+    default_path = frozen.app_path() + f"\\Data\\TaskGroup{task_group}\\{filename}"
     
+    # 优先从SaveTaskGroup读取
+    if os.path.exists(save_path):
+        try:
+            with open(save_path, 'r', encoding='utf-8') as f:
+                print(f"从SaveTaskGroup加载: {filename}")
+                return json.load(f)
+        except Exception as e:
+            print(f"从SaveTaskGroup加载{filename}失败: {e}，尝试加载默认配置...")
+    
+    # 回退到Data/TaskGroup（只读默认配置）
+    if os.path.exists(default_path):
+        try:
+            with open(default_path, 'r', encoding='utf-8') as f:
+                print(f"从Data/TaskGroup加载默认配置: {filename}")
+                return json.load(f)
+        except Exception as e:
+            print(f"加载默认配置{filename}失败: {e}")
+    
+    # 如果都失败，返回空列表
+    print(f"警告：无法加载{filename}，使用空配置")
+    return []
+
+def main():
+    """主函数入口"""
     bExpeditionMode = False
     bExpeditionModeEnable = False;
     CharacterCount = 100000
@@ -35,38 +63,16 @@ if __name__ == '__main__':
     bCanUesFastMode = False
     TestTaskIndex = 0;
     # 0 is NitePyramid, 1 is MonsterPark
-    FastJumpType = 0;
     WeekDay = datetime.datetime.now().weekday()
     TaskGroupIndex = WeekDay % 2;
+    ViceCharacterCount = 0
+    PostProcessType = 10  # 默认值
+    FastJumpType = 0  # 默认值
+    AdditionalMaterial = 0  # 默认值
     
-    # 如果有任务配置文件，使用配置文件中的设置
-    if task_config:
-        print("发现任务配置文件，正在加载配置...")
-        TaskGroupIndex = task_config.get("current_task_group", TaskGroupIndex)
-        CharacterCount = task_config.get("character_count", 100000)
-        ViceCharacterCount = task_config.get("vice_character_count", 0)
-        print(f"配置已加载 - TaskGroup: {TaskGroupIndex}, 角色数: {CharacterCount}, 前五号: {ViceCharacterCount}")
-    else:
-        ViceCharacterCount = 0
     
-    MSmState_CharacterSelect.bUseInverseSelect = TaskGroupIndex
-    # 10 default 
-    # 1 recive weekly reward
-    # 2 自动换黄图
-    # 3 自动整理背包
-    # 4 自动跳过委托
-    # 11 default + recive weekly reward
-    # 12 default + 自动换黄图
-    # 13 default + 自动开箱子
-    PostProcessType =10
-    if WeekDay <= 3:
-        FastJumpType = 1
-    else:
-        FastJumpType = 0
 
-    if WeekDay == 6:
-        PostProcessType = 11
-
+    # 先处理命令行参数，确定TaskGroupIndex
     for args in sys.argv:
         if search(r'debug', args):
             MSmState.bUseDebug = True
@@ -93,9 +99,75 @@ if __name__ == '__main__':
         if search(r'TaskGroupIndex',args):
             TaskGroupIndex = int(args.split("=")[1])
         if search(r'AdditionalMaterial',args):
-            MSmState_Material.bAdditionalMaterial = int(args.split("=")[1])
+            AdditionalMaterial = int(args.split("=")[1])
         if search(r'ViceCharacterCount',args):
             ViceCharacterCount = int(args.split("=")[1])
+
+    # 处理完命令行参数后，尝试从SaveTaskGroup加载配置信息
+    task_config = load_config_from_savetaskgroup(TaskGroupIndex)
+    if task_config:
+        print("发现SaveTaskGroup配置信息，正在加载配置...")
+        # 注意：不覆盖TaskGroupIndex，因为可能是从命令行指定的
+        ViceCharacterCount = task_config.get("vice_character_count", ViceCharacterCount)
+        # 从配置中加载PostProcessType（只有在命令行没有指定的情况下）
+        if "post_process_type" in task_config:
+            # 检查命令行是否已经设置了PostProcessType
+            post_process_from_cmdline = any(search(r'PostProcessType', arg) for arg in sys.argv[1:])
+            if not post_process_from_cmdline:
+                PostProcessType = task_config["post_process_type"]
+                print(f"从SaveTaskGroup加载PostProcessType: {PostProcessType}")
+                
+        # 从配置中加载FastJumpType（只有在命令行没有指定的情况下）
+        if "fast_jump_type" in task_config:
+            # 检查命令行是否已经设置了FastJumpType
+            fast_jump_from_cmdline = any(search(r'FastJumpType', arg) for arg in sys.argv[1:])
+            if not fast_jump_from_cmdline:
+                FastJumpType = task_config["fast_jump_type"]
+                print(f"从SaveTaskGroup加载FastJumpType: {FastJumpType}")
+                
+        # 从配置中加载AdditionalMaterial（只有在命令行没有指定的情况下）
+        if "additional_material" in task_config:
+            # 检查命令行是否已经设置了AdditionalMaterial
+            additional_material_from_cmdline = any(search(r'AdditionalMaterial', arg) for arg in sys.argv[1:])
+            if not additional_material_from_cmdline:
+                AdditionalMaterial = task_config["additional_material"]
+                print(f"从SaveTaskGroup加载AdditionalMaterial: {AdditionalMaterial}")
+                
+        print(f"配置已加载 - TaskGroup: {TaskGroupIndex}, 副号: {ViceCharacterCount}, 后处理: {PostProcessType}, 快速副本: {FastJumpType}, 额外材料: {AdditionalMaterial}")
+    
+    MSmState_CharacterSelect.bUseInverseSelect = TaskGroupIndex
+    # PostProcessType说明:
+    # 10 default 
+    # 1 收周任务奖励
+    # 2 自动换黄图
+    # 3 自动整理背包
+    # 4 自动跳过委托
+    # 11 default + 收周任务奖励
+    # 12 default + 自动换黄图
+    # 13 default + 自动整理背包
+    # 14 default + 自动跳过委托
+    
+    # 只有在没有从SaveTaskGroup或命令行设置时，才使用基于星期的默认值
+    post_process_set_by_config = task_config and "post_process_type" in task_config
+    post_process_set_by_cmdline = any(search(r'PostProcessType', arg) for arg in sys.argv[1:])
+    fast_jump_set_by_config = task_config and "fast_jump_type" in task_config
+    fast_jump_set_by_cmdline = any(search(r'FastJumpType', arg) for arg in sys.argv[1:])
+    additional_material_set_by_config = task_config and "additional_material" in task_config
+    additional_material_set_by_cmdline = any(search(r'AdditionalMaterial', arg) for arg in sys.argv[1:])
+    
+    if not post_process_set_by_config and not post_process_set_by_cmdline and WeekDay == 6:
+        PostProcessType = 11
+        
+    if not fast_jump_set_by_config and not fast_jump_set_by_cmdline:
+        # 基于星期的FastJumpType默认值
+        if WeekDay <= 3:
+            FastJumpType = 1
+        else:
+            FastJumpType = 0
+    
+    # AdditionalMaterial没有基于星期的默认值，保持默认的0
+    
+    print(f"最终配置 - TaskGroup: {TaskGroupIndex}, 副号: {ViceCharacterCount}, 后处理类型: {PostProcessType}, 快速副本类型: {FastJumpType}, 额外材料: {AdditionalMaterial}")
 
     IsMainCharacter = False
     hwd_title = "MuMu安卓设备"
@@ -112,6 +184,8 @@ if __name__ == '__main__':
         DoScreenHit.ApplicationWindowsTitleHeight = 33
     if MSmState.HandleNumber_Main  == MSmState.HandleNumber_Render:
         print("Warning: HandleNumber_Main is equal to HandleNumber_Render, considier run with -MainWindowsCapture")
+
+
     today = datetime.date.today()
     CurCharacterIndex = 0
     CurCharacterIndexFileName  = frozen.app_path() +"\\" + today.strftime('RecordFile%y%m%d');
@@ -137,6 +211,8 @@ if __name__ == '__main__':
                     if search(r'RecordFile', file) or search(r'&m', file):
                         if not search(today.strftime('RecordFile%y%m%d'), file):
                             os.remove(file)
+
+
 
     if MSmState.HandleNumber_Main != 0:
         StateTable = {}
@@ -165,6 +241,8 @@ if __name__ == '__main__':
         StateTable["PostProcess"]          = MSmState_PostProcess("PostProcess")
         StateTable["Expedition"]           = MSmState_Expedition("Expedition")
 
+
+        
         #global jump table means 
         #TODO, global jump table can be gen by each states' jump table
         GlobalJumpTable = {}
@@ -179,14 +257,33 @@ if __name__ == '__main__':
             GlobalJumpTable[targetstatename] = TargetJumeTable
 
         
-        TaskJsonExpedition = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListExpedition.json", 'r', encoding='utf-8'))
-        TaskJson = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskList.json", 'r', encoding='utf-8'))
-        TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListMain.json", 'r', encoding='utf-8'))
-        TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TaskGroup"+ str(TaskGroupIndex) + "\\TaskListFive.json", 'r', encoding='utf-8'))
+        # 使用新的加载函数，优先从SaveTaskGroup读取，回退到Data/TaskGroup
         if bTestMode:        
+            TaskJsonExpedition = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))
             TaskJson = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))
             TaskJsonMain = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))
             TaskJsonFive = json.load(open(frozen.app_path() + "\\Data\\TestList"+ str(TestTaskIndex) +".json", 'r', encoding='utf-8'))
+        else:
+            # 正常模式：优先从SaveTaskGroup加载，回退到Data/TaskGroup（只读）
+            TaskJsonExpedition = load_task_json_file(TaskGroupIndex, "TaskListExpedition.json")
+            TaskJson = load_task_json_file(TaskGroupIndex, "TaskList.json")
+            TaskJsonMain = load_task_json_file(TaskGroupIndex, "TaskListMain.json") 
+            TaskJsonFive = load_task_json_file(TaskGroupIndex, "TaskListFive.json")
+            
+            print(f"\n配置加载完成:")
+            print(f"- TaskGroup: {TaskGroupIndex}")
+            print(f"- 主号任务数: {len(TaskJsonMain)}")
+            print(f"- 副号任务数: {len(TaskJsonFive)}")
+            print(f"- 其他角色任务数: {len(TaskJson)}")
+            print(f"- 远征任务数: {len(TaskJsonExpedition)}")
+            
+            # 详细打印各类型角色的任务列表
+            print(f"\n=== 详细任务配置 ===")
+            print(f"主号任务列表: {TaskJsonMain}")
+            print(f"副号任务列表: {TaskJsonFive}")
+            print(f"其他角色任务列表: {TaskJson}")
+            print(f"远征任务列表: {TaskJsonExpedition}")
+            print(f"==================\n")
 
         InitState = StateTable["CharacterSelect"] 
         if InitState.IsUnderState() == False:
@@ -200,6 +297,7 @@ if __name__ == '__main__':
         bLastExpeditionMode = bExpeditionMode
         MSmState_FastJump.FastJumpType = FastJumpType;
         MSmState_PostProcess.PostProcessType = PostProcessType;
+        MSmState_Material.bAdditionalMaterial = AdditionalMaterial;
         if True:
             for j in range(0, 100000):
                 current_time_h = int(time.strftime("%H:%M:%S")[0:2])
@@ -240,54 +338,57 @@ if __name__ == '__main__':
                 if CurIndex == 0:
                     MSmState.bMainCharacter = True
                     MSmState.bFastMode = False
+                elif CurIndex <= ViceCharacterCount:
+                    MSmState.bViceCharacter = True
+                    MSmState.bMainCharacter = False
                 else:
                     MSmState.bMainCharacter = False
                     if bCanUesFastMode:
                         MSmState.bFastMode = True
    
                 TaskLen = len(TaskCur)
+
                 for StateIndex in range(TaskLen):
                     TargetStateName = TaskCur[StateIndex]
                     TargetState = StateTable[TargetStateName]
-                    while CurrentState.Name != TargetStateName:
-                        #Processing state
-                        #mostly do close ads or select to main character
-                        #now all Processing would return true
-                        print("Start processing state " + CurrentState.Name)
-                        CurrentState.Processing()
-                        print("End processing state " + CurrentState.Name)
-                        #find next jump
-                        NextStateName = GlobalJumpTable[TargetStateName][CurrentState.Name]
-                        NextState = StateTable[NextStateName]
-                        res = CurrentState.JumpToTarget(NextState)
-                        if res == 0:
-                            MaxIter = 100
-                            Iter = 0
-                            while NextState.IsUnderState() == False and Iter < MaxIter:
-                                sleep(1)
-                                Iter = Iter + 1
-                            if(Iter < MaxIter):
-                                CurrentState = NextState
-                                continue
-                            else:
-                                if LoginState.IsUnderState():
-                                    #means miss connection
-                                    CurrentState = LoginState
-                                    break
-                                if CurrentState.IsUnderState():
-                                    #can not jump to next state in otherwise, go to next character task
-                                    StateIndex = TaskLen -1
-                                    break
+                    try:
+                        while CurrentState.Name != TargetStateName:
+                            #Processing state
+                            #mostly do close ads or select to main character
+                            #now all Processing would return true
+                            print("Start processing state " + CurrentState.Name)
+                            CurrentState.Processing()
+                            print("End processing state " + CurrentState.Name)
+                            #find next jump
+                            NextStateName = GlobalJumpTable[TargetStateName][CurrentState.Name]
+                            NextState = StateTable[NextStateName]
+                            res = CurrentState.JumpToTarget(NextState)
+                            if res == 0:
+                                MaxIter = 500
+                                Iter = 0
+                                while NextState.IsUnderState() == False and Iter < MaxIter:
+                                    sleep(1)
+                                    Iter = Iter + 1
+                                if(Iter < MaxIter):
+                                    CurrentState = NextState
+                                    continue
+                                else:
+                                    raise RuntimeError("Jump to target state failed")
 
-                        elif res == 1:
-                            exit(1)
-                        elif res == 2:
-                            #if has no jump info, just move to next target
-                            break
+                            elif res == 1:
+                                exit(1)
+                            elif res == 2:
+                                #if has no jump info, just move to next target
+                                break
+                    except RuntimeError:
+                        StateIndex = 0
+                        StartStateName = TaskCur[StateIndex]
+                        StartState = StateTable[StartStateName]
+                        StartState.ForceReturnTocharacterSelect()
+
 
     else:
         print("please open 雷电模拟器 first")
 
-
-
-    
+if __name__ == '__main__':
+    main()
