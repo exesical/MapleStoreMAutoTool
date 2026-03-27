@@ -18,8 +18,8 @@ import random
 
 GHasGottenAll = False
 
-WaittingMaxTimes = 6000
-HitMaxTimes = 10
+WaittingMaxTimes = 600
+HitMaxTimes = 30
 
 class MSmState(object):
     """description of class"""

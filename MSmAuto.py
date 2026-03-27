@@ -364,7 +364,7 @@ def main():
                             NextState = StateTable[NextStateName]
                             res = CurrentState.JumpToTarget(NextState)
                             if res == 0:
-                                MaxIter = 10
+                                MaxIter = 30
                                 Iter = 0
                                 while NextState.IsUnderState() == False and Iter < MaxIter:
                                     sleep(1)
