@@ -66,9 +66,15 @@ def main():
     WeekDay = datetime.datetime.now().weekday()
     TaskGroupIndex = WeekDay % 2;
     ViceCharacterCount = 0
-    PostProcessType = 10  # 默认值
+    PostProcessType = 0  # 已废弃，保留用于兼容性
+    # PostProcess 相关的 bool 开关
+    bPostProcessDefault = True  # 默认功能：发送人气、交易商品、日常任务等
+    bPostProcessWeeklyReward = False  # 收周任务奖励
+    bPostProcessAutoChange = False  # 自动换黄图
+    bPostProcessOrganizePackage = False  # 自动整理背包
+    bPostProcessSkipCommission = False  # 自动跳过委托
+    bPostProcessAdditionalMaterial = False  # 开材料卷
     FastJumpType = 0  # 默认值
-    AdditionalMaterial = 0  # 默认值
     
     #MSmState.bUseDebug = True
 
@@ -94,12 +100,20 @@ def main():
             TestTaskIndex = int(args.split("=")[1])
         if search(r'FastJumpType',args):
             FastJumpType = int(args.split("=")[1])
-        if search(r'PostProcessType',args):
-            PostProcessType = int(args.split("=")[1])
+        if search(r'bPostProcessDefault',args):
+            bPostProcessDefault = args.split("=")[1].lower() == 'true'
+        if search(r'bPostProcessWeeklyReward',args):
+            bPostProcessWeeklyReward = args.split("=")[1].lower() == 'true'
+        if search(r'bPostProcessAutoChange',args):
+            bPostProcessAutoChange = args.split("=")[1].lower() == 'true'
+        if search(r'bPostProcessOrganizePackage',args):
+            bPostProcessOrganizePackage = args.split("=")[1].lower() == 'true'
+        if search(r'bPostProcessSkipCommission',args):
+            bPostProcessSkipCommission = args.split("=")[1].lower() == 'true'
+        if search(r'bPostProcessAdditionalMaterial',args):
+            bPostProcessAdditionalMaterial = args.split("=")[1].lower() == 'true'
         if search(r'TaskGroupIndex',args):
             TaskGroupIndex = int(args.split("=")[1])
-        if search(r'AdditionalMaterial',args):
-            AdditionalMaterial = int(args.split("=")[1])
         if search(r'ViceCharacterCount',args):
             ViceCharacterCount = int(args.split("=")[1])
 
@@ -109,14 +123,17 @@ def main():
         print("发现SaveTaskGroup配置信息，正在加载配置...")
         # 注意：不覆盖TaskGroupIndex，因为可能是从命令行指定的
         ViceCharacterCount = task_config.get("vice_character_count", ViceCharacterCount)
-        # 从配置中加载PostProcessType（只有在命令行没有指定的情况下）
-        if "post_process_type" in task_config:
-            # 检查命令行是否已经设置了PostProcessType
-            post_process_from_cmdline = any(search(r'PostProcessType', arg) for arg in sys.argv[1:])
-            if not post_process_from_cmdline:
-                PostProcessType = task_config["post_process_type"]
-                print(f"从SaveTaskGroup加载PostProcessType: {PostProcessType}")
-                
+        # 从配置中加载 PostProcess 相关的 bool 开关
+        post_process_bool_from_cmdline = any(search(r'bPostProcess', arg) for arg in sys.argv[1:])
+        if not post_process_bool_from_cmdline:
+            bPostProcessDefault = task_config.get("b_post_process_default", bPostProcessDefault)
+            bPostProcessWeeklyReward = task_config.get("b_post_process_weekly_reward", bPostProcessWeeklyReward)
+            bPostProcessAutoChange = task_config.get("b_post_process_auto_change", bPostProcessAutoChange)
+            bPostProcessOrganizePackage = task_config.get("b_post_process_organize_package", bPostProcessOrganizePackage)
+            bPostProcessSkipCommission = task_config.get("b_post_process_skip_commission", bPostProcessSkipCommission)
+            bPostProcessAdditionalMaterial = task_config.get("b_post_process_additional_material", bPostProcessAdditionalMaterial)
+            print(f"从SaveTaskGroup加载PostProcess配置: Default={bPostProcessDefault}, WeeklyReward={bPostProcessWeeklyReward}, AutoChange={bPostProcessAutoChange}, OrganizePackage={bPostProcessOrganizePackage}, SkipCommission={bPostProcessSkipCommission}, AdditionalMaterial={bPostProcessAdditionalMaterial}")
+            
         # 从配置中加载FastJumpType（只有在命令行没有指定的情况下）
         if "fast_jump_type" in task_config:
             # 检查命令行是否已经设置了FastJumpType
@@ -125,38 +142,26 @@ def main():
                 FastJumpType = task_config["fast_jump_type"]
                 print(f"从SaveTaskGroup加载FastJumpType: {FastJumpType}")
                 
-        # 从配置中加载AdditionalMaterial（只有在命令行没有指定的情况下）
-        if "additional_material" in task_config:
-            # 检查命令行是否已经设置了AdditionalMaterial
-            additional_material_from_cmdline = any(search(r'AdditionalMaterial', arg) for arg in sys.argv[1:])
-            if not additional_material_from_cmdline:
-                AdditionalMaterial = task_config["additional_material"]
-                print(f"从SaveTaskGroup加载AdditionalMaterial: {AdditionalMaterial}")
-                
-        print(f"配置已加载 - TaskGroup: {TaskGroupIndex}, 副号: {ViceCharacterCount}, 后处理: {PostProcessType}, 快速副本: {FastJumpType}, 额外材料: {AdditionalMaterial}")
+        print(f"配置已加载 - TaskGroup: {TaskGroupIndex}, 副号: {ViceCharacterCount}, 快速副本: {FastJumpType}")
     
     MSmState_CharacterSelect.bUseInverseSelect = TaskGroupIndex
-    # PostProcessType说明:
-    # 10 default 
-    # 1 收周任务奖励
-    # 2 自动换黄图
-    # 3 自动整理背包
-    # 4 自动跳过委托
-    # 11 default + 收周任务奖励
-    # 12 default + 自动换黄图
-    # 13 default + 自动整理背包
-    # 14 default + 自动跳过委托
+    # PostProcess 相关的 bool 开关说明:
+    # bPostProcessDefault: 发送人气、交易商品、日常任务等
+    # bPostProcessWeeklyReward: 收周任务奖励
+    # bPostProcessAutoChange: 自动换黄图
+    # bPostProcessOrganizePackage: 自动整理背包
+    # bPostProcessSkipCommission: 自动跳过委托
+    # bPostProcessAdditionalMaterial: 开材料卷
     
     # 只有在没有从SaveTaskGroup或命令行设置时，才使用基于星期的默认值
-    post_process_set_by_config = task_config and "post_process_type" in task_config
-    post_process_set_by_cmdline = any(search(r'PostProcessType', arg) for arg in sys.argv[1:])
+    post_process_bool_from_cmdline = any(search(r'bPostProcess', arg) for arg in sys.argv[1:])
+    post_process_bool_from_config = task_config and any(k.startswith("b_post_process_") for k in task_config.keys())
     fast_jump_set_by_config = task_config and "fast_jump_type" in task_config
     fast_jump_set_by_cmdline = any(search(r'FastJumpType', arg) for arg in sys.argv[1:])
-    additional_material_set_by_config = task_config and "additional_material" in task_config
-    additional_material_set_by_cmdline = any(search(r'AdditionalMaterial', arg) for arg in sys.argv[1:])
     
-    if not post_process_set_by_config and not post_process_set_by_cmdline and WeekDay == 6:
-        PostProcessType = 11
+    # 周日自动开启收周任务奖励
+    if not post_process_bool_from_config and not post_process_bool_from_cmdline and WeekDay == 6:
+        bPostProcessWeeklyReward = True
         
     if not fast_jump_set_by_config and not fast_jump_set_by_cmdline:
         # 基于星期的FastJumpType默认值
@@ -165,9 +170,7 @@ def main():
         else:
             FastJumpType = 0
     
-    # AdditionalMaterial没有基于星期的默认值，保持默认的0
-    
-    print(f"最终配置 - TaskGroup: {TaskGroupIndex}, 副号: {ViceCharacterCount}, 后处理类型: {PostProcessType}, 快速副本类型: {FastJumpType}, 额外材料: {AdditionalMaterial}")
+    print(f"最终配置 - TaskGroup: {TaskGroupIndex}, 副号: {ViceCharacterCount}, 后处理: Default={bPostProcessDefault}, WeeklyReward={bPostProcessWeeklyReward}, AutoChange={bPostProcessAutoChange}, OrganizePackage={bPostProcessOrganizePackage}, SkipCommission={bPostProcessSkipCommission}, AdditionalMaterial={bPostProcessAdditionalMaterial}, 快速副本类型: {FastJumpType}")
 
     IsMainCharacter = False
     hwd_title = "MuMu安卓设备"
@@ -240,6 +243,7 @@ def main():
         StateTable["Wulin"]                = MSmState_Wulin("Wulin")
         StateTable["PostProcess"]          = MSmState_PostProcess("PostProcess")
         StateTable["Expedition"]           = MSmState_Expedition("Expedition")
+        StateTable["DailyTask"]            = MSmState_DailyTask("DailyTask")
 
         
         #global jump table means 
@@ -295,8 +299,12 @@ def main():
         bStateChanged = False
         bLastExpeditionMode = bExpeditionMode
         MSmState_FastJump.FastJumpType = FastJumpType;
-        MSmState_PostProcess.PostProcessType = PostProcessType;
-        MSmState_Material.bAdditionalMaterial = AdditionalMaterial;
+        MSmState_PostProcess.bDefault = bPostProcessDefault;
+        MSmState_PostProcess.bWeeklyReward = bPostProcessWeeklyReward;
+        MSmState_PostProcess.bAutoChange = bPostProcessAutoChange;
+        MSmState_PostProcess.bOrganizePackage = bPostProcessOrganizePackage;
+        MSmState_PostProcess.bSkipCommission = bPostProcessSkipCommission;
+        MSmState_PostProcess.bAdditionalMaterial = bPostProcessAdditionalMaterial;
         if True:
             for j in range(0, 100000):
                 current_time_h = int(time.strftime("%H:%M:%S")[0:2])

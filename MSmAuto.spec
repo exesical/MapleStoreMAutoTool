@@ -1,49 +1,25 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 
-block_cipher = None
-
-
 a = Analysis(
     ['MSmAuto.py'],
     pathex=[],
     binaries=[],
-    datas=[
-        ('Data', 'Data'),
-        ('templates', 'templates'),
-        ('*.json', '.'),
-        ('*.png', '.'),
-    ],
-    hiddenimports=[
-        'PIL',
-        'PIL.Image',
-        'PIL.ImageTk',
-        'cv2',
-        'numpy',
-        'win32gui',
-        'win32con',
-        'win32api',
-        'datetime',
-        'time',
-        'os',
-        'json',
-    ],
+    datas=[],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
-    win_no_prefer_redirects=False,
-    win_private_assemblies=False,
-    cipher=block_cipher,
     noarchive=False,
+    optimize=0,
 )
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+pyz = PYZ(a.pure)
 
 exe = EXE(
     pyz,
     a.scripts,
     a.binaries,
-    a.zipfiles,
     a.datas,
     [],
     name='MSmAuto',

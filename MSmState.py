@@ -33,7 +33,7 @@ class MSmState(object):
     HandleNumber_Main = 0
     HandleNumber_Render = 0
     HandleNumber_Keyboard = 0
-
+    bFirstStart = True
     GlobalExitHitPos = [749,20]
     GlobalExitHitRect = [8, 8]
     
@@ -232,6 +232,20 @@ class MSmState(object):
 
         return PicArray
 
+    def ReadPicMap(self):
+        """读取当前state目录下所有png文件，存储到map中，键值为文件名不带后缀"""
+        Path_cur = frozen.app_path() + "\\Data\\" + self.Name
+        PicMap = {}
+        for cur_dir, sub_dir, included_file in walk(Path_cur):
+            if included_file:
+                for file in included_file:
+                    if file.lower().endswith('.png'):
+                        img = cv2.imdecode(fromfile(cur_dir + "\\" + file, dtype=uint8), -1)
+                        # 获取文件名不带后缀作为键值
+                        key = file[:-4] if file.lower().endswith('.png') else file
+                        PicMap[key] = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        return PicMap
+
     def ReadPic(self, PicName):
         Path_cur = frozen.app_path() + "\\Data\\" + self.Name
         img = cv2.imdecode(fromfile(Path_cur + "\\" + PicName + ".png", dtype=uint8), -1)
@@ -377,6 +391,169 @@ class MSmState(object):
             CurLoop += 1
             if CurLoop > HitMaxTimes:
                 raise RuntimeError("InfiniteLoop")
+
+    def GetHitInfo(self, HitPic, HitRange = 0.5, MatchingThreshold = 0.9):
+        sleep(0.5)
+        self.RefreshScreenShot();
+        HitPos = self.GetPicPos(HitPic, MatchingThreshold)
+        if HitPos is None:
+            return None
+        HitPicHeight, HitPicWidth = HitPic.shape[:2]
+        AutoHitPos = [HitPos[0] + int(HitPicWidth / 2), 
+                      HitPos[1] + int(HitPicHeight / 2) + DoScreenHit.ApplicationWindowsTitleHeight]
+        AutoHitRange = [int(HitPicWidth * HitRange), int(HitPicHeight * HitRange)]
+        return [AutoHitPos, AutoHitRange]
+
+    def TryLeaveJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8):
+        sleep(1)
+        print("TryLeaveJumpByPic with HitPic and CheckPic, matching threshold = " + str(MatchingThreshold))
+        self.RefreshScreenShot();
+        HitPos = self.GetPicPos(HitPic, MatchingThreshold)
+        if HitPos is None:
+            return
+        
+        # 根据HitPic的大小自动生成HitInfo，点击位置为HitPic的中心
+        HitPicHeight, HitPicWidth = HitPic.shape[:2]
+        AutoHitPos = [HitPos[0] + int(HitPicWidth / 2), 
+                      HitPos[1] + int(HitPicHeight / 2) + DoScreenHit.ApplicationWindowsTitleHeight]
+        AutoHitRange = [int(HitPicWidth * HitRange), int(HitPicHeight * HitRange)]
+        
+        self.DoHit(AutoHitPos, AutoHitRange)
+        sleep(1)
+        self.RefreshScreenShot();
+        bSuccess = self.IsPicMatching(CheckPic, MatchingThreshold)
+        CurLoop = 0
+        while bSuccess == True:
+# 更新HitPos
+            HitPos = self.GetPicPos(HitPic, MatchingThreshold)
+            if HitPos is not None:
+                AutoHitPos = [HitPos[0] + int(HitPicWidth / 2), 
+                              HitPos[1] + int(HitPicHeight / 2) + DoScreenHit.ApplicationWindowsTitleHeight]
+            self.DoHit(AutoHitPos, AutoHitRange)
+            sleep(1)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic, MatchingThreshold)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic, MatchingThreshold)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess and self.IsPicMatching(CheckPic, MatchingThreshold)
+            CurLoop += 1
+            if CurLoop > HitMaxTimes:
+                raise RuntimeError("InfiniteLoop")
+
+    def TryInnerJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8):
+        sleep(1)
+        print("TryInnerJumpByPic with HitPic and CheckPic, matching threshold = " + str(MatchingThreshold))
+        self.RefreshScreenShot();
+        HitPos = self.GetPicPos(HitPic, MatchingThreshold)
+        if HitPos is None:
+            return
+        
+        # 根据HitPic的大小自动生成HitInfo，点击位置为HitPic的中心
+        HitPicHeight, HitPicWidth = HitPic.shape[:2]
+        AutoHitPos = [HitPos[0] + int(HitPicWidth / 2), 
+                      HitPos[1] + int(HitPicHeight / 2) + DoScreenHit.ApplicationWindowsTitleHeight]
+        AutoHitRange = [int(HitPicWidth * HitRange), int(HitPicHeight * HitRange)]
+        
+        self.DoHit(AutoHitPos, AutoHitRange)
+        sleep(1)
+        self.RefreshScreenShot();
+        bSuccess = self.IsPicMatching(CheckPic, MatchingThreshold)
+        CurLoop = 0
+        while bSuccess == False:
+            # 更新HitPos
+            HitPos = self.GetPicPos(HitPic, MatchingThreshold)
+            if HitPos is not None:
+                AutoHitPos = [HitPos[0] + int(HitPicWidth / 2), 
+                              HitPos[1] + int(HitPicHeight / 2) + DoScreenHit.ApplicationWindowsTitleHeight]
+            self.DoHit(AutoHitPos, AutoHitRange)
+            sleep(1)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic, MatchingThreshold)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic, MatchingThreshold)
+            sleep(0.3)
+            self.RefreshScreenShot();
+            bSuccess = bSuccess or self.IsPicMatching(CheckPic, MatchingThreshold)
+            CurLoop += 1
+            if CurLoop > HitMaxTimes:
+                raise RuntimeError("InfiniteLoop")
+
+    def ExecuteSequenceByFolder(self, FolderName, HitRange = 0.5, MatchingThreshold = 0.8):
+        """
+        从指定文件夹读取HitPic和CheckPic序列并执行操作
+        
+        文件夹结构应为:
+        - HitPic_0.png, HitPic_1.png, ... (点击图片序列)
+        - CheckPic_0_L.png, CheckPic_0_J.png, CheckPic_1_L.png, CheckPic_1_J.png, ... (检查图片序列)
+        
+        L后缀表示使用TryLeaveJumpByPic (点击直到CheckPic消失)
+        J后缀表示使用TryInnerJumpByPic (点击直到CheckPic出现)
+        注意：同一个索引的L和J后缀不会同时存在
+        """
+        Path_cur = frozen.app_path() + "\\Data\\" + self.Name + "\\" + FolderName
+        
+        # 读取所有HitPic
+        HitPics = {}
+        for file in os.listdir(Path_cur):
+            if file.startswith("HitPic_") and file.endswith(".png"):
+                # 提取索引号，例如 HitPic_0.png -> index="0"
+                index = file.replace("HitPic_", "").replace(".png", "")
+                img = cv2.imdecode(fromfile(Path_cur + "\\" + file, dtype=uint8), -1)
+                HitPics[index] = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        
+        # 读取所有CheckPic
+        CheckPics = {}
+        for file in os.listdir(Path_cur):
+            if file.startswith("CheckPic_") and file.endswith(".png"):
+                # 提取索引号和后缀，例如 CheckPic_0_L.png -> index="0", suffix="L"
+                parts = file.replace("CheckPic_", "").replace(".png", "").rsplit("_", 1)
+                if len(parts) == 2:
+                    index, suffix = parts
+                    img = cv2.imdecode(fromfile(Path_cur + "\\" + file, dtype=uint8), -1)
+                    CheckPics[index] = (suffix, cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
+        
+        # 按索引排序执行操作
+        sorted_indices = sorted(HitPics.keys(), key=lambda x: int(x))
+        
+        for index in sorted_indices:
+            if index not in HitPics:
+                continue
+                
+            HitPic = HitPics[index]
+            
+            if index not in CheckPics:
+                # 如果没有对应的CheckPic，只点击一次
+                self.RefreshScreenShot()
+                HitPos = self.GetPicPos(HitPic, MatchingThreshold)
+                if HitPos is None:
+                    raise RuntimeError(f"Cannot find HitPic_{index}")
+                
+                HitPicHeight, HitPicWidth = HitPic.shape[:2]
+                AutoHitPos = [HitPos[0] + int(HitPicWidth / 2), 
+                              HitPos[1] + int(HitPicHeight / 2) + DoScreenHit.ApplicationWindowsTitleHeight]
+                AutoHitRange = [int(HitPicWidth * HitRange), int(HitPicHeight * HitRange)]
+                self.DoHit(AutoHitPos, AutoHitRange)
+            else:
+                # 根据后缀执行不同操作
+                suffix, CheckPic = CheckPics[index]
+                
+                if suffix == "L":
+                    # L后缀: 点击直到CheckPic消失
+                    self.TryLeaveJumpByPic(HitPic, CheckPic, HitRange, MatchingThreshold)
+                elif suffix == "J":
+                    # J后缀: 点击直到CheckPic出现
+                    self.TryInnerJumpByPic(HitPic, CheckPic, HitRange, MatchingThreshold)
+                else:
+                    # 其他后缀默认使用TryInnerJumpByPic
+                    self.TryInnerJumpByPic(HitPic, CheckPic, HitRange, MatchingThreshold)
+            
+            sleep(0.5)
+        
+        return True
 
     def TryLeaveJump2(self, HitName, CheckPic, CheckPic2):
         self.DoHitByName(HitName);
@@ -628,8 +805,11 @@ class MSmState_GameModeDefault(MSmState):
         self.DimensionEnterIdImage = self.ReadPic("DimensionEnterIdImage")
         self.ExpeditionEnterIdImage = self.ReadPic("ExpeditionEnterIdImage")
 
-    def AddEnter(self, ModeName, IdPic,MatchingThreshold = 0.8):
-        Pos = self.GetPicPos(IdPic)
+        self.PicMap = self.ReadPicMap()
+
+
+    def AddEnter(self, ModeName, IdPic, MatchingThreshold = 0.8):
+        Pos = self.GetPicPos(IdPic, MatchingThreshold)
         if Pos is None:
             print("Cannot find "+ ModeName + " Enter")
         else:
@@ -645,23 +825,40 @@ class MSmState_GameModeDefault(MSmState):
             for i in range(len(JumpInfoJson)):
                 self.JumpInfo[JumpInfoJson[i]["NextStateName"]] = [JumpInfoJson[i]["ClickPos"],JumpInfoJson[i]["ClickRange"]]
         self.RefreshScreenShot()
-        if MSmState.bAllMaterialHasGotten == False:
+        IsLargeVersion = self.IsPicMatching(self.PicMap["IsLargeVersion"], 0.975)
+        if IsLargeVersion == True:
             self.AddEnter("Material", self.MaterialEnterIdImage)        
-        self.AddEnter("Elite", self.EliteEnterIdImage,0.85)
-        for i in range(0, self.EliteCount ):
-            if "Elite" not in self.JumpInfo:
-                self.AddEnter("Elite", self.EliteEnterIdImages[i],0.85)
+            self.AddEnter("Elite", self.EliteEnterIdImage,0.85)
+            for i in range(0, self.EliteCount ):
+                if "Elite" not in self.JumpInfo:
+                    self.AddEnter("Elite", self.EliteEnterIdImages[i],0.85)
 
 
-        self.AddEnter("Tangyun", self.TangyunEnterIdImage)        
-        self.AddEnter("Pirate", self.PirateEnterIdImage)        
-        self.AddEnter("NitePyramid", self.NitePyramidEnterIdImage)        
-        self.AddEnter("Weekly", self.WeeklyEnterIdImage)     
-        self.AddEnter("SpecialWeekly", self.WeeklyEnterIdImage)          
-        self.AddEnter("Wulin", self.WulinEnterIdImage)        
-        self.AddEnter("Dimension", self.DimensionEnterIdImage)        
-        self.AddEnter("MonsterPark", self.MonsterParkEnterIdImage)        
-        self.AddEnter("Expedition", self.ExpeditionEnterIdImage)        
+            self.AddEnter("Tangyun", self.TangyunEnterIdImage)        
+            self.AddEnter("Pirate", self.PirateEnterIdImage)        
+            self.AddEnter("NitePyramid", self.NitePyramidEnterIdImage)        
+            self.AddEnter("Weekly", self.WeeklyEnterIdImage)     
+            self.AddEnter("SpecialWeekly", self.WeeklyEnterIdImage)          
+            self.AddEnter("Wulin", self.WulinEnterIdImage)        
+            self.AddEnter("Dimension", self.DimensionEnterIdImage)        
+            self.AddEnter("MonsterPark", self.MonsterParkEnterIdImage)        
+            self.AddEnter("Expedition", self.ExpeditionEnterIdImage)
+        else:
+            self.AddEnter("Material", self.PicMap["MiniMaterialEnterIdentify"], 0.9)        
+            self.AddEnter("Elite", self.PicMap["MiniEliteEnterIdImage"], 0.9)
+            for i in range(0, self.EliteCount ):
+                if "Elite" not in self.JumpInfo:
+                    self.AddEnter("Elite", self.PicMap["MiniEliteEnterIdImage" + str(i)], 0.9)
+
+
+            self.AddEnter("Tangyun", self.PicMap["MiniTangyunEnterIdImage"], 0.9)        
+            self.AddEnter("Pirate", self.PicMap["MiniPirateEnterIdImage"], 0.9)        
+            self.AddEnter("NitePyramid", self.PicMap["MiniNitePyramidEnterIdImage"], 0.9)        
+            self.AddEnter("Weekly", self.PicMap["MiniWeeklyEnterIdImage"], 0.9)     
+            self.AddEnter("SpecialWeekly", self.PicMap["MiniWeeklyEnterIdImage"], 0.9)          
+            self.AddEnter("Wulin", self.PicMap["MiniWulinEnterIdImage"], 0.9)               
+            self.AddEnter("MonsterPark", self.PicMap["MiniMonsterParkEnterIdImage"], 0.9)        
+            self.AddEnter("Expedition", self.PicMap["MiniExpeditionEnterIdImage"], 0.9)       
 
         return True
 
@@ -669,6 +866,7 @@ class MSmState_GuildInfo(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
         self.TreeGift = self.ReadPic("TreeGift")
+        self.GuildinfoIdImage = self.ReadPicMap()
 
     def Processing(self):
         sleep(1)
@@ -678,6 +876,15 @@ class MSmState_GuildInfo(MSmState):
                 self.DoHitByName("ReciveTreeGift")
             self.TryLeaveJump("CloseTreeGift", self.TreeGift, 0.9)
         sleep(1)
+        if MSmState.bMainCharacter == True:
+            self.TryLeaveJumpByPic(self.GuildinfoIdImage["GuildBossEnter"], self.GuildinfoIdImage["GuildBossEnter"], 0.5, 0.9)
+            CanEnter = self.GetHitInfo(self.GuildinfoIdImage["EnterTimes"], 0.9)
+            if CanEnter is not None:
+                for i in range(np.random.randint(3,5)):
+                    self.DoHit(CanEnter[0], CanEnter[1])
+                self.TryLeaveJumpByPic(self.GuildinfoIdImage["Confirm"], self.GuildinfoIdImage["Confirm"], 0.5, 0.9)
+                self.WaitUntil(self.GuildinfoIdImage["Leave"])
+                self.TryLeaveJumpByPic(self.GuildinfoIdImage["Leave"], self.GuildinfoIdImage["Leave"], 0.5, 0.9)
         return True
 
 class MSmState_Loading(MSmState):
@@ -708,8 +915,6 @@ class MSmState_Mail(MSmState):
         return True
 
 class MSmState_Material(MSmState):
-    #
-    bAdditionalMaterial = 0;
     def __init__(self, StateName):
         super().__init__(StateName)
         Path_cur = frozen.app_path() + "\\Data\\" + StateName
@@ -730,17 +935,17 @@ class MSmState_Material(MSmState):
     def Processing(self):
         self.TryInnerJump("Enter0",self.Enter0)
         self.TryInnerJump("Enter1",self.Enter1)
-        if MSmState_PostProcess.PostProcessType != 10 or MSmState_Material.bAdditionalMaterial == 1:
-            self.HitHandle.DoMousePull(self.HitInfo["CheckNeededPull"][0],self.HitInfo["CheckNeededPull"][1],[0,-300], 20, 3)
-            sleep(2)
-            self.RefreshScreenShot()
-            TempPos = self.GetPicPos(self.AllMaterialsGotten, 0.95)
-            if TempPos is not None:
-                self.TryLeaveJump("Cancel0",self.Enter1)
-                self.TryLeaveJump("CloseMaterial",self.MaterialMain)
-                self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
-                MSmState.bAllMaterialHasGotten = True
-                return True
+        # if MSmState_PostProcess.bDefault == False or MSmState_PostProcess.bAdditionalMaterial == True:
+        #     self.HitHandle.DoMousePull(self.HitInfo["CheckNeededPull"][0],self.HitInfo["CheckNeededPull"][1],[0,-300], 20, 3)
+        #     sleep(2)
+        #     self.RefreshScreenShot()
+        #     TempPos = self.GetPicPos(self.AllMaterialsGotten, 0.95)
+        #     if TempPos is not None:
+        #         self.TryLeaveJump("Cancel0",self.Enter1)
+        #         self.TryLeaveJump("CloseMaterial",self.MaterialMain)
+        #         self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+        #         MSmState.bAllMaterialHasGotten = True
+        #         return True
 
 
         self.TryLeaveJump("Enter2",self.Enter1)
@@ -758,7 +963,7 @@ class MSmState_Material(MSmState):
             if curloop > 100:
                 raise RuntimeError("Material exit timeout")
             
-        MSmState.bAllMaterialHasGotten = False
+        # MSmState.bAllMaterialHasGotten = False
         self.TryLeaveJump("Exit", self.MaterialExitIdImage)
         
 
@@ -770,6 +975,7 @@ class MSmState_SystemMenuOpening(MSmState):
 class MSmState_Wander(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
+        self.PicMap = self.ReadPicMap()
         Path_cur = frozen.app_path() + "\\Data\\" + StateName
         self.AdImages = []
         for file in os.listdir(Path_cur):
@@ -777,8 +983,28 @@ class MSmState_Wander(MSmState):
                 self.AdImages.append(cv2.imdecode(fromfile(Path_cur+ "\\"+file, dtype=uint8), -1))
                 self.AdImages[len(self.AdImages) - 1] = cv2.cvtColor(self.AdImages[len(self.AdImages) - 1], cv2.COLOR_BGR2GRAY)
 
+    def GetChangePresetHitInfo(self):
+        self.RefreshScreenShot()
+        HitPos = self.GetHitInfo(self.PicMap["ChangePreset0"], 0.5, 0.85)
+        if HitPos is None:
+            HitPos = self.GetHitInfo(self.PicMap["ChangePreset1"], 0.5, 0.85)
+        return HitPos
+
     def Processing(self):
         sleep(1)
+        if MSmState.bFirstStart == True and MSmState.bMainCharacter == True:
+             ChangePresetHitInfo = self.GetChangePresetHitInfo()
+             while ChangePresetHitInfo is None:
+                 self.HitHandle.DoMousePull(self.HitInfo["ChangePreset"][0],self.HitInfo["ChangePreset"][1],[200,0], 15, 5)
+                 sleep(2)
+                 ChangePresetHitInfo = self.GetChangePresetHitInfo()
+
+             self.TryInnerJumpByPic(self.PicMap["ChangePreset0"], self.PicMap["ChangePreset1"], 0.5, 0.9)
+             self.DoHitByName("Preset1")
+             sleep(0.5)
+             self.DoHitByName("Preset1")
+             MSmState.bFirstStart = False
+
         AdCloseMask = []
         HasAdExist = False
         self.RefreshScreenShot()
@@ -802,6 +1028,103 @@ class MSmState_Wander(MSmState):
         self.DoHitByName("AutoSkill")
         return True
 
+class MSmState_DailyTask(MSmState):
+    """日常任务状态 - 处理日常任务相关操作"""
+    def __init__(self, StateName):
+        super().__init__(StateName)
+        # 加载日常任务相关的图片资源
+        self.DailyTaskPic = self.ReadPicMap()
+
+
+    def OpenMainDailyTaskWidget(self):
+        self.TryInnerJump("OpenSystemMenu", self.DailyTaskPic["SysOpeningIdImage"])
+        self.TryInnerJump("OpenDailyTask", self.DailyTaskPic["DailyTaskMain"])
+
+    def CloseMainDailyTaskWidget(self):
+        self.TryLeaveJump("OpenSystemMenu", self.DailyTaskPic["DailyTaskMain"])
+        self.TryLeaveJump("OpenSystemMenu", self.DailyTaskPic["SysOpeningIdImage"])
+
+    def GetAutoTaskRunningState(self):
+        # 获取自动任务当前的运行状态
+        # 返回值可以是 "NotStarted", "Running", "Completed" 等
+        self.RefreshScreenShot()
+        if self.IsPicMatching(self.DailyTaskPic["AutoTaskRunning"], 0.7) or self.IsPicMatching(self.DailyTaskPic["AutoTaskRunning0"], 0.85) or self.IsPicMatching(self.DailyTaskPic["AutoTaskRunning1"], 0.95):
+            return True
+        else:         
+            return False
+
+    def SelectTaskPrefer(self):
+        self.RefreshScreenShot()
+        self.TryInnerJumpByPic(self.DailyTaskPic["TaskType0"], self.DailyTaskPic["ReciveTask"], 0.5, 0.8)
+        self.TryInnerJumpByPic(self.DailyTaskPic["TaskType1"], self.DailyTaskPic["ReciveTask"], 0.5, 0.8)
+        self.TryInnerJumpByPic(self.DailyTaskPic["TaskType2"], self.DailyTaskPic["ReciveTask"], 0.5, 0.8)
+
+    def Processing(self):
+        # 处理日常任务逻辑
+        self.OpenMainDailyTaskWidget()
+        self.TryInnerJumpByPic(self.DailyTaskPic["TaskSettings"], self.DailyTaskPic["TaskSettingsSub"])
+        self.RefreshScreenShot()
+        IsSettingsOK = self.IsPicMatching(self.DailyTaskPic["TaskSettingsCheck0"], 0.95) and self.IsPicMatching(self.DailyTaskPic["TaskSettingsCheck1"], 0.95)
+        if IsSettingsOK == False:
+            self.TryLeaveJumpByPic(self.DailyTaskPic["CheckState1"], self.DailyTaskPic["CheckState1"], 0.5, 0.95)#clean all check state
+            self.TryLeaveJumpByPic(self.DailyTaskPic["CheckDisplay0"], self.DailyTaskPic["CheckDisplay0"], 0.5, 0.996)
+            self.TryInnerJump("DisplayDailyTask", self.DailyTaskPic["CheckState1"], 0.95)
+            self.TryLeaveJumpByPic(self.DailyTaskPic["ApplySettings"], self.DailyTaskPic["ApplySettings"])             
+        else:
+             self.TryLeaveJumpByPic(self.DailyTaskPic["ApplySettings"], self.DailyTaskPic["ApplySettings"])
+        self.CloseMainDailyTaskWidget()
+
+        if 1: #委托相关
+            self.TryInnerJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"] )
+            self.TryInnerJump("Commission",self.DailyTaskPic["CommissionMain"])
+            for i in range(0,3):
+                self.SelectTaskPrefer()
+                for i in range(np.random.randint(2,3)):
+                    self.DoHitByName("ReciveCommission")
+                for i in range(np.random.randint(2,3)):
+                    self.DoHitByName("CloseCommissionRevice")
+
+            self.TryLeaveJump("CloseCommissionMain",self.DailyTaskPic["CommissionMain"])
+            self.TryLeaveJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"])
+
+        #开始跑日常任务
+        self.TryInnerJumpByPic(self.DailyTaskPic["TaskClose"], self.DailyTaskPic["TaskOpen"], 0.5, 0.98)
+
+        self.TryInnerJumpByPic(self.DailyTaskPic["BossTaskOpen"], self.DailyTaskPic["BossTaskClose"], 0.5, 0.9)  
+
+        DailyTaskHitInfo = self.GetHitInfo(self.DailyTaskPic["TaskTinyIcon"])
+        curloop = 0
+        StillHasTask = DailyTaskHitInfo is not None
+        while StillHasTask :
+            curloop = curloop + 1
+            if curloop > 180: #超过半小时
+                raise RuntimeError("DailyTask Loop Timeout")
+            IsRunning = self.GetAutoTaskRunningState()
+            if IsRunning == False and DailyTaskHitInfo is not None:
+                self.DoHit(DailyTaskHitInfo[0], DailyTaskHitInfo[1])
+            FastFinished = self.GetHitInfo(self.DailyTaskPic["FastFinished"], 0.5, 0.95) 
+            if FastFinished is not None:
+                self.TryLeaveJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["FastFinished"], 0.5, 0.95)
+                sleep(15)
+            self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9) 
+            self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.95) 
+            self.TryLeaveJumpByPic(self.DailyTaskPic["MoveToVillage"], self.DailyTaskPic["MoveToVillage"], 0.5, 0.95)   
+            GetAdditonHitInfo = self.GetHitInfo(self.DailyTaskPic["GetAddition"], 0.5, 0.95)
+            if GetAdditonHitInfo is None:
+                self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9) 
+            StillHasTask = False
+            for i in range(10):
+                DailyTaskHitInfo = self.GetHitInfo(self.DailyTaskPic["TaskTinyIcon"])
+                StillHasTask =  StillHasTask or  DailyTaskHitInfo is not None   
+        
+        sleep(15) #等待自动回村
+        if MSmState.bMainCharacter == True:
+            self.TryLeaveJumpByPic(self.DailyTaskPic["GetAddition"], self.DailyTaskPic["GetAddition"], 0.5, 0.95)   
+            self.TryLeaveJumpByPic(self.DailyTaskPic["BuyAddition"], self.DailyTaskPic["BuyAddition"], 0.5, 0.95) 
+        else:
+            self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.85) 
+        return True
+
 class MSmState_TeamCommon(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
@@ -818,81 +1141,100 @@ class MSmState_TeamCommon(MSmState):
         self.TryLeaveJump("Comfirm", self.AddTimesIdImage)
         self.WaitingForAutoFightingFinished()
         self.TryLeaveJump("Exit", self.ExitIdImage)
-        return True
-
+        return True        
 
 class MSmState_Expedition(MSmState):
     def __init__(self, StateName):
         super().__init__(StateName)
-        self.SelectBoss = []
-        self.SelectHard = []
-        for i in range(0,4):
-            self.SelectBoss.append(self.ReadPic("SelectBoss" + str(i)))
-            self.SelectHard.append(self.ReadPic("SelectHard" + str(i)))
-        self.FindCreateTeamWidget = self.ReadPic("FindCreateTeamWidget")   
-        self.FindSpoils = self.ReadPic("FindSpoils")   
-        self.PrepareRoom = self.ReadPic("PrepareRoom")   
-        self.CreateRoom = self.ReadPic("CreateRoom")   
-        self.ExpeditionMain = self.ReadPic("ExpeditionMain")   
-        self.FightingRoom = self.ReadPic("FightingRoom")   
-        self.LeaveWidget = self.ReadPic("LeaveWidget")   
-        self.SetLimitation = self.ReadPic("SetLimitation")   
-        
-    def WaitingForFightingFinished(self):
+        self.PicMap = self.ReadPicMap()
+    
+    def IsFinished(self):
         self.RefreshScreenShot()
-        bAutoFightingFinished = self.IsPicMatching(self.FindSpoils);
-        self.DoHit([873,456],[10,10])
-        sleep(0.1)
-        self.DoHit([821,530],[10,10])
-        IterCount = 0
-        while bAutoFightingFinished == False and IterCount < 180:
-            sleep(random.random()+0.5)
-            self.DoHit([873,456],[10,10])
-            sleep(0.1)
-            self.DoHit([821,530],[10,10])
-            self.RefreshScreenShot()
-            bAutoFightingFinished = self.IsPicMatching(self.FindSpoils);
-            IterCount = IterCount + 1
+        return self.IsPicMatching(self.PicMap["FinishAll"], 0.95)     
 
-    def ProcessInternal(self, index):    
-        bCanEnter = self.IsPicMatching(self.CreateRoom);
-        if bCanEnter == True:
-            #the first time
-            self.TryInnerJump("CreateRoom",self.PrepareRoom)
-            self.TryInnerJump("FindTeam",self.FindCreateTeamWidget)
-            self.TryInnerJump("SetLimitation",self.SetLimitation)
-            self.TryLeaveJump("CreateTeam",self.FindCreateTeamWidget)
-            self.WaitingForFightingFinished()
+    
+    def SelectBossMaxLevel(self):
+        self.RefreshScreenShot()
+        HitInfo = self.GetHitInfo(self.PicMap["Chaos"], 0.5, 0.95)
+        if HitInfo is None:
+            HitInfo = self.GetHitInfo(self.PicMap["Difficult"], 0.5, 0.95)
+        for i in range(np.random.randint(2,4)):
+            self.DoHit(HitInfo[0], HitInfo[1])
+        self.TryInnerJumpByPic(self.PicMap["TeamMode0"], self.PicMap["FastTeam"], 0.5, 0.95)
+
+    def IsBossFightFinished(self, bosstype):
+        self.RefreshScreenShot()
+        if bosstype == 0:
+            return self.IsPicMatching(self.PicMap["ReturnToMain"], 0.95)
+        elif bosstype == 1:
+            return self.IsPicMatching(self.PicMap["Confirm2"], 0.95)
+        else:
+            return self.IsPicMatching(self.PicMap["Confirm2"], 0.95)
+
+    def WaitForFinished(self, bosstype):
+        self.RefreshScreenShot()
+        curloop = 0
+        maxloop = 30
+        if bosstype == 0:
+            returniconname = "ReturnToMain0"
+        elif bosstype == 1:
+            returniconname = "ReturnToMain1"
+        elif bosstype == 2:
+            returniconname = "ReturnToMain2"
+        if bosstype == 2:
+            maxloop = 15
+        while self.IsBossFightFinished(bosstype) == False:
+            self.DoHitByName("UseSkill"+str(curloop % 8))
+            curloop += 1
+            sleep(1)
+            self.RefreshScreenShot()
             
-            self.TryLeaveJump("SpoilsComfirm",self.FindSpoils)
-            self.TryInnerJump("Exit",self.LeaveWidget)  
-            self.TryInnerJump("LeaveToMain",self.ExpeditionMain)
+            if curloop > maxloop: 
+                print("Boss fight finished wait timeout, try to exit")
+                self.RefreshScreenShot()
+                self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95)
+                sleep(3)
+                self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95)
+                sleep(15)
+                return
+        if bosstype == 0:
+            self.TryLeaveJumpByPic(self.PicMap["ReturnToMain"], self.PicMap["ReturnToMain"], 0.5, 0.95)
+        elif bosstype == 1:
+            self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95)
+            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95)
             sleep(3)
-            #leave to main widget to do the second time
-            self.TryInnerJump("SelectBoss" + str(index),self.SelectBoss[index])
-            self.TryInnerJump("SelectHardMode",self.SelectHard[index])
-            bCanEnter = self.IsPicMatching(self.CreateRoom);
-            if bCanEnter == True:
-                self.TryInnerJump("CreateRoom",self.PrepareRoom)
-                self.TryInnerJump("FindTeam",self.FindCreateTeamWidget)
-                self.TryInnerJump("SetLimitation",self.SetLimitation)
-                self.TryLeaveJump("CreateTeam",self.FindCreateTeamWidget)
-                self.WaitingForFightingFinished()
-            
-                self.TryLeaveJump("SpoilsComfirm",self.FindSpoils)
-                self.TryInnerJump("Exit",self.LeaveWidget) 
-                if index < 3:
-                    self.TryInnerJump("LeaveToMain",self.ExpeditionMain)
-                    sleep(3)
-                else:
-                    self.TryLeaveJump("Leave",self.LeaveWidget)
-            
+            self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95)
+        else:
+            self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95)
+            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95)
+            sleep(3)
+            self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95)
+        sleep(15)
+
+    def GetBossType(self):
+        self.RefreshScreenShot()
+        if self.IsPicMatching(self.PicMap["BossType0"], 0.98) or self.IsPicMatching(self.PicMap["BossType01"], 0.98):
+            return 0
+        elif self.IsPicMatching(self.PicMap["BossType1"], 0.98):
+            return 1    
+        else:
+            return 2            
+
 
     def Processing(self):
-        for i in range(0,4):
-            self.TryInnerJump("SelectBoss" + str(i),self.SelectBoss[i])
-            self.TryInnerJump("SelectHardMode",self.SelectHard[i])
-            self.ProcessInternal(i)
+        sleep(1)
+        self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95)
+        self.TryInnerJumpByPic(self.PicMap["SelectCanEnter0"], self.PicMap["SelectCanEnter1"], 0.5, 0.95)
+        while self.IsFinished() == False:
+            self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95)
+            self.TryInnerJumpByPic(self.PicMap["SelectCanEnter0"], self.PicMap["SelectCanEnter1"], 0.5, 0.95)
+            self.TryInnerJump("SelectFirstBoss", self.PicMap["BossSubTitleOpen"], 0.95)
+            self.SelectBossMaxLevel()
+            bootype = self.GetBossType()
+            self.TryLeaveJumpByPic(self.PicMap["FastTeam"], self.PicMap["FastTeam"], 0.5, 0.95)
+            self.WaitUntil(self.PicMap["TimerIcon"])
+            sleep(12)#兼容贝伦出地时间
+            self.WaitForFinished(bootype)        
 
         return True
 
@@ -1077,7 +1419,19 @@ class MSmState_Wulin(MSmState):
         return True
 
 class MSmState_PostProcess(MSmState):
-    PostProcessType = 0;
+    # 默认功能：发送人气、交易商品、日常任务等
+    bDefault = True
+    # 收周任务奖励
+    bWeeklyReward = False
+    # 自动换黄图
+    bAutoChange = False
+    # 自动整理背包
+    bOrganizePackage = False
+    # 自动跳过委托
+    bSkipCommission = False
+    # 开材料卷
+    bAdditionalMaterial = False
+    
     def __init__(self, StateName):
         super().__init__(StateName)
         self.AutoFightingIdImage = self.ReadPic("AutoFightingIdImage")
@@ -1140,34 +1494,34 @@ class MSmState_PostProcess(MSmState):
         self.OpenSelectTicket1 = self.ReadPic("OpenSelectTicket1")
         self.HasTicketSelected = self.ReadPic("HasTicketSelected")
         self.GetTicketsComfirm = self.ReadPic("GetTicketsComfirm")
-
+        
+        self.ChangePreset0 = self.ReadPic("ChangePreset0")
+        self.ChangePreset1 = self.ReadPic("ChangePreset1")
+        
+    def GetChangePresetHitInfo(self):
+        self.RefreshScreenShot()
+        HitPos = self.GetHitInfo(self.PicMap["ChangePreset0"], 0.5, 0.85)
+        if HitPos is None:
+            HitPos = self.GetHitInfo(self.PicMap["ChangePreset1"], 0.5, 0.85)
+        return HitPos
 
     def Processing(self):
 
-        if MSmState_Material.bAdditionalMaterial!=0:
-            if MSmState.bAllMaterialHasGotten == True:
-                return True
-            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
-            self.TryInnerJump("OpenPackage",self.OpenPackage)
-            self.TryInnerJump("SelectTimeLimit",self.SelectTimeLimit)
-            TicketPos = self.GetPicPos(self.SelectTicket, 0.9)
-            if TicketPos is not None:
-                TicketPosHitInfo = [[TicketPos[0] + 20, TicketPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 22],[10,10]]
-                self.TryInnerJumpByPos(TicketPosHitInfo, self.OpenSelectTicket0)
-                self.TryInnerJump("Disassemble",self.OpenSelectTicket1)
-                self.TryInnerJump("SelectMaterialTickets",self.HasTicketSelected,0.97)
-                self.DoHitByName("AddTicketsMax")
-                sleep(0.2)
-                self.DoHitByName("AddTicketsMax")
-                sleep(0.2)
-                self.TryLeaveJump("GetTickets",self.HasTicketSelected, 0.985)
-                self.TryLeaveJump("GetTicketsComfirm",self.GetTicketsComfirm, 0.985)    
-            self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
-            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
-            return True
+        if MSmState.bMainCharacter == True :
+                ChangePresetHitInfo = self.GetChangePresetHitInfo
+                while ChangePresetHitInfo is None:
+                    self.HitHandle.DoMousePull(self.HitInfo["ChangePreset"][0],self.HitInfo["ChangePreset"][1],[200,0], 15, 5)
+                    sleep(2)
+                    ChangePresetHitInfo = self.GetChangePresetHitInfo()
 
-        TempPostProcessType = MSmState_PostProcess.PostProcessType 
-        if TempPostProcessType > 9:
+                self.TryInnerJumpByPic(self.ChangePreset0, self.ChangePreset1, 0.5, 0.9)
+                self.DoHitByName("Preset3")
+                sleep(0.5)
+                self.DoHitByName("Preset3")
+                sleep(1)
+
+        # 默认功能：发送人气、交易商品、日常任务等
+        if MSmState_PostProcess.bDefault:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("Communication",self.FriendsIdImage)
             self.TryInnerJump("WeChatFriends",self.WeChatFriendsIdImage)
@@ -1264,11 +1618,9 @@ class MSmState_PostProcess(MSmState):
                 for i in range(np.random.randint(1,2)):
                     self.DoHitByName("UseFreeTime")
                 self.TryLeaveJump("CloseAutoFighting",self.AutoFightingIdImage)
-            else:
-                TempPostProcessType = TempPostProcessType - 10
 
         #收周任务奖励
-        if TempPostProcessType == 1:
+        if MSmState_PostProcess.bWeeklyReward:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("Daily",self.DailyIdImage)
             #先做一次图片分享
@@ -1303,7 +1655,7 @@ class MSmState_PostProcess(MSmState):
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
     
         #自动换黄图
-        if TempPostProcessType == 2:
+        if MSmState_PostProcess.bAutoChange:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("OpenActivity",self.OpenActivity)
             ChangeEnterPos = self.GetPicPos(self.ChangeEnter, 0.85)
@@ -1384,7 +1736,7 @@ class MSmState_PostProcess(MSmState):
                 self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
         
         #自动整理背包
-        if TempPostProcessType == 3:
+        if MSmState_PostProcess.bOrganizePackage:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("OpenPackage",self.OpenPackage)
 
@@ -1417,7 +1769,7 @@ class MSmState_PostProcess(MSmState):
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
 
         #自动跳过委托
-        if TempPostProcessType == 4:
+        if MSmState_PostProcess.bSkipCommission:
             self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
             self.TryInnerJump("Commission",self.CommissionMain)
             CommissionFinished = self.GetPicPos(self.CommissionFinished, 0.95, cv2.TM_CCORR_NORMED)
@@ -1436,4 +1788,98 @@ class MSmState_PostProcess(MSmState):
             self.TryLeaveJump("CloseCommissionMain",self.CommissionMain)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
 
+        if MSmState_PostProcess.bAdditionalMaterial == True:
+            # if MSmState.bAllMaterialHasGotten == True:
+            #     return True
+            self.TryInnerJump("OpenSystemMenu",self.SysOpeningIdImage)
+            self.TryInnerJump("OpenPackage",self.OpenPackage)
+            self.TryInnerJump("SelectTimeLimit",self.SelectTimeLimit)
+            TicketPos = self.GetPicPos(self.SelectTicket, 0.9)
+            if TicketPos is not None:
+                TicketPosHitInfo = [[TicketPos[0] + 20, TicketPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 22],[10,10]]
+                self.TryInnerJumpByPos(TicketPosHitInfo, self.OpenSelectTicket0)
+                self.TryInnerJump("Disassemble",self.OpenSelectTicket1)
+                self.TryInnerJump("SelectMaterialTickets",self.HasTicketSelected,0.97)
+                self.DoHitByName("AddTicketsMax")
+                sleep(0.2)
+                self.DoHitByName("AddTicketsMax")
+                sleep(0.2)
+                self.TryLeaveJump("GetTickets",self.HasTicketSelected, 0.985)
+                self.TryLeaveJump("GetTicketsComfirm",self.GetTicketsComfirm, 0.985)    
+            self.TryLeaveJump("CloseCommissionMain",self.OpenPackage)
+            self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
+            return True
+
         return True
+
+
+if __name__ == "__main__":
+    # ============ 测试配置 ============
+    # 在这里修改要测试的状态名称
+    TEST_STATE = "DailyTask"  # 例如: DailyTask, PostProcess, Material, Elite, Wander 等
+    # =================================
+    
+    from win32gui import FindWindow, FindWindowEx
+    
+    # 获取窗口句柄 (参考 MSmAuto.py 的逻辑)
+    hwd_title = "MuMu安卓设备"
+    MSmState.HandleNumber_Main = FindWindow(None, hwd_title)
+    if MSmState.HandleNumber_Main != 0:
+        MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "MuMuNxDevice")
+        MSmState.HandleNumber_Keyboard = FindWindowEx(MSmState.HandleNumber_Render, None, None, "nemudisplay")
+        DoScreenHit.ApplicationWindowsTitleHeight = 0
+        print(f"找到 MuMu 窗口: {hwd_title}")
+    else:
+        hwd_title = "雷电模拟器"
+        MSmState.HandleNumber_Main = FindWindow(None, hwd_title)
+        MSmState.HandleNumber_Render = FindWindowEx(MSmState.HandleNumber_Main, None, None, "TheRender")
+        MSmState.HandleNumber_Keyboard = MSmState.HandleNumber_Render
+        DoScreenHit.ApplicationWindowsTitleHeight = 0
+        print(f"找到雷电模拟器窗口: {hwd_title}")
+    
+    if MSmState.HandleNumber_Main == 0:
+        print("错误: 未找到 MuMu安卓设备 或 雷电模拟器 窗口")
+        exit(1)
+    
+    if MSmState.HandleNumber_Main == MSmState.HandleNumber_Render:
+        print("Warning: HandleNumber_Main is equal to HandleNumber_Render, consider run with -MainWindowsCapture")
+    
+    print(f"=" * 50)
+    print(f"MSmState 单元测试")
+    print(f"=" * 50)
+    print(f"状态名称: {TEST_STATE}")
+    print(f"主窗口句柄: {MSmState.HandleNumber_Main}")
+    print(f"渲染窗口句柄: {MSmState.HandleNumber_Render}")
+    print(f"键盘窗口句柄: {MSmState.HandleNumber_Keyboard}")
+    print(f"=" * 50)
+    
+    # 查找状态类
+    state_class_name = f"MSmState_{TEST_STATE}"
+    state_class = None
+    for name in dir():
+        obj = eval(name)
+        if isinstance(obj, type) and issubclass(obj, MSmState) and obj != MSmState and name == state_class_name:
+            state_class = obj
+            break
+    
+    if state_class is None:
+        print(f"错误: 未找到状态类 '{state_class_name}'")
+        print("可用的状态类:")
+        for name in dir():
+            obj = eval(name)
+            if isinstance(obj, type) and issubclass(obj, MSmState) and obj != MSmState:
+                print(f"  - {name.replace('MSmState_', '')}")
+        exit(1)
+    
+    # 创建状态实例
+    state_instance = state_class(TEST_STATE)
+    
+    print(f"\n开始执行 {TEST_STATE} 的 Processing() 方法...\n")
+    
+    try:
+        result = state_instance.Processing()
+        print(f"\n执行完成，返回值: {result}")
+    except Exception as e:
+        print(f"\n执行出错: {e}")
+        import traceback
+        traceback.print_exc()

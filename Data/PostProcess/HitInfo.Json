@@ -1,5 +1,15 @@
 [
     {
+        "OpName":"ChangePreset",
+        "ClickPos":[745,267],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"Preset3",
+        "ClickPos":[862,206],
+        "ClickRange":[10,10]
+    },
+    {
         "OpName":"SelectTimeLimit",
         "ClickPos":[669,135],
         "ClickRange":[5,5]

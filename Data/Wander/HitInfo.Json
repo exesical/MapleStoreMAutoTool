@@ -1,5 +1,20 @@
 [
     {
+        "OpName":"ChangePreset",
+        "ClickPos":[745,267],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"Preset1",
+        "ClickPos":[745,206],
+        "ClickRange":[10,10]
+    },
+    {
+        "OpName":"Preset3",
+        "ClickPos":[862,206],
+        "ClickRange":[10,10]
+    },
+    {
         "OpName":"CloseAd0",
         "ClickPos":[919,51],
         "ClickRange":[10,10]

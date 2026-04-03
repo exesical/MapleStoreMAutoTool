@@ -8,5 +8,10 @@
         "NextStateName":"PostProcess",
         "ClickPos":[590,444],
         "ClickRange":[10,10]
+    },
+    {
+        "NextStateName":"DailyTask",
+        "ClickPos":[590,444],
+        "ClickRange":[10,10]
     }
 ]

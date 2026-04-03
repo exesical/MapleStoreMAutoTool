@@ -1,67 +1,47 @@
 [
     {
-        "OpName":"SelectBoss0",
-        "ClickPos":[115,146],
-        "ClickRange":[40,18]
+        "OpName":"SelectFirstBoss",
+        "ClickPos":[83,170],
+        "ClickRange":[30,15]
     },
     {
-        "OpName":"SelectBoss1",
-        "ClickPos":[297,146],
-        "ClickRange":[40,18]
+        "OpName":"UseSkill0",
+        "ClickPos":[738,346],
+        "ClickRange":[10,10]
     },
     {
-        "OpName":"SelectBoss2",
-        "ClickPos":[489,146],
-        "ClickRange":[40,18]
+        "OpName":"UseSkill1",
+        "ClickPos":[820,346],
+        "ClickRange":[10,10]
     },
     {
-        "OpName":"SelectBoss3",
-        "ClickPos":[668,146],
-        "ClickRange":[40,18]
+        "OpName":"UseSkill2",
+        "ClickPos":[908,346],
+        "ClickRange":[10,10]
     },
     {
-        "OpName":"SelectHardMode",
-        "ClickPos":[76,324],
-        "ClickRange":[35,10]
+        "OpName":"UseSkill3",
+        "ClickPos":[704,422],
+        "ClickRange":[10,10]
     },
     {
-        "OpName":"CreateRoom",
-        "ClickPos":[678,531],
-        "ClickRange":[60,12]
+        "OpName":"UseSkill4",
+        "ClickPos":[789,422],
+        "ClickRange":[10,10]
     },
     {
-        "OpName":"FindTeam",
-        "ClickPos":[152,257],
-        "ClickRange":[40,14]
+        "OpName":"UseSkill5",
+        "ClickPos":[872,422],
+        "ClickRange":[10,10]
     },
     {
-        "OpName":"CreateTeam",
-        "ClickPos":[480,462],
-        "ClickRange":[80,18]
+        "OpName":"UseSkill6",
+        "ClickPos":[738,498],
+        "ClickRange":[10,10]
     },
     {
-        "OpName":"SetLimitation",
-        "ClickPos":[560,280],
-        "ClickRange":[8,8]
-    },
-    {
-        "OpName":"SpoilsComfirm",
-        "ClickPos":[480,538],
-        "ClickRange":[60,15]
-    },
-    {
-        "OpName":"Exit",
-        "ClickPos":[928,247],
-        "ClickRange":[12,12]
-    },
-    {
-        "OpName":"Leave",
-        "ClickPos":[629,433],
-        "ClickRange":[40,13]
-    },
-    {
-        "OpName":"LeaveToMain",
-        "ClickPos":[480,433],
-        "ClickRange":[40,13]
+        "OpName":"UseSkill7",
+        "ClickPos":[822,498],
+        "ClickRange":[10,10]
     }
 ]

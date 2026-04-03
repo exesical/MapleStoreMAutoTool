@@ -36,7 +36,8 @@ class TaskConfigUI:
             "Dimension": "次元副本",
             "Expedition": "远征队",
             "Evolution": "进化副本",
-            "Exchange": "交易所"
+            "Exchange": "交易所",
+            "DailyTask": "日常任务"
         }
         
         # 数据文件路径
@@ -56,22 +57,13 @@ class TaskConfigUI:
             "five_character_tasks": [],
             "current_task_group": 0,
             "vice_character_count": 0,
-            "post_process_type": 10,  # 默认值为10
-            "fast_jump_type": 0,  # 默认值为0
-            "additional_material": 0  # 默认值为0
-        }
-        
-        # PostProcessType选项映射
-        self.post_process_options = {
-            "10 - 默认处理": 10,
-            "11 - 默认 + 收周任务奖励": 11, 
-            "12 - 默认 + 自动换黄图": 12,
-            "13 - 默认 + 自动整理背包": 13,
-            "14 - 默认 + 自动跳过委托": 14,
-            "1 - 收周任务奖励": 1,
-            "2 - 自动换黄图": 2,
-            "3 - 自动整理背包": 3,
-            "4 - 自动跳过委托": 4
+            "b_post_process_default": True,  # 默认功能：发送人气、交易商品、日常任务等
+            "b_post_process_weekly_reward": False,  # 收周任务奖励
+            "b_post_process_auto_change": False,  # 自动换黄图
+            "b_post_process_organize_package": False,  # 自动整理背包
+            "b_post_process_skip_commission": False,  # 自动跳过委托
+            "b_post_process_additional_material": False,  # 开材料卷
+            "fast_jump_type": 0  # 默认值为0
         }
         
         # FastJumpType选项映射
@@ -80,47 +72,18 @@ class TaskConfigUI:
             "1 - 怪物公园": 1
         }
         
-        # AdditionalMaterial选项映射
-        self.additional_material_options = {
-            "0 - 关闭": 0,
-            "1 - 开材料卷": 1
-        }
-        
         self.create_ui()
         # 初始加载当前TaskGroup的配置
         self.load_existing_taskgroup_config(self.current_task_group)
         
     def load_available_tasks(self):
-        """从现有的TaskGroup文件夹加载可用任务"""
-        try:
-            # 收集所有可能的任务
-            all_tasks = set()
-            
-            # 从TaskGroup0-6收集所有任务
-            for group in range(7):
-                group_path = os.path.join(self.data_path, f"TaskGroup{group}")
-                if os.path.exists(group_path):
-                    for task_file in ["TaskListMain.json", "TaskList.json", "TaskListFive.json"]:
-                        task_path = os.path.join(group_path, task_file)
-                        if os.path.exists(task_path):
-                            with open(task_path, 'r', encoding='utf-8') as f:
-                                tasks = json.load(f)
-                                all_tasks.update(tasks)
-            
-            # 排序并过滤重复的CharacterSelect
-            self.available_tasks = []
-            for task in sorted(all_tasks):
-                if task == "CharacterSelect":
-                    if "CharacterSelect" not in self.available_tasks:
-                        self.available_tasks.insert(0, task)  # 角色选择始终在前面
-                else:
-                    self.available_tasks.append(task)
-                    
-        except Exception as e:
-            messagebox.showerror("错误", f"加载任务列表失败: {e}")
-            # 默认任务列表
-            self.available_tasks = ["CharacterSelect", "GuildInfo", "Mail", "Material", 
-                                  "MonsterPark", "FastJump", "Elite", "Weekly", "PostProcess"]
+        """从task_mapping中获取所有可用的任务（对应StateTable中声明的状态）"""
+        # task_mapping 定义了所有可用的状态，直接从中获取
+        # CharacterSelect 不在可选列表中显示，但会自动添加到任务列表头尾
+        self.available_tasks = []
+        for task in sorted(self.task_mapping.keys()):
+            if task != "CharacterSelect":
+                self.available_tasks.append(task)
     
     def create_ui(self):
         """创建UI界面"""
@@ -158,23 +121,49 @@ class TaskConfigUI:
         vice_char_spin = ttk.Spinbox(group_frame, from_=0, to=20, textvariable=self.vice_char_count_var, width=10)
         vice_char_spin.grid(row=0, column=3, sticky=tk.W)
         
-        # 第二行：PostProcessType设置
-        ttk.Label(group_frame, text="后处理类型:").grid(row=1, column=0, sticky=tk.W, padx=(0, 10), pady=(10, 0))
+        # 第二行：PostProcess 设置（使用复选框，行优先显示）
+        ttk.Label(group_frame, text="后处理功能:").grid(row=1, column=0, sticky=tk.NW, padx=(0, 10), pady=(10, 0))
         
-        # 找到默认的PostProcessType对应的选项文本
-        default_post_process_option = "10 - 默认处理"
-        for option_text, value in self.post_process_options.items():
-            if value == self.config_data["post_process_type"]:
-                default_post_process_option = option_text
-                break
+        post_process_frame = ttk.Frame(group_frame)
+        post_process_frame.grid(row=1, column=1, columnspan=3, sticky=tk.W, pady=(10, 0))
         
-        self.post_process_var = tk.StringVar(value=default_post_process_option)
-        post_process_combo = ttk.Combobox(group_frame, textvariable=self.post_process_var, 
-                                         values=list(self.post_process_options.keys()), 
-                                         state="readonly", width=25)
-        post_process_combo.grid(row=1, column=1, columnspan=3, sticky=tk.W, pady=(10, 0))
+        # 第一行：默认功能、收周任务奖励
+        row1_frame = ttk.Frame(post_process_frame)
+        row1_frame.pack(anchor=tk.W, fill=tk.X)
         
-        # 第三行：FastJumpType设置
+        self.b_post_process_default_var = tk.BooleanVar(value=self.config_data["b_post_process_default"])
+        ttk.Checkbutton(row1_frame, text="默认功能(人气/交易/日常)", 
+                       variable=self.b_post_process_default_var).pack(side=tk.LEFT, padx=(0, 20))
+        
+        self.b_post_process_weekly_reward_var = tk.BooleanVar(value=self.config_data["b_post_process_weekly_reward"])
+        ttk.Checkbutton(row1_frame, text="收周任务奖励", 
+                       variable=self.b_post_process_weekly_reward_var).pack(side=tk.LEFT, padx=(0, 20))
+        
+        # 第二行：自动换黄图、自动整理背包、自动跳过委托
+        row2_frame = ttk.Frame(post_process_frame)
+        row2_frame.pack(anchor=tk.W, fill=tk.X, pady=(5, 0))
+        
+        self.b_post_process_auto_change_var = tk.BooleanVar(value=self.config_data["b_post_process_auto_change"])
+        ttk.Checkbutton(row2_frame, text="自动换黄图", 
+                       variable=self.b_post_process_auto_change_var).pack(side=tk.LEFT, padx=(0, 20))
+        
+        self.b_post_process_organize_package_var = tk.BooleanVar(value=self.config_data["b_post_process_organize_package"])
+        ttk.Checkbutton(row2_frame, text="自动整理背包", 
+                       variable=self.b_post_process_organize_package_var).pack(side=tk.LEFT, padx=(0, 20))
+        
+        self.b_post_process_skip_commission_var = tk.BooleanVar(value=self.config_data["b_post_process_skip_commission"])
+        ttk.Checkbutton(row2_frame, text="自动跳过委托", 
+                       variable=self.b_post_process_skip_commission_var).pack(side=tk.LEFT, padx=(0, 20))
+        
+        # 第三行：开材料卷
+        row3_frame = ttk.Frame(post_process_frame)
+        row3_frame.pack(anchor=tk.W, fill=tk.X, pady=(5, 0))
+        
+        self.b_post_process_additional_material_var = tk.BooleanVar(value=self.config_data["b_post_process_additional_material"])
+        ttk.Checkbutton(row3_frame, text="开材料卷", 
+                       variable=self.b_post_process_additional_material_var).pack(side=tk.LEFT)
+        
+        # 第四行：FastJumpType设置
         ttk.Label(group_frame, text="快速副本类型:").grid(row=2, column=0, sticky=tk.W, padx=(0, 10), pady=(10, 0))
         
         # 找到默认的FastJumpType对应的选项文本
@@ -189,22 +178,6 @@ class TaskConfigUI:
                                       values=list(self.fast_jump_options.keys()), 
                                       state="readonly", width=25)
         fast_jump_combo.grid(row=2, column=1, columnspan=3, sticky=tk.W, pady=(10, 0))
-        
-        # 第四行：AdditionalMaterial设置
-        ttk.Label(group_frame, text="在后处理里面开包里的卷，\n和其他后处理功能互斥，单独跑:").grid(row=3, column=0, sticky=tk.W, padx=(0, 10), pady=(10, 0))
-        
-        # 找到默认的AdditionalMaterial对应的选项文本
-        default_additional_material_option = "0 - 关闭"
-        for option_text, value in self.additional_material_options.items():
-            if value == self.config_data["additional_material"]:
-                default_additional_material_option = option_text
-                break
-        
-        self.additional_material_var = tk.StringVar(value=default_additional_material_option)
-        additional_material_combo = ttk.Combobox(group_frame, textvariable=self.additional_material_var, 
-                                               values=list(self.additional_material_options.keys()), 
-                                               state="readonly", width=25)
-        additional_material_combo.grid(row=3, column=1, columnspan=3, sticky=tk.W, pady=(10, 0))
         
         # 任务配置区域
         config_frame = ttk.Frame(main_frame)
@@ -563,7 +536,7 @@ class TaskConfigUI:
                         }
                         self.config_data[config_key] = fallback_configs.get(config_key, ["CharacterSelect", "CharacterSelect"])
                             
-            # 同时加载config_info.json中的角色数量和PostProcessType配置
+            # 同时加载config_info.json中的角色数量和 PostProcess 相关配置
             config_info_path = os.path.join(save_group_path, "config_info.json")
             config_loaded = False
             if os.path.exists(config_info_path):
@@ -576,19 +549,41 @@ class TaskConfigUI:
                             self.config_data["vice_character_count"] = config_info["vice_character_count"]
                             self.vice_char_count_var.set(str(config_info["vice_character_count"]))
                         
-                        # 加载PostProcessType
-                        if "post_process_type" in config_info:
-                            self.config_data["post_process_type"] = config_info["post_process_type"]
-                            # 找到对应的选项文本并更新UI
-                            for option_text, value in self.post_process_options.items():
-                                if value == config_info["post_process_type"]:
-                                    self.post_process_var.set(option_text)
-                                    self.log(f"从config_info.json加载PostProcessType: {option_text}")
-                                    break
+                        # 加载 PostProcess 相关的 bool 配置
+                        if "b_post_process_default" in config_info:
+                            self.config_data["b_post_process_default"] = config_info["b_post_process_default"]
+                            self.b_post_process_default_var.set(config_info["b_post_process_default"])
                         else:
-                            # 如果没有PostProcessType配置，使用默认值并更新UI
-                            self.config_data["post_process_type"] = 10
-                            self.post_process_var.set("10 - 默认处理")
+                            self.config_data["b_post_process_default"] = True
+                            self.b_post_process_default_var.set(True)
+                            
+                        if "b_post_process_weekly_reward" in config_info:
+                            self.config_data["b_post_process_weekly_reward"] = config_info["b_post_process_weekly_reward"]
+                            self.b_post_process_weekly_reward_var.set(config_info["b_post_process_weekly_reward"])
+                        else:
+                            self.config_data["b_post_process_weekly_reward"] = False
+                            self.b_post_process_weekly_reward_var.set(False)
+                            
+                        if "b_post_process_auto_change" in config_info:
+                            self.config_data["b_post_process_auto_change"] = config_info["b_post_process_auto_change"]
+                            self.b_post_process_auto_change_var.set(config_info["b_post_process_auto_change"])
+                        else:
+                            self.config_data["b_post_process_auto_change"] = False
+                            self.b_post_process_auto_change_var.set(False)
+                            
+                        if "b_post_process_organize_package" in config_info:
+                            self.config_data["b_post_process_organize_package"] = config_info["b_post_process_organize_package"]
+                            self.b_post_process_organize_package_var.set(config_info["b_post_process_organize_package"])
+                        else:
+                            self.config_data["b_post_process_organize_package"] = False
+                            self.b_post_process_organize_package_var.set(False)
+                            
+                        if "b_post_process_skip_commission" in config_info:
+                            self.config_data["b_post_process_skip_commission"] = config_info["b_post_process_skip_commission"]
+                            self.b_post_process_skip_commission_var.set(config_info["b_post_process_skip_commission"])
+                        else:
+                            self.config_data["b_post_process_skip_commission"] = False
+                            self.b_post_process_skip_commission_var.set(False)
                             
                         # 加载FastJumpType
                         if "fast_jump_type" in config_info:
@@ -604,19 +599,22 @@ class TaskConfigUI:
                             self.config_data["fast_jump_type"] = 0
                             self.fast_jump_var.set("0 - 夜金字塔")
                             
-                        # 加载AdditionalMaterial
-                        if "additional_material" in config_info:
-                            self.config_data["additional_material"] = config_info["additional_material"]
-                            # 找到对应的选项文本并更新UI
-                            for option_text, value in self.additional_material_options.items():
-                                if value == config_info["additional_material"]:
-                                    self.additional_material_var.set(option_text)
-                                    self.log(f"从config_info.json加载AdditionalMaterial: {option_text}")
-                                    break
+                        # 加载AdditionalMaterial (兼容旧配置)
+                        if "b_post_process_additional_material" in config_info:
+                            self.config_data["b_post_process_additional_material"] = config_info["b_post_process_additional_material"]
+                            self.b_post_process_additional_material_var.set(config_info["b_post_process_additional_material"])
+                            self.log(f"从config_info.json加载b_post_process_additional_material: {config_info['b_post_process_additional_material']}")
+                        elif "additional_material" in config_info:
+                            # 兼容旧配置：从整数转换为bool
+                            old_value = config_info["additional_material"]
+                            new_value = old_value == 1
+                            self.config_data["b_post_process_additional_material"] = new_value
+                            self.b_post_process_additional_material_var.set(new_value)
+                            self.log(f"从旧配置转换AdditionalMaterial: {old_value} -> {new_value}")
                         else:
-                            # 如果没有AdditionalMaterial配置，使用默认值并更新UI
-                            self.config_data["additional_material"] = 0
-                            self.additional_material_var.set("0 - 关闭")
+                            # 如果没有配置，使用默认值
+                            self.config_data["b_post_process_additional_material"] = False
+                            self.b_post_process_additional_material_var.set(False)
                             
                         config_loaded = True
                         self.log(f"加载了TaskGroup{task_group}的配置（角色数量、后处理类型）")
@@ -627,20 +625,25 @@ class TaskConfigUI:
             if not config_loaded:
                 self.config_data["vice_character_count"] = 0
                 self.vice_char_count_var.set("0")
-                self.config_data["post_process_type"] = 10
-                self.post_process_var.set("10 - 默认处理")
+                self.config_data["b_post_process_default"] = True
+                self.b_post_process_default_var.set(True)
+                self.config_data["b_post_process_weekly_reward"] = False
+                self.b_post_process_weekly_reward_var.set(False)
+                self.config_data["b_post_process_auto_change"] = False
+                self.b_post_process_auto_change_var.set(False)
+                self.config_data["b_post_process_organize_package"] = False
+                self.b_post_process_organize_package_var.set(False)
+                self.config_data["b_post_process_skip_commission"] = False
+                self.b_post_process_skip_commission_var.set(False)
+                self.config_data["b_post_process_additional_material"] = False
+                self.b_post_process_additional_material_var.set(False)
                 self.config_data["fast_jump_type"] = 0
                 self.fast_jump_var.set("0 - 夜金字塔")
-                self.config_data["additional_material"] = 0
-                self.additional_material_var.set("0 - 关闭")
                 self.log(f"TaskGroup{task_group}没有保存的配置，使用默认值")
             
             # 刷新界面
             for config_key in task_files.keys():
                 self.refresh_selected_tasks(config_key)
-            
-            # 确保PostProcessType UI正确更新
-            self.refresh_post_process_ui()
                 
             self.log(f"TaskGroup{task_group}配置加载完成")
             
@@ -648,21 +651,16 @@ class TaskConfigUI:
             self.log(f"加载TaskGroup{task_group}配置失败: {e}")
     
     def refresh_post_process_ui(self):
-        """刷新PostProcessType、FastJumpType和AdditionalMaterial UI控件"""
+        """刷新PostProcess、FastJumpType和AdditionalMaterial UI控件"""
         try:
-            # 刷新PostProcessType
-            current_post_process_type = self.config_data.get("post_process_type", 10)
-            post_process_updated = False
-            for option_text, value in self.post_process_options.items():
-                if value == current_post_process_type:
-                    if self.post_process_var.get() != option_text:
-                        self.post_process_var.set(option_text)
-                        self.log(f"UI更新PostProcessType为: {option_text}")
-                    post_process_updated = True
-                    break
-            if not post_process_updated:
-                self.post_process_var.set("10 - 默认处理")
-                self.log("UI重置PostProcessType为默认值")
+            # 刷新PostProcess bool值
+            self.b_post_process_default_var.set(self.config_data.get("b_post_process_default", True))
+            self.b_post_process_weekly_reward_var.set(self.config_data.get("b_post_process_weekly_reward", False))
+            self.b_post_process_auto_change_var.set(self.config_data.get("b_post_process_auto_change", False))
+            self.b_post_process_organize_package_var.set(self.config_data.get("b_post_process_organize_package", False))
+            self.b_post_process_skip_commission_var.set(self.config_data.get("b_post_process_skip_commission", False))
+            self.b_post_process_additional_material_var.set(self.config_data.get("b_post_process_additional_material", False))
+            self.log("UI已更新PostProcess配置")
             
             # 刷新FastJumpType
             current_fast_jump_type = self.config_data.get("fast_jump_type", 0)
@@ -677,20 +675,6 @@ class TaskConfigUI:
             if not fast_jump_updated:
                 self.fast_jump_var.set("0 - 夜金字塔")
                 self.log("UI重置FastJumpType为默认值")
-            
-            # 刷新AdditionalMaterial
-            current_additional_material = self.config_data.get("additional_material", 0)
-            additional_material_updated = False
-            for option_text, value in self.additional_material_options.items():
-                if value == current_additional_material:
-                    if self.additional_material_var.get() != option_text:
-                        self.additional_material_var.set(option_text)
-                        self.log(f"UI更新AdditionalMaterial为: {option_text}")
-                    additional_material_updated = True
-                    break
-            if not additional_material_updated:
-                self.additional_material_var.set("0 - 关闭")
-                self.log("UI重置AdditionalMaterial为默认值")
                 
         except Exception as e:
             self.log(f"刷新UI失败: {e}")
@@ -757,15 +741,16 @@ class TaskConfigUI:
             # 创建一个标识文件，表明这是用户自定义配置
             info_file = os.path.join(save_group_path, "config_info.json")
             
-            # 获取当前选中的PostProcessType、FastJumpType和AdditionalMaterial值
-            selected_post_process_text = self.post_process_var.get()
-            selected_post_process_value = self.post_process_options.get(selected_post_process_text, 10)
+            # 获取当前选中的 PostProcess 相关 bool 值
+            b_post_process_default = self.b_post_process_default_var.get()
+            b_post_process_weekly_reward = self.b_post_process_weekly_reward_var.get()
+            b_post_process_auto_change = self.b_post_process_auto_change_var.get()
+            b_post_process_organize_package = self.b_post_process_organize_package_var.get()
+            b_post_process_skip_commission = self.b_post_process_skip_commission_var.get()
+            b_post_process_additional_material = self.b_post_process_additional_material_var.get()
             
             selected_fast_jump_text = self.fast_jump_var.get()
             selected_fast_jump_value = self.fast_jump_options.get(selected_fast_jump_text, 0)
-            
-            selected_additional_material_text = self.additional_material_var.get()
-            selected_additional_material_value = self.additional_material_options.get(selected_additional_material_text, 0)
             
             # 获取当前UI中的副号角色数量
             try:
@@ -778,9 +763,13 @@ class TaskConfigUI:
                 "source": "TaskConfigUI",
                 "task_group": task_group,
                 "vice_character_count": current_vice_char_count,
-                "post_process_type": selected_post_process_value,
+                "b_post_process_default": b_post_process_default,
+                "b_post_process_weekly_reward": b_post_process_weekly_reward,
+                "b_post_process_auto_change": b_post_process_auto_change,
+                "b_post_process_organize_package": b_post_process_organize_package,
+                "b_post_process_skip_commission": b_post_process_skip_commission,
+                "b_post_process_additional_material": b_post_process_additional_material,
                 "fast_jump_type": selected_fast_jump_value,
-                "additional_material": selected_additional_material_value,
                 "description": "用户自定义任务配置，优先级高于默认Data/TaskGroup配置"
             }
             with open(info_file, 'w', encoding='utf-8') as f:
@@ -801,14 +790,24 @@ class TaskConfigUI:
                 "five_character_tasks": [],
                 "current_task_group": 0,
                 "vice_character_count": 0,
-                "post_process_type": 10,
-                "fast_jump_type": 0,
-                "additional_material": 0
+                "b_post_process_default": True,
+                "b_post_process_weekly_reward": False,
+                "b_post_process_auto_change": False,
+                "b_post_process_organize_package": False,
+                "b_post_process_skip_commission": False,
+                "b_post_process_additional_material": False,
+                "fast_jump_type": 0
             }
             
             # 重新加载UI
             self.vice_char_count_var.set("0")
             self.task_group_var.set("0")
+            self.b_post_process_default_var.set(True)
+            self.b_post_process_weekly_reward_var.set(False)
+            self.b_post_process_auto_change_var.set(False)
+            self.b_post_process_organize_package_var.set(False)
+            self.b_post_process_skip_commission_var.set(False)
+            self.b_post_process_additional_material_var.set(False)
             
             for key in ["main_character_tasks", "five_character_tasks", "other_character_tasks"]:
                 self.refresh_selected_tasks(key)

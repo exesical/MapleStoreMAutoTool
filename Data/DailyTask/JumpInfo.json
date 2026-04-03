@@ -1,0 +1,17 @@
+[
+    {
+        "NextStateName":"SystemMenuOpening",
+        "ClickPos":[930,29],
+        "ClickRange":[10,10]
+    },
+    {
+        "NextStateName":"PostProcess",
+        "ClickPos":[590,444],
+        "ClickRange":[10,10]
+    },
+    {
+        "NextStateName":"Wander",
+        "ClickPos":[590,444],
+        "ClickRange":[10,10]
+    }
+]

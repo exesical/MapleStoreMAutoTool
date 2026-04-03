@@ -22,7 +22,8 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Exchange", "Exchange" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -48,7 +49,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -74,7 +76,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -100,7 +103,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -126,7 +130,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -152,7 +157,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -178,7 +184,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -204,7 +211,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -230,7 +238,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -256,7 +265,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -282,7 +292,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -308,7 +319,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -335,7 +347,8 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "PostProcess", "Wander" ],
-			[ "Material", "Wander" ]
+			[ "Material", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -350,7 +363,8 @@
 			[ "ChangeCharacter", "SystemMenuOpening" ],
 			[ "Material", "Wander" ],
 			[ "Exchange", "SystemMenuOpening" ],
-			[ "Mail", "SystemMenuOpening" ]
+			[ "Mail", "SystemMenuOpening" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -365,7 +379,8 @@
 			[ "ChangeCharacter", "SystemMenuOpening" ],
 			[ "Material", "Wander" ],
 			[ "Exchange", "SystemMenuOpening" ],
-			[ "GuildInfo", "SystemMenuOpening" ]
+			[ "GuildInfo", "SystemMenuOpening" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -393,7 +408,8 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
-			[ "PostProcess", "Wander" ]
+			[ "PostProcess", "Wander" ],
+			[ "DailyTask", "Wander" ]
 		]
 	},
 	{
@@ -419,7 +435,35 @@
 			[ "Tangyun", "Wander" ],
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
-			[ "Wulin", "Wander" ]
+			[ "Wulin", "Wander" ],
+			[ "DailyTask", "Wander" ]
+		]
+	},
+	{
+		"TargetStateName": "DailyTask",
+		"TargetTable": [
+			[ "Login", "CharacterSelect" ],
+			[ "CharacterSelect", "Wander" ],
+			[ "Wander", "DailyTask" ],
+			[ "SystemMenuOpening", "Wander" ],
+			[ "Mail", "SystemMenuOpening" ],
+			[ "GameModeDefault", "SystemMenuOpening" ],
+			[ "FastJump", "SystemMenuOpening" ],
+			[ "ChangeCharacter", "SystemMenuOpening" ],
+
+			[ "GuildInfo", "SystemMenuOpening" ],
+			[ "Exchange", "SystemMenuOpening" ],
+			[ "Material", "Wander" ],
+			[ "Elite", "Wander" ],
+			[ "Dimension", "Wander" ],
+			[ "MonsterPark", "Wander" ],
+			[ "NitePyramid", "Wander" ],
+			[ "Pirate", "Wander" ],
+			[ "Tangyun", "Wander" ],
+			[ "Weekly", "Wander" ],
+			[ "SpecialWeekly", "Wander" ],
+			[ "Wulin", "Wander" ],
+			[ "PostProcess", "Wander" ]
 		]
 	}
 ]
