@@ -265,7 +265,7 @@ class MSmState(object):
             bSuccess = bSuccess or self.IsPicMatching(MSmState.GlobalExitPic)
         self.TryInnerJumpByPos([MSmState.ReturnChachaterSelectHitPos, MSmState.ReturnChachaterSelectHitRect], MSmState.CharacterSelectIdPic)
 
-    def WaitUntil(self, CheckPic):
+    def WaitUntil(self, CheckPic, MaxTime = 600):
         sleep(1)
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(CheckPic)
@@ -275,7 +275,7 @@ class MSmState(object):
             self.RefreshScreenShot();
             bSuccess = bSuccess or self.IsPicMatching(CheckPic)
             CurLoop += 1
-            if CurLoop > WaittingMaxTimes:
+            if CurLoop > MaxTime:
                 raise RuntimeError("InfiniteLoop")
 
     def TryInnerJumpByPos(self, HitPos, CheckPic):
@@ -404,9 +404,9 @@ class MSmState(object):
         AutoHitRange = [int(HitPicWidth * HitRange), int(HitPicHeight * HitRange)]
         return [AutoHitPos, AutoHitRange]
 
-    def TryLeaveJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8):
+    def TryLeaveJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8, OpName = ""):
         sleep(1)
-        print("TryLeaveJumpByPic with HitPic and CheckPic, matching threshold = " + str(MatchingThreshold))
+        print("TryLeaveJumpByPic matching threshold = " + str(MatchingThreshold) + "OpName = " + OpName)
         self.RefreshScreenShot();
         HitPos = self.GetPicPos(HitPic, MatchingThreshold)
         if HitPos is None:
@@ -443,9 +443,9 @@ class MSmState(object):
             if CurLoop > HitMaxTimes:
                 raise RuntimeError("InfiniteLoop")
 
-    def TryInnerJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8):
+    def TryInnerJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8, OpName =""):
         sleep(1)
-        print("TryInnerJumpByPic with HitPic and CheckPic, matching threshold = " + str(MatchingThreshold))
+        print("TryInnerJumpByPic = " + str(MatchingThreshold) + "OpName = " + OpName)
         self.RefreshScreenShot();
         HitPos = self.GetPicPos(HitPic, MatchingThreshold)
         if HitPos is None:
@@ -1095,6 +1095,7 @@ class MSmState_DailyTask(MSmState):
         DailyTaskHitInfo = self.GetHitInfo(self.DailyTaskPic["TaskTinyIcon"])
         curloop = 0
         StillHasTask = DailyTaskHitInfo is not None
+        bCanFastTransfer = False
         while StillHasTask :
             curloop = curloop + 1
             if curloop > 180: #超过半小时
@@ -1105,9 +1106,14 @@ class MSmState_DailyTask(MSmState):
             FastFinished = self.GetHitInfo(self.DailyTaskPic["FastFinished"], 0.5, 0.95) 
             if FastFinished is not None:
                 self.TryLeaveJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["FastFinished"], 0.5, 0.95)
+                bCanFastTransfer = True
                 sleep(15)
+            if bCanFastTransfer:
+                self.TryLeaveJumpByPic(self.DailyTaskPic["FastTransfer"], self.DailyTaskPic["FastTransfer"], 0.5, 0.9) 
+                bCanFastTransfer = False
+
             self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9) 
-            self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.95) 
+            self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9) 
             self.TryLeaveJumpByPic(self.DailyTaskPic["MoveToVillage"], self.DailyTaskPic["MoveToVillage"], 0.5, 0.95)   
             GetAdditonHitInfo = self.GetHitInfo(self.DailyTaskPic["GetAddition"], 0.5, 0.95)
             if GetAdditonHitInfo is None:
@@ -1160,7 +1166,7 @@ class MSmState_Expedition(MSmState):
             HitInfo = self.GetHitInfo(self.PicMap["Difficult"], 0.5, 0.95)
         for i in range(np.random.randint(2,4)):
             self.DoHit(HitInfo[0], HitInfo[1])
-        self.TryInnerJumpByPic(self.PicMap["TeamMode0"], self.PicMap["FastTeam"], 0.5, 0.95)
+        self.TryInnerJumpByPic(self.PicMap["TeamMode0"], self.PicMap["FastTeam"], 0.5, 0.95, "Select FastTeam")
 
     def IsBossFightFinished(self, bosstype):
         self.RefreshScreenShot()
@@ -1174,7 +1180,7 @@ class MSmState_Expedition(MSmState):
     def WaitForFinished(self, bosstype):
         self.RefreshScreenShot()
         curloop = 0
-        maxloop = 30
+        maxloop = 20
         if bosstype == 0:
             returniconname = "ReturnToMain0"
         elif bosstype == 1:
@@ -1184,56 +1190,73 @@ class MSmState_Expedition(MSmState):
         if bosstype == 2:
             maxloop = 15
         while self.IsBossFightFinished(bosstype) == False:
-            self.DoHitByName("UseSkill"+str(curloop % 8))
+            for skillnum in range(0,8):
+                self.DoHitByName("UseSkill"+str(skillnum))
             curloop += 1
             sleep(1)
             self.RefreshScreenShot()
+            #这里如果死完了复活不了返回村庄要处理的流程太多了，直接走卡死流程重启算了 。 
+            self.TryLeaveJumpByPic(self.PicMap["Recover"], self.PicMap["Recover"], 0.5, 0.95, "do recover")
+              
             
             if curloop > maxloop: 
                 print("Boss fight finished wait timeout, try to exit")
                 self.RefreshScreenShot()
-                self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95)
+                self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Hit Exit")
                 sleep(3)
-                self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95)
+                self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Hit Return to Main Early Exit")
                 sleep(15)
                 return
         if bosstype == 0:
-            self.TryLeaveJumpByPic(self.PicMap["ReturnToMain"], self.PicMap["ReturnToMain"], 0.5, 0.95)
+            self.TryLeaveJumpByPic(self.PicMap["ReturnToMain"], self.PicMap["ReturnToMain"], 0.5, 0.95, "Finished Boss0 Return to Main")
         elif bosstype == 1:
-            self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95)
-            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95)
+            self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95, "Finished Boss1 Comfirm")
+            sleep(2)
+            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss1 Exit")
             sleep(3)
-            self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95)
+            self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss1 Return To Main")
         else:
-            self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95)
-            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95)
+            self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95, "Finished Boss2 Comfirm")
+            sleep(2)
+            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss2 Exit")
             sleep(3)
-            self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95)
+            self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss2 Return To Main")
         sleep(15)
 
     def GetBossType(self):
         self.RefreshScreenShot()
         if self.IsPicMatching(self.PicMap["BossType0"], 0.98) or self.IsPicMatching(self.PicMap["BossType01"], 0.98):
+            print("Cur Boss Type - 0") 
             return 0
         elif self.IsPicMatching(self.PicMap["BossType1"], 0.98):
+            print("Cur Boss Type - 1")
             return 1    
         else:
-            return 2            
+            print("Cur Boss Type - 2")
+            return 2   
+    
+       
 
 
     def Processing(self):
         sleep(1)
-        self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95)
-        self.TryInnerJumpByPic(self.PicMap["SelectCanEnter0"], self.PicMap["SelectCanEnter1"], 0.5, 0.95)
+        self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95, "SelectWeekly")
+        self.TryInnerJumpByPic(self.PicMap["SelectCanEnter0"], self.PicMap["SelectCanEnter1"], 0.5, 0.95, "SelectCanEnter0")
         while self.IsFinished() == False:
-            self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95)
-            self.TryInnerJumpByPic(self.PicMap["SelectCanEnter0"], self.PicMap["SelectCanEnter1"], 0.5, 0.95)
+            self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95, "Undo SelectWeekly")
+            self.TryInnerJumpByPic(self.PicMap["SelectCanEnter0"], self.PicMap["SelectCanEnter1"], 0.5, 0.95, "Undo SelectCanEnter0")
             self.TryInnerJump("SelectFirstBoss", self.PicMap["BossSubTitleOpen"], 0.95)
             self.SelectBossMaxLevel()
             bootype = self.GetBossType()
-            self.TryLeaveJumpByPic(self.PicMap["FastTeam"], self.PicMap["FastTeam"], 0.5, 0.95)
-            self.WaitUntil(self.PicMap["TimerIcon"])
-            sleep(12)#兼容贝伦出地时间
+            bosswaittime = 12
+            if bootype == 0:
+                 bosswaittime = 6
+            if bootype == 1:
+                 bosswaittime = 6
+            self.TryLeaveJumpByPic(self.PicMap["FastTeam"], self.PicMap["FastTeam"], 0.5, 0.95,"Fast Team")
+
+            self.WaitUntil(self.PicMap["TimerIcon"], 60)
+            sleep(bosswaittime)#兼容贝伦出地时间
             self.WaitForFinished(bootype)        
 
         return True
@@ -1816,7 +1839,7 @@ class MSmState_PostProcess(MSmState):
 if __name__ == "__main__":
     # ============ 测试配置 ============
     # 在这里修改要测试的状态名称
-    TEST_STATE = "DailyTask"  # 例如: DailyTask, PostProcess, Material, Elite, Wander 等
+    TEST_STATE = "Expedition"  # 例如: DailyTask, PostProcess, Material, Elite, Wander 等
     # =================================
     
     from win32gui import FindWindow, FindWindowEx
