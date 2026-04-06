@@ -23,6 +23,7 @@
 			[ "Exchange", "Exchange" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -50,6 +51,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -77,6 +79,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -104,6 +107,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -131,6 +135,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -158,6 +163,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -185,6 +191,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -212,6 +219,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -239,6 +247,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -266,6 +275,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -293,6 +303,7 @@
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -348,6 +359,7 @@
 			[ "Wulin", "Wander" ],
 			[ "PostProcess", "Wander" ],
 			[ "Material", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -364,6 +376,7 @@
 			[ "Material", "Wander" ],
 			[ "Exchange", "SystemMenuOpening" ],
 			[ "Mail", "SystemMenuOpening" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -380,6 +393,7 @@
 			[ "Material", "Wander" ],
 			[ "Exchange", "SystemMenuOpening" ],
 			[ "GuildInfo", "SystemMenuOpening" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -436,6 +450,7 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "DailyTask", "Wander" ]
 		]
 	},
@@ -463,6 +478,7 @@
 			[ "Weekly", "Wander" ],
 			[ "SpecialWeekly", "Wander" ],
 			[ "Wulin", "Wander" ],
+			[ "Expedition", "Wander" ],
 			[ "PostProcess", "Wander" ]
 		]
 	}

@@ -1,5 +1,10 @@
 [
   "CharacterSelect",
-  "DailyTask",
+  "GuildInfo",
+  "Mail",
+  "FastJump",
+  "Material",
+  "Weekly",
+  "PostProcess",
   "CharacterSelect"
 ]

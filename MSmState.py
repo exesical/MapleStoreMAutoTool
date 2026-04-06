@@ -992,18 +992,18 @@ class MSmState_Wander(MSmState):
 
     def Processing(self):
         sleep(1)
-        if MSmState.bFirstStart == True and MSmState.bMainCharacter == True:
-             ChangePresetHitInfo = self.GetChangePresetHitInfo()
-             while ChangePresetHitInfo is None:
-                 self.HitHandle.DoMousePull(self.HitInfo["ChangePreset"][0],self.HitInfo["ChangePreset"][1],[200,0], 15, 5)
-                 sleep(2)
-                 ChangePresetHitInfo = self.GetChangePresetHitInfo()
+        # if MSmState.bFirstStart == True and MSmState.bMainCharacter == True:
+        #      ChangePresetHitInfo = self.GetChangePresetHitInfo()
+        #      while ChangePresetHitInfo is None:
+        #          self.HitHandle.DoMousePull(self.HitInfo["ChangePreset"][0],self.HitInfo["ChangePreset"][1],[200,0], 15, 5)
+        #          sleep(2)
+        #          ChangePresetHitInfo = self.GetChangePresetHitInfo()
 
-             self.TryInnerJumpByPic(self.PicMap["ChangePreset0"], self.PicMap["ChangePreset1"], 0.5, 0.9)
-             self.DoHitByName("Preset1")
-             sleep(0.5)
-             self.DoHitByName("Preset1")
-             MSmState.bFirstStart = False
+        #      self.TryInnerJumpByPic(self.PicMap["ChangePreset0"], self.PicMap["ChangePreset1"], 0.5, 0.9)
+        #      self.DoHitByName("Preset1")
+        #      sleep(0.5)
+        #      self.DoHitByName("Preset1")
+        #      MSmState.bFirstStart = False
 
         AdCloseMask = []
         HasAdExist = False
@@ -1095,7 +1095,7 @@ class MSmState_DailyTask(MSmState):
         DailyTaskHitInfo = self.GetHitInfo(self.DailyTaskPic["TaskTinyIcon"])
         curloop = 0
         StillHasTask = DailyTaskHitInfo is not None
-        bCanFastTransfer = False
+        bCanFastTransfer = True
         while StillHasTask :
             curloop = curloop + 1
             if curloop > 180: #超过半小时
@@ -1109,6 +1109,7 @@ class MSmState_DailyTask(MSmState):
                 bCanFastTransfer = True
                 sleep(15)
             if bCanFastTransfer:
+                sleep(3)
                 self.TryLeaveJumpByPic(self.DailyTaskPic["FastTransfer"], self.DailyTaskPic["FastTransfer"], 0.5, 0.9) 
                 bCanFastTransfer = False
 
@@ -1180,7 +1181,7 @@ class MSmState_Expedition(MSmState):
     def WaitForFinished(self, bosstype):
         self.RefreshScreenShot()
         curloop = 0
-        maxloop = 20
+        maxloop = 10
         if bosstype == 0:
             returniconname = "ReturnToMain0"
         elif bosstype == 1:
@@ -1188,11 +1189,12 @@ class MSmState_Expedition(MSmState):
         elif bosstype == 2:
             returniconname = "ReturnToMain2"
         if bosstype == 2:
-            maxloop = 15
+            maxloop = 10
         while self.IsBossFightFinished(bosstype) == False:
             for skillnum in range(0,8):
                 self.DoHitByName("UseSkill"+str(skillnum))
             curloop += 1
+            print("boss loop fighting = "+ str(curloop))
             sleep(1)
             self.RefreshScreenShot()
             #这里如果死完了复活不了返回村庄要处理的流程太多了，直接走卡死流程重启算了 。 
@@ -1205,9 +1207,14 @@ class MSmState_Expedition(MSmState):
                 self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Hit Exit")
                 sleep(3)
                 self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Hit Return to Main Early Exit")
-                sleep(15)
+                self.WaitUntil(self.PicMap["MainId"], 30)
                 return
         if bosstype == 0:
+            if self.IsPicMatching(self.PicMap["GetMoreReward"], 0.95):
+                self.TryLeaveJumpByPic(self.PicMap["GetMoreReward"], self.PicMap["GetMoreReward"], 0.5, 0.95, "Finished Boss0 Return to Main")
+                sleep(2)
+                self.TryLeaveJumpByPic(self.PicMap["Confirm"], self.PicMap["Confirm"], 0.5, 0.95, "Finished Boss0 Return to Main")
+                sleep(2)
             self.TryLeaveJumpByPic(self.PicMap["ReturnToMain"], self.PicMap["ReturnToMain"], 0.5, 0.95, "Finished Boss0 Return to Main")
         elif bosstype == 1:
             self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95, "Finished Boss1 Comfirm")
@@ -1221,7 +1228,7 @@ class MSmState_Expedition(MSmState):
             self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss2 Exit")
             sleep(3)
             self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss2 Return To Main")
-        sleep(15)
+        self.WaitUntil(self.PicMap["MainId"], 30)
 
     def GetBossType(self):
         self.RefreshScreenShot()
@@ -1258,7 +1265,8 @@ class MSmState_Expedition(MSmState):
             self.WaitUntil(self.PicMap["TimerIcon"], 60)
             sleep(bosswaittime)#兼容贝伦出地时间
             self.WaitForFinished(bootype)        
-
+        self.TryLeaveJump("OpenSystemMenu", self.PicMap["MainId"])
+        self.TryLeaveJump("OpenSystemMenu", self.PicMap["SysOpeningIdImage"])
         return True
 
 
@@ -1530,18 +1538,17 @@ class MSmState_PostProcess(MSmState):
 
     def Processing(self):
 
-        if MSmState.bMainCharacter == True :
-                ChangePresetHitInfo = self.GetChangePresetHitInfo
-                while ChangePresetHitInfo is None:
-                    self.HitHandle.DoMousePull(self.HitInfo["ChangePreset"][0],self.HitInfo["ChangePreset"][1],[200,0], 15, 5)
-                    sleep(2)
-                    ChangePresetHitInfo = self.GetChangePresetHitInfo()
-
-                self.TryInnerJumpByPic(self.ChangePreset0, self.ChangePreset1, 0.5, 0.9)
-                self.DoHitByName("Preset3")
-                sleep(0.5)
-                self.DoHitByName("Preset3")
-                sleep(1)
+        # if MSmState.bMainCharacter == True :
+        #         ChangePresetHitInfo = self.GetChangePresetHitInfo
+        #         while ChangePresetHitInfo is None:
+        #             self.HitHandle.DoMousePull(self.HitInfo["ChangePreset"][0],self.HitInfo["ChangePreset"][1],[200,0], 15, 5)
+        #             sleep(2)
+        #             ChangePresetHitInfo = self.GetChangePresetHitInfo()
+        #         self.TryInnerJumpByPic(self.ChangePreset0, self.ChangePreset1, 0.5, 0.9)
+        #         self.DoHitByName("Preset3")
+        #         sleep(0.5)
+        #         self.DoHitByName("Preset3")
+        #         sleep(1)
 
         # 默认功能：发送人气、交易商品、日常任务等
         if MSmState_PostProcess.bDefault:

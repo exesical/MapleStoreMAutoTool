@@ -43,5 +43,10 @@
         "OpName":"UseSkill7",
         "ClickPos":[822,498],
         "ClickRange":[10,10]
+    },
+    {
+        "OpName":"OpenSystemMenu",
+        "ClickPos":[930,29],
+        "ClickRange":[10,10]
     }
 ]
