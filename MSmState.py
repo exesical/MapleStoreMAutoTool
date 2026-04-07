@@ -813,6 +813,7 @@ class MSmState_GameModeDefault(MSmState):
         if Pos is None:
             print("Cannot find "+ ModeName + " Enter")
         else:
+            print("find "+ ModeName + " Enter")
             self.JumpInfo[ModeName] = [[Pos[0]+ 75, Pos[1]+ 47 + DoScreenHit.ApplicationWindowsTitleHeight],[15, 15]]
 
     def Processing(self):
@@ -844,21 +845,21 @@ class MSmState_GameModeDefault(MSmState):
             self.AddEnter("MonsterPark", self.MonsterParkEnterIdImage)        
             self.AddEnter("Expedition", self.ExpeditionEnterIdImage)
         else:
-            self.AddEnter("Material", self.PicMap["MiniMaterialEnterIdentify"], 0.9)        
-            self.AddEnter("Elite", self.PicMap["MiniEliteEnterIdImage"], 0.9)
+            self.AddEnter("Material", self.PicMap["MiniMaterialEnterIdentify"], 0.95)        
+            self.AddEnter("Elite", self.PicMap["MiniEliteEnterIdImage"], 0.95)
             for i in range(0, self.EliteCount ):
                 if "Elite" not in self.JumpInfo:
-                    self.AddEnter("Elite", self.PicMap["MiniEliteEnterIdImage" + str(i)], 0.9)
+                    self.AddEnter("Elite", self.PicMap["MiniEliteEnterIdImage" + str(i)], 0.95)
 
 
-            self.AddEnter("Tangyun", self.PicMap["MiniTangyunEnterIdImage"], 0.9)        
-            self.AddEnter("Pirate", self.PicMap["MiniPirateEnterIdImage"], 0.9)        
-            self.AddEnter("NitePyramid", self.PicMap["MiniNitePyramidEnterIdImage"], 0.9)        
-            self.AddEnter("Weekly", self.PicMap["MiniWeeklyEnterIdImage"], 0.9)     
-            self.AddEnter("SpecialWeekly", self.PicMap["MiniWeeklyEnterIdImage"], 0.9)          
-            self.AddEnter("Wulin", self.PicMap["MiniWulinEnterIdImage"], 0.9)               
-            self.AddEnter("MonsterPark", self.PicMap["MiniMonsterParkEnterIdImage"], 0.9)        
-            self.AddEnter("Expedition", self.PicMap["MiniExpeditionEnterIdImage"], 0.9)       
+            self.AddEnter("Tangyun", self.PicMap["MiniTangyunEnterIdImage"], 0.95)        
+            self.AddEnter("Pirate", self.PicMap["MiniPirateEnterIdImage"], 0.95)        
+            self.AddEnter("NitePyramid", self.PicMap["MiniNitePyramidEnterIdImage"], 0.95)        
+            self.AddEnter("Weekly", self.PicMap["MiniWeeklyEnterIdImage"], 0.95)     
+            self.AddEnter("SpecialWeekly", self.PicMap["MiniWeeklyEnterIdImage"], 0.95)          
+            self.AddEnter("Wulin", self.PicMap["MiniWulinEnterIdImage"], 0.95)               
+            self.AddEnter("MonsterPark", self.PicMap["MiniMonsterParkEnterIdImage"], 0.95)        
+            self.AddEnter("Expedition", self.PicMap["MiniExpeditionEnterIdImage"], 0.95)       
 
         return True
 
@@ -1858,7 +1859,7 @@ class MSmState_PostProcess(MSmState):
 if __name__ == "__main__":
     # ============ 测试配置 ============
     # 在这里修改要测试的状态名称
-    TEST_STATE = "DailyTask"  # 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander 等
+    TEST_STATE = "GameModeDefault"  #GameModeDefault 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander 等
     # =================================
     
     from win32gui import FindWindow, FindWindowEx
