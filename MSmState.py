@@ -1215,7 +1215,7 @@ class MSmState_Expedition(MSmState):
             if curloop > maxloop: 
                 print("Boss fight finished wait timeout, try to exit")
                 self.RefreshScreenShot()
-                self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Hit Exit")
+                self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.85, "Hit Exit")
                 sleep(3)
                 self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Hit Return to Main Early Exit")
                 self.WaitUntil(self.PicMap["MainId"], 30)
@@ -1231,13 +1231,13 @@ class MSmState_Expedition(MSmState):
         elif bosstype == 1:
             self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95, "Finished Boss1 Comfirm")
             sleep(2)
-            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss1 Exit")
+            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.85, "Finished Boss1 Exit")
             sleep(3)
             self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss1 Return To Main")
         else:
             self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95, "Finished Boss2 Comfirm")
             sleep(2)
-            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss2 Exit")
+            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.85, "Finished Boss2 Exit")
             sleep(3)
             self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss2 Return To Main")
         self.WaitUntil(self.PicMap["MainId"], 30)
