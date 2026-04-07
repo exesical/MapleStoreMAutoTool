@@ -1083,7 +1083,15 @@ class MSmState_DailyTask(MSmState):
                     self.DoHitByName("ReciveCommission")
                 for i in range(np.random.randint(2,3)):
                     self.DoHitByName("CloseCommissionRevice")
-
+            CommissionFinished = self.GetPicPos(self.DailyTaskPic["CommissionFinished"], 0.95, cv2.TM_CCORR_NORMED)
+            NoCommissionTicket = self.GetPicPos(self.DailyTaskPic["NoCommissionTicket"], 0.999, cv2.TM_CCORR_NORMED)
+            if (NoCommissionTicket is None) and (CommissionFinished is None):
+                self.TryInnerJump("AlignCommission",self.DailyTaskPic["CommisionReciveReady"],0.95)
+                self.TryInnerJump("StartCommission",self.DailyTaskPic["CommisionStartReady"],0.95)
+                self.TryInnerJump("DoCommission",self.DailyTaskPic["CommissionAllFinished"],0.95)
+                if MSmState.bMainCharacter == True:
+                    self.TryInnerJumpByPic(self.DailyTaskPic["GetMoreReward"], self.DailyTaskPic["BuyAddition"], 0.5, 0.98)
+                    self.TryLeaveJumpByPic(self.DailyTaskPic["BuyAddition"], self.DailyTaskPic["BuyAddition"], 0.5, 0.95) 
             self.TryLeaveJump("CloseCommissionMain",self.DailyTaskPic["CommissionMain"])
             self.TryLeaveJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"])
 
@@ -1095,7 +1103,7 @@ class MSmState_DailyTask(MSmState):
         DailyTaskHitInfo = self.GetHitInfo(self.DailyTaskPic["TaskTinyIcon"])
         curloop = 0
         StillHasTask = DailyTaskHitInfo is not None
-        bCanFastTransfer = True
+        bCanFastTransfer = False
         while StillHasTask :
             curloop = curloop + 1
             if curloop > 180: #超过半小时
@@ -1108,7 +1116,10 @@ class MSmState_DailyTask(MSmState):
                 self.TryLeaveJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["FastFinished"], 0.5, 0.95)
                 bCanFastTransfer = True
                 sleep(15)
-            if bCanFastTransfer:
+            else:
+                self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9) 
+
+            if IsRunning and bCanFastTransfer:
                 sleep(3)
                 self.TryLeaveJumpByPic(self.DailyTaskPic["FastTransfer"], self.DailyTaskPic["FastTransfer"], 0.5, 0.9) 
                 bCanFastTransfer = False
@@ -1213,8 +1224,9 @@ class MSmState_Expedition(MSmState):
             if self.IsPicMatching(self.PicMap["GetMoreReward"], 0.95):
                 self.TryLeaveJumpByPic(self.PicMap["GetMoreReward"], self.PicMap["GetMoreReward"], 0.5, 0.95, "Finished Boss0 Return to Main")
                 sleep(2)
-                self.TryLeaveJumpByPic(self.PicMap["Confirm"], self.PicMap["Confirm"], 0.5, 0.95, "Finished Boss0 Return to Main")
-                sleep(2)
+                self.TryLeaveJumpByPic(self.PicMap["Confirm"], self.PicMap["Confirm"], 0.5, 0.98, "Finished Boss0 Return to Main")
+                # self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Hit Exit")
+                # sleep(2)
             self.TryLeaveJumpByPic(self.PicMap["ReturnToMain"], self.PicMap["ReturnToMain"], 0.5, 0.95, "Finished Boss0 Return to Main")
         elif bosstype == 1:
             self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95, "Finished Boss1 Comfirm")
@@ -1846,7 +1858,7 @@ class MSmState_PostProcess(MSmState):
 if __name__ == "__main__":
     # ============ 测试配置 ============
     # 在这里修改要测试的状态名称
-    TEST_STATE = "Expedition"  # 例如: DailyTask, PostProcess, Material, Elite, Wander 等
+    TEST_STATE = "DailyTask"  # 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander 等
     # =================================
     
     from win32gui import FindWindow, FindWindowEx
@@ -1873,7 +1885,7 @@ if __name__ == "__main__":
     
     if MSmState.HandleNumber_Main == MSmState.HandleNumber_Render:
         print("Warning: HandleNumber_Main is equal to HandleNumber_Render, consider run with -MainWindowsCapture")
-    
+    MSmState.bMainCharacter = True
     print(f"=" * 50)
     print(f"MSmState 单元测试")
     print(f"=" * 50)
