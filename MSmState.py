@@ -46,6 +46,9 @@ class MSmState(object):
     CharacterSelectIdPic = cv2.imdecode(fromfile(frozen.app_path() + "\\Data\\CharacterSelect\\Identification\\0.png" , dtype=uint8), -1)
     CharacterSelectIdPic = cv2.cvtColor(CharacterSelectIdPic, cv2.COLOR_BGR2GRAY)
 
+    ForceLeaveConfirmPic = cv2.imdecode(fromfile(frozen.app_path() + "\\Data\\CharacterSelect\\ForceLeaveConfirm.png" , dtype=uint8), -1)
+    ForceLeaveConfirmPic = cv2.cvtColor(ForceLeaveConfirmPic, cv2.COLOR_BGR2GRAY)
+
 
     def __init__(self, StateName):
         left, top, right, bottom = win32gui.GetWindowRect(MSmState.HandleNumber_Render)
@@ -256,6 +259,7 @@ class MSmState(object):
             return
         self.HitHandle.PressKeyboardESC()
         sleep(1)
+        self.TryLeaveJumpByPic(self.ForceLeaveConfirmPic, self.ForceLeaveConfirmPic, 0.5, 0.9, "Force Leave Confirm")
         self.RefreshScreenShot();
         bSuccess = self.IsPicMatching(MSmState.GlobalExitPic)
         while bSuccess == False:
@@ -442,6 +446,18 @@ class MSmState(object):
             CurLoop += 1
             if CurLoop > HitMaxTimes:
                 raise RuntimeError("InfiniteLoop")
+    def DoHitByPic(self, HitPic, HitRange = 0.5, MatchingThreshold = 0.8, HitTimes = 3):
+        sleep(1)
+        self.RefreshScreenShot();
+        HitPos = self.GetPicPos(HitPic, MatchingThreshold)
+        if HitPos is None:
+            return
+        HitPicHeight, HitPicWidth = HitPic.shape[:2]
+        AutoHitPos = [HitPos[0] + int(HitPicWidth / 2), 
+                      HitPos[1] + int(HitPicHeight / 2) + DoScreenHit.ApplicationWindowsTitleHeight]
+        AutoHitRange = [int(HitPicWidth * HitRange), int(HitPicHeight * HitRange)]
+        for i in range(HitTimes):
+            self.DoHit(AutoHitPos, AutoHitRange)
 
     def TryInnerJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8, OpName =""):
         sleep(1)
@@ -1056,9 +1072,12 @@ class MSmState_DailyTask(MSmState):
 
     def SelectTaskPrefer(self):
         self.RefreshScreenShot()
-        self.TryInnerJumpByPic(self.DailyTaskPic["TaskType0"], self.DailyTaskPic["ReciveTask"], 0.5, 0.8)
-        self.TryInnerJumpByPic(self.DailyTaskPic["TaskType1"], self.DailyTaskPic["ReciveTask"], 0.5, 0.8)
-        self.TryInnerJumpByPic(self.DailyTaskPic["TaskType2"], self.DailyTaskPic["ReciveTask"], 0.5, 0.8)
+        self.DoHitByPic(self.DailyTaskPic["TaskType0"], 0.5, 0.75)
+        self.TryLeaveJumpByPic(self.DailyTaskPic["CloseRewardDetail"], self.DailyTaskPic["CloseRewardDetail"], 0.3, 0.98)
+        self.DoHitByPic(self.DailyTaskPic["TaskType1"], 0.5, 0.75)
+        self.TryLeaveJumpByPic(self.DailyTaskPic["CloseRewardDetail"], self.DailyTaskPic["CloseRewardDetail"], 0.3, 0.98)
+        self.DoHitByPic(self.DailyTaskPic["TaskType2"], 0.5, 0.75)
+        self.TryLeaveJumpByPic(self.DailyTaskPic["CloseRewardDetail"], self.DailyTaskPic["CloseRewardDetail"], 0.3, 0.98)
 
     def Processing(self):
         # 处理日常任务逻辑
@@ -1096,6 +1115,9 @@ class MSmState_DailyTask(MSmState):
             self.TryLeaveJump("CloseCommissionMain",self.DailyTaskPic["CommissionMain"])
             self.TryLeaveJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"])
 
+        #self.TryInnerJumpByPic(self.DailyTaskPic["MysticAreaUnselect"], self.DailyTaskPic["MysticAreaSelect"], 0.5, 0.98)
+                
+
         #开始跑日常任务
         self.TryInnerJumpByPic(self.DailyTaskPic["TaskClose"], self.DailyTaskPic["TaskOpen"], 0.5, 0.98)
 
@@ -1114,18 +1136,23 @@ class MSmState_DailyTask(MSmState):
                 self.DoHit(DailyTaskHitInfo[0], DailyTaskHitInfo[1])
             FastFinished = self.GetHitInfo(self.DailyTaskPic["FastFinished"], 0.5, 0.95) 
             if FastFinished is not None:
-                self.TryLeaveJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["FastFinished"], 0.5, 0.95)
+                self.TryInnerJumpByPic(self.DailyTaskPic["MysticAreaUnselect"], self.DailyTaskPic["MysticAreaSelect"], 0.5, 0.98)
+                    
+                for i in range(6): #防止切图黑屏的时候误判
+                    self.TryLeaveJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["FastFinished"], 0.5, 0.95)
+                    sleep(1)
                 bCanFastTransfer = True
                 sleep(15)
             else:
                 self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9) 
 
             if IsRunning and bCanFastTransfer:
-                sleep(3)
-                self.TryLeaveJumpByPic(self.DailyTaskPic["FastTransfer"], self.DailyTaskPic["FastTransfer"], 0.5, 0.9) 
+                for i in range(6): #防止切图黑屏的时候误判
+                    self.TryLeaveJumpByPic(self.DailyTaskPic["FastTransfer"], self.DailyTaskPic["FastTransfer"], 0.5, 0.9) 
                 bCanFastTransfer = False
-
-            self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9) 
+            if self.IsPicMatching(self.DailyTaskPic["Confirm"], 0.9):
+                self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9) 
+            
             self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9) 
             self.TryLeaveJumpByPic(self.DailyTaskPic["MoveToVillage"], self.DailyTaskPic["MoveToVillage"], 0.5, 0.95)   
             GetAdditonHitInfo = self.GetHitInfo(self.DailyTaskPic["GetAddition"], 0.5, 0.95)
@@ -1265,7 +1292,7 @@ class MSmState_Expedition(MSmState):
         while self.IsFinished() == False:
             self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95, "Undo SelectWeekly")
             self.TryInnerJumpByPic(self.PicMap["SelectCanEnter0"], self.PicMap["SelectCanEnter1"], 0.5, 0.95, "Undo SelectCanEnter0")
-            self.TryInnerJump("SelectFirstBoss", self.PicMap["BossSubTitleOpen"], 0.95)
+            self.TryInnerJump("SelectFirstBoss", self.PicMap["BossSubTitleOpen"], 0.935)
             self.SelectBossMaxLevel()
             bootype = self.GetBossType()
             bosswaittime = 12
@@ -1859,7 +1886,7 @@ class MSmState_PostProcess(MSmState):
 if __name__ == "__main__":
     # ============ 测试配置 ============
     # 在这里修改要测试的状态名称
-    TEST_STATE = "GameModeDefault"  #GameModeDefault 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander 等
+    TEST_STATE = "DailyTask"  #GameModeDefault 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander 等
     # =================================
     
     from win32gui import FindWindow, FindWindowEx

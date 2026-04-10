@@ -1,13 +1,16 @@
 [
   "CharacterSelect",
-  "Expedition",
   "GuildInfo",
   "Mail",
-  "MonsterPark",
-  "FastJump",
   "Material",
-  "Weekly",
+  "MonsterPark",
+  "NitePyramid",
+  "Wulin",
   "Elite",
+  "SpecialWeekly",
+  "Weekly",
+  "Pirate",
+  "Tangyun",
   "PostProcess",
   "CharacterSelect"
 ]
