@@ -11,7 +11,7 @@
     },
     {
         "OpName":"CloseTable",
-        "ClickPos":[859,140],
+        "ClickPos":[879,140],
         "ClickRange":[8,8]
     },
     {
@@ -28,6 +28,11 @@
         "OpName":"FinalComfirm",
         "ClickPos":[588,399],
         "ClickRange":[50,15]
+    },
+    {
+        "OpName":"CloseMP",
+        "ClickPos":[777,50],
+        "ClickRange":[8,8]
     },
     {
         "OpName":"Finish",

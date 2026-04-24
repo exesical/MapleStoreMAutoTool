@@ -48,5 +48,10 @@
         "OpName":"OpenSystemMenu",
         "ClickPos":[930,29],
         "ClickRange":[10,10]
+    },
+    {
+        "OpName":"EarlyExit",
+        "ClickPos":[926,213],
+        "ClickRange":[8,8]
     }
 ]

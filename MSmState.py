@@ -43,6 +43,9 @@ class MSmState(object):
     GlobalExitPic = cv2.imdecode(fromfile(frozen.app_path() + "\\Data\\Global\\GameEnd.png" , dtype=uint8), -1)
     GlobalExitPic = cv2.cvtColor(GlobalExitPic, cv2.COLOR_BGR2GRAY)
 
+    CommonExitPic = cv2.imdecode(fromfile(frozen.app_path() + "\\Data\\Global\\CommonExit.png" , dtype=uint8), -1)
+    CommonExitPic = cv2.cvtColor(CommonExitPic, cv2.COLOR_BGR2GRAY)
+
     CharacterSelectIdPic = cv2.imdecode(fromfile(frozen.app_path() + "\\Data\\CharacterSelect\\Identification\\0.png" , dtype=uint8), -1)
     CharacterSelectIdPic = cv2.cvtColor(CharacterSelectIdPic, cv2.COLOR_BGR2GRAY)
 
@@ -255,19 +258,19 @@ class MSmState(object):
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY);
 
     def ForceReturnTocharacterSelect(self):
-        if self.IsUnderState():
-            return
-        self.HitHandle.PressKeyboardESC()
-        sleep(1)
-        self.TryLeaveJumpByPic(self.ForceLeaveConfirmPic, self.ForceLeaveConfirmPic, 0.5, 0.9, "Force Leave Confirm")
-        self.RefreshScreenShot();
-        bSuccess = self.IsPicMatching(MSmState.GlobalExitPic)
-        while bSuccess == False:
-            self.HitHandle.PressKeyboardESC()
-            sleep(1)
+        while self.IsUnderState() == False:
             self.RefreshScreenShot();
-            bSuccess = bSuccess or self.IsPicMatching(MSmState.GlobalExitPic)
-        self.TryInnerJumpByPos([MSmState.ReturnChachaterSelectHitPos, MSmState.ReturnChachaterSelectHitRect], MSmState.CharacterSelectIdPic)
+            while True:
+                self.RefreshScreenShot()
+                if self.IsPicMatching(self.GlobalExitPic, 0.9) == True or self.IsPicMatching(self.CommonExitPic, 0.9) == True or self.IsUnderState() == True:
+                    break
+                self.HitHandle.PressKeyboardESC()
+                sleep(1)
+            for i in range(2):
+                self.DoHit([480,400], [30,10])
+            sleep(1)
+        return 
+        
 
     def WaitUntil(self, CheckPic, MaxTime = 600):
         sleep(1)
@@ -282,7 +285,7 @@ class MSmState(object):
             if CurLoop > MaxTime:
                 raise RuntimeError("InfiniteLoop")
 
-    def TryInnerJumpByPos(self, HitPos, CheckPic):
+    def TryInnerJumpByPos(self, HitPos, CheckPic, InMaxHitTimes = HitMaxTimes):
         self.DoHit(HitPos[0],HitPos[1])
         sleep(1)
         self.RefreshScreenShot();
@@ -300,7 +303,7 @@ class MSmState(object):
             self.RefreshScreenShot();
             bSuccess = bSuccess or self.IsPicMatching(CheckPic)
             CurLoop += 1
-            if CurLoop > HitMaxTimes:
+            if CurLoop > InMaxHitTimes:
                 raise RuntimeError("InfiniteLoop")
 
     def TryInnerJump(self, HitName, CheckPic, MatchingThreshold = 0.8):
@@ -459,11 +462,11 @@ class MSmState(object):
         for i in range(HitTimes):
             self.DoHit(AutoHitPos, AutoHitRange)
 
-    def TryInnerJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8, OpName =""):
+    def TryInnerJumpByPic(self, HitPic, CheckPic, HitRange = 0.5, MatchingThreshold = 0.8, OpName ="", method = cv2.TM_CCOEFF_NORMED ):
         sleep(1)
         print("TryInnerJumpByPic = " + str(MatchingThreshold) + "OpName = " + OpName)
-        self.RefreshScreenShot();
-        HitPos = self.GetPicPos(HitPic, MatchingThreshold)
+        self.RefreshScreenShot();   
+        HitPos = self.GetPicPos(HitPic, MatchingThreshold, method)
         if HitPos is None:
             return
         
@@ -657,6 +660,7 @@ class MSmState_FastJump(MSmState):
     FastJumpType = 0;
     def __init__(self, StateName):
         super().__init__(StateName)
+        self.PicMap = self.ReadPicMap()
         self.Enter = self.ReadPic("Enter")
         self.Enter2 = self.ReadPic("Enter2")
         self.EnterConfirm = self.ReadPic("EnterConfirm")
@@ -682,72 +686,49 @@ class MSmState_FastJump(MSmState):
         if bUseAllTimes is not None:
             self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
             return True
-        if MSmState_FastJump.FastJumpType == 1:
+        #UseAllJumpTickets = self.GetPicPos(self.PicMap["UseAllJumpTickets"], 0.998, cv2.TM_CCORR_NORMED)
+        if True:
             self.HitHandle.DoMousePull(self.HitInfo["DoMouseWheel"][0],self.HitInfo["DoMouseWheel"][1],[0,-300], 20, 3)
             sleep(3)
             self.RefreshScreenShot();
             FastMPPos = None
             for i in range(0,3):
                if FastMPPos is None:
-                    FastMPPos = self.GetPicPos(self.MPIdenty[i], 0.982, cv2.TM_CCORR_NORMED)     
+                    FastMPPos = self.GetPicPos(self.MPIdenty[i], 0.992, cv2.TM_CCORR_NORMED)     
         
             if FastMPPos is not None:
                 self.TryInnerJump("OpenTable", self.OpenTableIdenty)
-                FastMPEnterPos = [[FastMPPos[0] + 360, FastMPPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 16],[12,5]]
+                FastMPEnterPos = [[FastMPPos[0] + 431, FastMPPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight + 16],[12,5]]
                 self.TryInnerJumpByPos(FastMPEnterPos, self.Enter2)
                 self.RefreshScreenShot();
-                FastMPPos = None
-                for i in range(4,5):
-                    if FastMPPos is not None:
-                        break
-                    FastMPPos = self.GetPicPos(self.MPEnter[i], 0.998, cv2.TM_CCORR_NORMED)    
-                if FastMPPos is None:
-                    FastMPPos = self.GetPicPos(self.MPEnterDefault, 0.998, cv2.TM_CCORR_NORMED)
-                if FastMPPos is not None:
-                    FastMPEnterPos = [[FastMPPos[0] + 40, FastMPPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight],[10,10]]
-                    for i in range(np.random.randint(2,4)):
-                        self.DoHit(FastMPEnterPos[0],FastMPEnterPos[1])
-                    self.RefreshScreenShot();
-                    FastMPEnterPos = self.GetPicPos(self.Enter, 0.99, cv2.TM_CCORR_NORMED)
-                    if FastMPEnterPos is not None:
-                        self.TryInnerJump("UseJump", self.EnterConfirm)
-                        self.TryLeaveJump("FinalComfirm",self.EnterConfirm,0.9)
-                        sleep(3)
-                        self.TryLeaveJump("Finish",self.FinishConfirm)
-                    else:
-                        self.TryLeaveJump("GiveUp",self.Enter2)
-                        self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+                MPFastJump = self.GetPicPos(self.PicMap["MPFastJump"], 0.98, cv2.TM_CCORR_NORMED)
+                if MPFastJump is not None and MPFastJump[0] > 470:
+                    self.TryInnerJumpByPic(self.PicMap["MPFastJump"],self.PicMap["MPFastJumpEnter"],0.5, 0.9, "MP Fast Jump")
+                    self.TryLeaveJumpByPic(self.PicMap["MPConfirm0"],self.PicMap["MPConfirm0"],0.5, 0.9, "MP Fast Jump Confirm0")
+                    sleep(2)
+                    self.TryLeaveJumpByPic(self.PicMap["MPConfirm1"],self.PicMap["MPConfirm1"],0.5, 0.9, "MP Fast Jump Confirm1")
                 else:
-                    self.TryLeaveJump("GiveUp",self.Enter2)
+                    self.TryLeaveJump("CloseMP", self.PicMap["MPSubTitle"])
                     self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+                
+                
             else:
                 self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
-        else:
+        if True:
+            self.TryInnerJump("OpenTable", self.OpenTableIdenty)
             self.RefreshScreenShot();
             FastNPPos = None
             for i in range(0,4):
                if FastNPPos is None:
-                    FastNPPos = self.GetPicPos(self.NPIdenty[i], 0.982, cv2.TM_CCORR_NORMED)     
+                    FastNPPos = self.GetPicPos(self.NPIdenty[i], 0.992, cv2.TM_CCORR_NORMED)     
             if FastNPPos is not None:
-                FastNPEnterPos = [[FastNPPos[0] + 360, FastNPPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight +16],[12,5]]
+                FastNPEnterPos = [[FastNPPos[0] + 431, FastNPPos[1]+ DoScreenHit.ApplicationWindowsTitleHeight +16],[12,5]]
                 self.TryInnerJumpByPos(FastNPEnterPos, self.NPEnter)
                 self.RefreshScreenShot();
-                FastNPPos = None
-                FastNPPos = self.GetPicPos(self.Enter, 0.98, cv2.TM_CCORR_NORMED)  
-                if FastNPPos is not None:
-                    self.RefreshScreenShot();
-                    FastNPEnterPos = self.GetPicPos(self.Enter, 0.99, cv2.TM_CCORR_NORMED)
-                    if FastNPEnterPos is not None:
-                        self.TryInnerJump("UseJump", self.EnterConfirm)
-                        self.TryLeaveJump("FinalComfirm",self.EnterConfirm,0.9)
-                        sleep(3)
-                        self.TryLeaveJump("Finish",self.FinishConfirm)
-                    else:
-                        self.TryLeaveJump("GiveUp",self.Enter2)
-                        self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
-                else:
-                    self.TryLeaveJump("GiveUp",self.Enter2)
-                    self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
+                self.TryInnerJumpByPic(self.PicMap["NPFastJump"],self.PicMap["MPFastJumpEnter"],0.5, 0.9, "NP Fast Jump")
+                self.TryLeaveJumpByPic(self.PicMap["NPConfirm0"],self.PicMap["NPConfirm0"],0.5, 0.9, "NP Fast Jump Confirm0")
+                sleep(2)
+                self.TryLeaveJumpByPic(self.PicMap["MPConfirm1"],self.PicMap["MPConfirm1"],0.5, 0.9, "NP Fast Jump Confirm1")
             else:
                 self.TryLeaveJump("CloseTable", self.OpenTableIdenty)
         return True
@@ -893,9 +874,9 @@ class MSmState_GuildInfo(MSmState):
                 self.DoHitByName("ReciveTreeGift")
             self.TryLeaveJump("CloseTreeGift", self.TreeGift, 0.9)
         sleep(1)
-        if MSmState.bMainCharacter == True:
+        if MSmState.bMainCharacter == True or MSmState.bViceCharacter == True:
             self.TryLeaveJumpByPic(self.GuildinfoIdImage["GuildBossEnter"], self.GuildinfoIdImage["GuildBossEnter"], 0.5, 0.9)
-            CanEnter = self.GetHitInfo(self.GuildinfoIdImage["EnterTimes"], 0.9)
+            CanEnter = self.GetHitInfo(self.GuildinfoIdImage["EnterTimes"], 0.5, 0.98)
             if CanEnter is not None:
                 for i in range(np.random.randint(3,5)):
                     self.DoHit(CanEnter[0], CanEnter[1])
@@ -1081,47 +1062,49 @@ class MSmState_DailyTask(MSmState):
 
     def Processing(self):
         # 处理日常任务逻辑
-        self.OpenMainDailyTaskWidget()
-        self.TryInnerJumpByPic(self.DailyTaskPic["TaskSettings"], self.DailyTaskPic["TaskSettingsSub"])
-        self.RefreshScreenShot()
-        IsSettingsOK = self.IsPicMatching(self.DailyTaskPic["TaskSettingsCheck0"], 0.95) and self.IsPicMatching(self.DailyTaskPic["TaskSettingsCheck1"], 0.95)
-        if IsSettingsOK == False:
-            self.TryLeaveJumpByPic(self.DailyTaskPic["CheckState1"], self.DailyTaskPic["CheckState1"], 0.5, 0.95)#clean all check state
-            self.TryLeaveJumpByPic(self.DailyTaskPic["CheckDisplay0"], self.DailyTaskPic["CheckDisplay0"], 0.5, 0.996)
-            self.TryInnerJump("DisplayDailyTask", self.DailyTaskPic["CheckState1"], 0.95)
-            self.TryLeaveJumpByPic(self.DailyTaskPic["ApplySettings"], self.DailyTaskPic["ApplySettings"])             
-        else:
-             self.TryLeaveJumpByPic(self.DailyTaskPic["ApplySettings"], self.DailyTaskPic["ApplySettings"])
-        self.CloseMainDailyTaskWidget()
+        if 1:
+            self.OpenMainDailyTaskWidget()
+            self.TryInnerJumpByPic(self.DailyTaskPic["TaskSettings"], self.DailyTaskPic["TaskSettingsSub"])
+            self.RefreshScreenShot()
+            IsSettingsOK = self.IsPicMatching(self.DailyTaskPic["TaskSettingsCheck0"], 0.95) and self.IsPicMatching(self.DailyTaskPic["TaskSettingsCheck1"], 0.95)
+            if IsSettingsOK == False:
+                self.TryLeaveJumpByPic(self.DailyTaskPic["CheckState1"], self.DailyTaskPic["CheckState1"], 0.5, 0.95)#clean all check state
+                self.TryLeaveJumpByPic(self.DailyTaskPic["CheckDisplay0"], self.DailyTaskPic["CheckDisplay0"], 0.5, 0.996)
+                self.TryInnerJump("DisplayDailyTask", self.DailyTaskPic["CheckState1"], 0.95)
+                self.TryLeaveJumpByPic(self.DailyTaskPic["ApplySettings"], self.DailyTaskPic["ApplySettings"])             
+            else:
+                self.TryLeaveJumpByPic(self.DailyTaskPic["ApplySettings"], self.DailyTaskPic["ApplySettings"])
+            self.CloseMainDailyTaskWidget()
 
-        if 1: #委托相关
-            self.TryInnerJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"] )
-            self.TryInnerJump("Commission",self.DailyTaskPic["CommissionMain"])
-            for i in range(0,3):
-                self.SelectTaskPrefer()
-                for i in range(np.random.randint(2,3)):
-                    self.DoHitByName("ReciveCommission")
-                for i in range(np.random.randint(2,3)):
-                    self.DoHitByName("CloseCommissionRevice")
-            CommissionFinished = self.GetPicPos(self.DailyTaskPic["CommissionFinished"], 0.95, cv2.TM_CCORR_NORMED)
-            NoCommissionTicket = self.GetPicPos(self.DailyTaskPic["NoCommissionTicket"], 0.999, cv2.TM_CCORR_NORMED)
-            if (NoCommissionTicket is None) and (CommissionFinished is None):
-                self.TryInnerJump("AlignCommission",self.DailyTaskPic["CommisionReciveReady"],0.95)
-                self.TryInnerJump("StartCommission",self.DailyTaskPic["CommisionStartReady"],0.95)
-                self.TryInnerJump("DoCommission",self.DailyTaskPic["CommissionAllFinished"],0.95)
-                if MSmState.bMainCharacter == True:
-                    self.TryInnerJumpByPic(self.DailyTaskPic["GetMoreReward"], self.DailyTaskPic["BuyAddition"], 0.5, 0.98)
-                    self.TryLeaveJumpByPic(self.DailyTaskPic["BuyAddition"], self.DailyTaskPic["BuyAddition"], 0.5, 0.95) 
-            self.TryLeaveJump("CloseCommissionMain",self.DailyTaskPic["CommissionMain"])
-            self.TryLeaveJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"])
+            if 1: #委托相关
+                self.TryInnerJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"] )
+                self.TryInnerJump("Commission",self.DailyTaskPic["CommissionMain"])
+                for i in range(0,3):
+                    self.SelectTaskPrefer()
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("ReciveCommission")
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("CloseCommissionRevice")
+                CommissionFinished = self.GetPicPos(self.DailyTaskPic["CommissionFinished"], 0.95, cv2.TM_CCORR_NORMED)
+                NoCommissionTicket = self.GetPicPos(self.DailyTaskPic["NoCommissionTicket"], 0.999, cv2.TM_CCORR_NORMED)
+                if (NoCommissionTicket is None) and (CommissionFinished is None):
+                    self.TryInnerJump("AlignCommission",self.DailyTaskPic["CommisionReciveReady"],0.95)
+                    self.TryInnerJump("StartCommission",self.DailyTaskPic["CommisionStartReady"],0.95)
+                    self.TryInnerJump("DoCommission",self.DailyTaskPic["CommissionAllFinished"],0.95)
+                    if MSmState.bMainCharacter == True:
+                        self.TryInnerJumpByPic(self.DailyTaskPic["GetMoreReward"], self.DailyTaskPic["BuyAddition"], 0.5, 0.98)
+                        self.TryLeaveJumpByPic(self.DailyTaskPic["BuyAddition"], self.DailyTaskPic["BuyAddition"], 0.5, 0.95) 
+                self.TryLeaveJump("CloseCommissionMain",self.DailyTaskPic["CommissionMain"])
+                self.TryLeaveJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"])
 
         #self.TryInnerJumpByPic(self.DailyTaskPic["MysticAreaUnselect"], self.DailyTaskPic["MysticAreaSelect"], 0.5, 0.98)
                 
-
+        #self.TryInnerJumpByPic(self.DailyTaskPic["MysticAreaUnselect0"], self.DailyTaskPic["MysticAreaSelect0"], 0.5, 0.98, "MysticAreaSelect",cv2.TM_CCORR_NORMED)
+            
         #开始跑日常任务
-        self.TryInnerJumpByPic(self.DailyTaskPic["TaskClose"], self.DailyTaskPic["TaskOpen"], 0.5, 0.98)
+        self.TryInnerJumpByPic(self.DailyTaskPic["TaskClose"], self.DailyTaskPic["TaskOpen"], 0.5, 0.98, "TaskOpen")
 
-        self.TryInnerJumpByPic(self.DailyTaskPic["BossTaskOpen"], self.DailyTaskPic["BossTaskClose"], 0.5, 0.9)  
+        self.TryInnerJumpByPic(self.DailyTaskPic["BossTaskOpen"], self.DailyTaskPic["BossTaskClose"], 0.5, 0.9, "BossTaskClose")  
 
         DailyTaskHitInfo = self.GetHitInfo(self.DailyTaskPic["TaskTinyIcon"])
         curloop = 0
@@ -1132,24 +1115,30 @@ class MSmState_DailyTask(MSmState):
             if curloop > 180: #超过半小时
                 raise RuntimeError("DailyTask Loop Timeout")
             IsRunning = self.GetAutoTaskRunningState()
+            
             if IsRunning == False and DailyTaskHitInfo is not None:
                 self.DoHit(DailyTaskHitInfo[0], DailyTaskHitInfo[1])
-            FastFinished = self.GetHitInfo(self.DailyTaskPic["FastFinished"], 0.5, 0.95) 
-            if FastFinished is not None:
-                self.TryInnerJumpByPic(self.DailyTaskPic["MysticAreaUnselect"], self.DailyTaskPic["MysticAreaSelect"], 0.5, 0.98)
-                    
-                for i in range(6): #防止切图黑屏的时候误判
-                    self.TryLeaveJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["FastFinished"], 0.5, 0.95)
-                    sleep(1)
-                bCanFastTransfer = True
-                sleep(15)
-            else:
-                self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9) 
+                sleep(2)
+            DailyTaskSub = self.GetHitInfo(self.DailyTaskPic["DailyTaskSub"], 0.5, 0.95) 
+            if DailyTaskSub is not None:
+                for i in range(np.random.randint(2,4)):
+                    self.DoHit([333,425], [30,10]) #尝试快速完成日常任务
+                    sleep(0.5)
+            # FastFinished = self.GetHitInfo(self.DailyTaskPic["FastFinished"], 0.5, 0.95) 
+            # if FastFinished is not None:
+                   
+            #     for i in range(6): #防止切图黑屏的时候误判
+            #         self.TryLeaveJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["FastFinished"], 0.5, 0.95,"FastFinished")
+            #         sleep(1)
+            #     bCanFastTransfer = True
+            #     sleep(15)
+            # else:
+            self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9,"ContinueProcess") 
 
-            if IsRunning and bCanFastTransfer:
-                for i in range(6): #防止切图黑屏的时候误判
-                    self.TryLeaveJumpByPic(self.DailyTaskPic["FastTransfer"], self.DailyTaskPic["FastTransfer"], 0.5, 0.9) 
-                bCanFastTransfer = False
+            # if IsRunning and bCanFastTransfer:
+            #     for i in range(6): #防止切图黑屏的时候误判
+            #         self.TryLeaveJumpByPic(self.DailyTaskPic["FastTransfer"], self.DailyTaskPic["FastTransfer"], 0.5, 0.9, "FastTransfer") 
+            #     bCanFastTransfer = False
             if self.IsPicMatching(self.DailyTaskPic["Confirm"], 0.9):
                 self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9) 
             
@@ -1210,23 +1199,25 @@ class MSmState_Expedition(MSmState):
 
     def IsBossFightFinished(self, bosstype):
         self.RefreshScreenShot()
-        if bosstype == 0:
-            return self.IsPicMatching(self.PicMap["ReturnToMain"], 0.95)
-        elif bosstype == 1:
-            return self.IsPicMatching(self.PicMap["Confirm2"], 0.95)
-        else:
-            return self.IsPicMatching(self.PicMap["Confirm2"], 0.95)
+        return self.IsPicMatching(self.PicMap["ReturnToMain"], 0.9) or self.IsPicMatching(self.PicMap["Confirm2"], 0.9)
+    
+    def DoCommonExit(self):
+        self.HitHandle.PressKeyboardESC()
+        while True:
+            self.RefreshScreenShot()
+            if self.IsPicMatching(self.PicMap["CommonExit"], 0.95) == True:
+                break
+            self.HitHandle.PressKeyboardESC()
+            sleep(1)
+        self.TryLeaveJumpByPic(self.PicMap["CommonExit"], self.PicMap["CommonExit"], 0.5, 0.95, "Common Exit")
+        self.WaitUntil(self.PicMap["MainId"], 30)
+
+            
 
     def WaitForFinished(self, bosstype):
         self.RefreshScreenShot()
         curloop = 0
         maxloop = 10
-        if bosstype == 0:
-            returniconname = "ReturnToMain0"
-        elif bosstype == 1:
-            returniconname = "ReturnToMain1"
-        elif bosstype == 2:
-            returniconname = "ReturnToMain2"
         if bosstype == 2:
             maxloop = 10
         while self.IsBossFightFinished(bosstype) == False:
@@ -1238,36 +1229,16 @@ class MSmState_Expedition(MSmState):
             self.RefreshScreenShot()
             #这里如果死完了复活不了返回村庄要处理的流程太多了，直接走卡死流程重启算了 。 
             self.TryLeaveJumpByPic(self.PicMap["Recover"], self.PicMap["Recover"], 0.5, 0.95, "do recover")
-              
             
             if curloop > maxloop: 
                 print("Boss fight finished wait timeout, try to exit")
-                self.RefreshScreenShot()
-                self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.85, "Hit Exit")
-                sleep(3)
-                self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Hit Return to Main Early Exit")
-                self.WaitUntil(self.PicMap["MainId"], 30)
+                self.DoCommonExit()
                 return
-        if bosstype == 0:
-            if self.IsPicMatching(self.PicMap["GetMoreReward"], 0.95):
-                self.TryLeaveJumpByPic(self.PicMap["GetMoreReward"], self.PicMap["GetMoreReward"], 0.5, 0.95, "Finished Boss0 Return to Main")
-                sleep(2)
-                self.TryLeaveJumpByPic(self.PicMap["Confirm"], self.PicMap["Confirm"], 0.5, 0.98, "Finished Boss0 Return to Main")
-                # self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.95, "Hit Exit")
-                # sleep(2)
-            self.TryLeaveJumpByPic(self.PicMap["ReturnToMain"], self.PicMap["ReturnToMain"], 0.5, 0.95, "Finished Boss0 Return to Main")
-        elif bosstype == 1:
-            self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95, "Finished Boss1 Comfirm")
-            sleep(2)
-            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.85, "Finished Boss1 Exit")
-            sleep(3)
-            self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss1 Return To Main")
-        else:
-            self.TryLeaveJumpByPic(self.PicMap["Confirm2"], self.PicMap["Confirm2"], 0.5, 0.95, "Finished Boss2 Comfirm")
-            sleep(2)
-            self.TryInnerJumpByPic(self.PicMap["EarlyExit"], self.PicMap[returniconname], 0.5, 0.85, "Finished Boss2 Exit")
-            sleep(3)
-            self.TryLeaveJumpByPic(self.PicMap[returniconname], self.PicMap[returniconname], 0.5, 0.95, "Finished Boss2 Return To Main")
+        self.TryLeaveJumpByPic(self.PicMap["GetMoreReward"], self.PicMap["GetMoreReward"], 0.5, 0.95, "do GetMoreReward")
+        sleep(3)
+        self.TryLeaveJumpByPic(self.PicMap["GetMoreRewardConfirm"], self.PicMap["GetMoreRewardConfirm"], 0.5, 0.95, "do GetMoreRewardConfirm")
+        sleep(1)
+        self.DoCommonExit()
         self.WaitUntil(self.PicMap["MainId"], 30)
 
     def GetBossType(self):
@@ -1282,9 +1253,6 @@ class MSmState_Expedition(MSmState):
             print("Cur Boss Type - 2")
             return 2   
     
-       
-
-
     def Processing(self):
         sleep(1)
         self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95, "SelectWeekly")
@@ -1292,7 +1260,7 @@ class MSmState_Expedition(MSmState):
         while self.IsFinished() == False:
             self.TryInnerJumpByPic(self.PicMap["SelectWeekly"], self.PicMap["SelectDaily"], 0.5, 0.95, "Undo SelectWeekly")
             self.TryInnerJumpByPic(self.PicMap["SelectCanEnter0"], self.PicMap["SelectCanEnter1"], 0.5, 0.95, "Undo SelectCanEnter0")
-            self.TryInnerJump("SelectFirstBoss", self.PicMap["BossSubTitleOpen"], 0.935)
+            self.TryInnerJump("SelectFirstBoss", self.PicMap["BossSubTitleOpen"], 0.911)
             self.SelectBossMaxLevel()
             bootype = self.GetBossType()
             bosswaittime = 12
@@ -1302,7 +1270,7 @@ class MSmState_Expedition(MSmState):
                  bosswaittime = 6
             self.TryLeaveJumpByPic(self.PicMap["FastTeam"], self.PicMap["FastTeam"], 0.5, 0.95,"Fast Team")
 
-            self.WaitUntil(self.PicMap["TimerIcon"], 60)
+            self.WaitUntil(self.PicMap["TimerIcon"], 240)
             sleep(bosswaittime)#兼容贝伦出地时间
             self.WaitForFinished(bootype)        
         self.TryLeaveJump("OpenSystemMenu", self.PicMap["MainId"])
@@ -1371,7 +1339,7 @@ class MSmState_MonsterPark(MSmState):
         self.SimpleSelected = self.ReadPic("SimpleSelected")
 
     def Processing(self):
-        if MSmState.bMainCharacter == False:
+        if MSmState.bMainCharacter == False and MSmState.bViceCharacter == False:
             SimpleSelected = self.GetPicPos(self.SimpleSelected, 0.95)
             while SimpleSelected is None:
                 self.HitHandle.DoMousePull(self.HitInfo["SelectSimple"][0],self.HitInfo["SelectSimple"][1],[500,0], 30, 5)
@@ -1432,7 +1400,7 @@ class MSmState_Weekly(MSmState):
         #self.GiveUp = self.ReadPic("GiveUp")
 
     def Processing(self):
-        if MSmState.bMainCharacter == False:
+        if MSmState.bMainCharacter == False and MSmState.bViceCharacter == False:
             for i in range(np.random.randint(2,3)):
                 self.DoHitByName("SelectSimple")
         self.TryInnerJump("Enter",self.AddTimesIdImage)
@@ -1681,7 +1649,7 @@ class MSmState_PostProcess(MSmState):
 
             self.TryLeaveJump("CloseDaily",self.DailyIdImage)
             self.TryLeaveJump("OpenSystemMenu",self.SysOpeningIdImage)
-            if MSmState.bMainCharacter == True:
+            if MSmState.bMainCharacter == True or MSmState.bViceCharacter == True:
                 self.TryLeaveJump("AutoFighting",self.DailyIdImage)
                 self.TryInnerJump("AutoFighting",self.AutoFightingIdImage)
                 sleep(1)
@@ -1886,7 +1854,7 @@ class MSmState_PostProcess(MSmState):
 if __name__ == "__main__":
     # ============ 测试配置 ============
     # 在这里修改要测试的状态名称
-    TEST_STATE = "DailyTask"  #GameModeDefault 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander 等
+    TEST_STATE = "FastJump"  #GameModeDefault 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander FastJump CharacterSelect  等
     # =================================
     
     from win32gui import FindWindow, FindWindowEx
@@ -1914,6 +1882,7 @@ if __name__ == "__main__":
     if MSmState.HandleNumber_Main == MSmState.HandleNumber_Render:
         print("Warning: HandleNumber_Main is equal to HandleNumber_Render, consider run with -MainWindowsCapture")
     MSmState.bMainCharacter = True
+    MSmState.bViceCharacter = True
     print(f"=" * 50)
     print(f"MSmState 单元测试")
     print(f"=" * 50)
@@ -1947,6 +1916,7 @@ if __name__ == "__main__":
     print(f"\n开始执行 {TEST_STATE} 的 Processing() 方法...\n")
     
     try:
+        #state_instance.ForceReturnTocharacterSelect()
         result = state_instance.Processing()
         print(f"\n执行完成，返回值: {result}")
     except Exception as e:

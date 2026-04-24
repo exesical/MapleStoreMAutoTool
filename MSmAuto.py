@@ -350,6 +350,7 @@ def main():
                     MSmState.bMainCharacter = False
                 else:
                     MSmState.bMainCharacter = False
+                    MSmState.bViceCharacter = False
                     if bCanUesFastMode:
                         MSmState.bFastMode = True
    
