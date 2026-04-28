@@ -34,7 +34,7 @@ except ImportError:
     Logger.info("MapleAuto: Running on non-Android platform")
 
 # Import our modified state classes
-from android_state import AndroidMSmState, AndroidScreenHit
+from android_state import AndroidMSmState, AndroidScreenHit, run_android_automation, IS_ANDROID, APP_PATH
 
 class MapleAutoApp(App):
     def __init__(self, **kwargs):
@@ -161,6 +161,13 @@ class MapleAutoApp(App):
         self.selected_task = task_type
         self.task_dropdown.dismiss()
         
+    def show_popup(self, title, message):
+        """显示弹窗"""
+        popup = Popup(title=title,
+                      content=Label(text=message),
+                      size_hint=(0.6, 0.4))
+        popup.open()
+        
     def update_log(self, message):
         """Update log display in UI thread"""
         def _update(dt):
@@ -231,66 +238,86 @@ class MapleAutoApp(App):
         self.is_running = True
         self.start_button.disabled = True
         self.stop_button.disabled = False
-        
+        self.log_text = ""
+
         # Start automation in separate thread
         self.auto_thread = threading.Thread(target=self.run_automation)
         self.auto_thread.daemon = True
         self.auto_thread.start()
-        
+
         self.update_log("开始自动化...")
-        
+
     def stop_automation(self, instance):
         """Stop the automation process"""
         self.is_running = False
         self.start_button.disabled = False
         self.stop_button.disabled = True
-        
         self.update_log("停止自动化...")
-        
+
     def run_automation(self):
         """Main automation logic running in separate thread"""
         try:
             char_count = int(self.char_count_input.text) if self.char_count_input.text else 1
-            
+
             self.update_log(f"开始处理 {char_count} 个角色")
             self.update_log(f"任务类型: {self.selected_task}")
-            
-            # Initialize Android state manager
-            android_state = AndroidMSmState()
-            
-            for i in range(char_count):
-                if not self.is_running:
-                    break
-                    
-                self.update_log(f"处理第 {i+1} 个角色...")
-                self.update_progress((i / char_count) * 100)
-                
-                try:
-                    # Execute the selected task
-                    if self.selected_task == 'daily':
-                        android_state.run_daily_tasks()
-                    elif self.selected_task == 'material':
-                        android_state.run_material_tasks()
-                    elif self.selected_task == 'elite':
-                        android_state.run_elite_tasks()
-                    elif self.selected_task == 'monster_park':
-                        android_state.run_monster_park()
-                    elif self.selected_task == 'fast_jump':
-                        android_state.run_fast_jump()
-                    elif self.selected_task == 'full_process':
-                        android_state.run_full_process()
-                        
-                    self.update_log(f"第 {i+1} 个角色处理完成")
-                    
-                except Exception as e:
-                    self.update_log(f"第 {i+1} 个角色处理失败: {e}")
-                    
+
+            # ---- 映射 UI 任务类型到 run_android_automation 参数 ----
+            task_group = 0
+            b_post_default = True
+            b_post_weekly = False
+            b_post_auto_change = False
+            b_post_organize = False
+            b_post_skip = False
+            b_post_additional = False
+            fast_jump_type = 0
+            vice_count = 0
+
+            if self.selected_task == 'daily':
+                task_group = 0
+            elif self.selected_task == 'material':
+                task_group = 1
+            elif self.selected_task == 'elite':
+                task_group = 2
+            elif self.selected_task == 'monster_park':
+                task_group = 3
+            elif self.selected_task == 'fast_jump':
+                task_group = 4
+                fast_jump_type = 1
+            elif self.selected_task == 'full_process':
+                task_group = 0
+                b_post_default = True
+                b_post_weekly = True
+                b_post_auto_change = True
+                b_post_organize = True
+                b_post_additional = True
+
+            self.update_log("启动安卓自动化引擎...")
+
+            # 调用 android_state 的自动化主流程
+            run_android_automation(
+                task_group_index=task_group,
+                character_count=char_count,
+                vice_character_count=vice_count,
+                b_post_process_default=b_post_default,
+                b_post_process_weekly_reward=b_post_weekly,
+                b_post_process_auto_change=b_post_auto_change,
+                b_post_process_organize_package=b_post_organize,
+                b_post_process_skip_commission=b_post_skip,
+                b_post_process_additional_material=b_post_additional,
+                fast_jump_type=fast_jump_type,
+                progress_callback=self.update_progress,
+                log_callback=self.update_log
+            )
+
             self.update_progress(100)
             self.update_log("所有任务完成!")
-            
+
         except Exception as e:
             self.update_log(f"自动化过程出错: {e}")
-            
+            import traceback
+            self.update_log(traceback.format_exc())
+
         finally:
             # Reset UI state
             def reset_ui(dt):
@@ -298,17 +325,6 @@ class MapleAutoApp(App):
                 self.start_button.disabled = False
                 self.stop_button.disabled = True
             Clock.schedule_once(reset_ui, 0)
-            
-    def show_popup(self, title, message):
-        """Show popup message"""
-        def _show(dt):
-            popup = Popup(
-                title=title,
-                content=Label(text=message),
-                size_hint=(0.8, 0.4)
-            )
-            popup.open()
-        Clock.schedule_once(_show, 0)
 
 
 if __name__ == '__main__':

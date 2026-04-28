@@ -268,6 +268,7 @@ class MSmState(object):
                 sleep(1)
             for i in range(2):
                 self.DoHit([480,400], [30,10])
+                print("Try return to character select, hit pos = " + str([480,400]) + " hit range = " + str([30,10]))
             sleep(1)
         return 
         
@@ -1037,6 +1038,7 @@ class MSmState_DailyTask(MSmState):
     def OpenMainDailyTaskWidget(self):
         self.TryInnerJump("OpenSystemMenu", self.DailyTaskPic["SysOpeningIdImage"])
         self.TryInnerJump("OpenDailyTask", self.DailyTaskPic["DailyTaskMain"])
+        self.TryInnerJumpByPic(self.DailyTaskPic["SelectDailyTask"], self.DailyTaskPic["DailyTaskSelected"], 0.5, 0.95)
 
     def CloseMainDailyTaskWidget(self):
         self.TryLeaveJump("OpenSystemMenu", self.DailyTaskPic["DailyTaskMain"])
@@ -1061,103 +1063,47 @@ class MSmState_DailyTask(MSmState):
         self.TryLeaveJumpByPic(self.DailyTaskPic["CloseRewardDetail"], self.DailyTaskPic["CloseRewardDetail"], 0.3, 0.98)
 
     def Processing(self):
-        # 处理日常任务逻辑
-        if 1:
-            self.OpenMainDailyTaskWidget()
-            self.TryInnerJumpByPic(self.DailyTaskPic["TaskSettings"], self.DailyTaskPic["TaskSettingsSub"])
-            self.RefreshScreenShot()
-            IsSettingsOK = self.IsPicMatching(self.DailyTaskPic["TaskSettingsCheck0"], 0.95) and self.IsPicMatching(self.DailyTaskPic["TaskSettingsCheck1"], 0.95)
-            if IsSettingsOK == False:
-                self.TryLeaveJumpByPic(self.DailyTaskPic["CheckState1"], self.DailyTaskPic["CheckState1"], 0.5, 0.95)#clean all check state
-                self.TryLeaveJumpByPic(self.DailyTaskPic["CheckDisplay0"], self.DailyTaskPic["CheckDisplay0"], 0.5, 0.996)
-                self.TryInnerJump("DisplayDailyTask", self.DailyTaskPic["CheckState1"], 0.95)
-                self.TryLeaveJumpByPic(self.DailyTaskPic["ApplySettings"], self.DailyTaskPic["ApplySettings"])             
+        self.OpenMainDailyTaskWidget()
+        
+        self.RefreshScreenShot()
+        while self.IsPicMatching(self.DailyTaskPic["FastTask"], 0.95) == True:
+            self.TryInnerJumpByPic(self.DailyTaskPic["FastTask"], self.DailyTaskPic["DailyTaskSub"], 0.5, 0.95)
+            if self.IsPicMatching(self.DailyTaskPic["FastFinishedGray"], 0.95) == True:
+                self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9,"ContinueProcess")
+                self.WaitUntil(self.DailyTaskPic["Confirm"], 600)
+                self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9,"ContinueProcessConfirm")
+                self.TryLeaveJumpByPic(self.DailyTaskPic["CloseDailyTaskSub"], self.DailyTaskPic["DailyTaskSub"], 0.5, 0.9,"CloseDailyTaskSub")
+                self.OpenMainDailyTaskWidget()
             else:
-                self.TryLeaveJumpByPic(self.DailyTaskPic["ApplySettings"], self.DailyTaskPic["ApplySettings"])
-            self.CloseMainDailyTaskWidget()
-
-            if 1: #委托相关
-                self.TryInnerJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"] )
-                self.TryInnerJump("Commission",self.DailyTaskPic["CommissionMain"])
-                for i in range(0,3):
-                    self.SelectTaskPrefer()
+                self.TryInnerJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["Confirm"], 0.5, 0.95)
+                self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9,"ContinueProcessConfirm")
+                self.TryLeaveJumpByPic(self.DailyTaskPic["CloseDailyTaskSub"], self.DailyTaskPic["DailyTaskSub"], 0.5, 0.9,"CloseDailyTaskSub")
+                
+        self.CloseMainDailyTaskWidget()
+        #自动跳过委托
+        if True:
+            self.TryInnerJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"])
+            self.TryInnerJump("Commission",self.DailyTaskPic["CommissionMain"])
+            CommissionFinished = self.GetPicPos(self.DailyTaskPic["CommissionFinished"], 0.95, cv2.TM_CCORR_NORMED)
+            NoCommissionTicket = self.GetPicPos(self.DailyTaskPic["NoCommissionTicket"], 0.999, cv2.TM_CCORR_NORMED)
+            if (NoCommissionTicket is None) and (CommissionFinished is None):
+                for k in range(3):
+                    for i in range(np.random.randint(2,3)):
+                        self.DoHitByName("CommissionTask" + str(k))
                     for i in range(np.random.randint(2,3)):
                         self.DoHitByName("ReciveCommission")
                     for i in range(np.random.randint(2,3)):
                         self.DoHitByName("CloseCommissionRevice")
-                CommissionFinished = self.GetPicPos(self.DailyTaskPic["CommissionFinished"], 0.95, cv2.TM_CCORR_NORMED)
-                NoCommissionTicket = self.GetPicPos(self.DailyTaskPic["NoCommissionTicket"], 0.999, cv2.TM_CCORR_NORMED)
-                if (NoCommissionTicket is None) and (CommissionFinished is None):
-                    self.TryInnerJump("AlignCommission",self.DailyTaskPic["CommisionReciveReady"],0.95)
-                    self.TryInnerJump("StartCommission",self.DailyTaskPic["CommisionStartReady"],0.95)
-                    self.TryInnerJump("DoCommission",self.DailyTaskPic["CommissionAllFinished"],0.95)
-                    if MSmState.bMainCharacter == True:
-                        self.TryInnerJumpByPic(self.DailyTaskPic["GetMoreReward"], self.DailyTaskPic["BuyAddition"], 0.5, 0.98)
-                        self.TryLeaveJumpByPic(self.DailyTaskPic["BuyAddition"], self.DailyTaskPic["BuyAddition"], 0.5, 0.95) 
-                self.TryLeaveJump("CloseCommissionMain",self.DailyTaskPic["CommissionMain"])
-                self.TryLeaveJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"])
+                self.TryInnerJump("AlignCommission",self.DailyTaskPic["CommisionReciveReady"],0.95)
+                self.TryInnerJump("StartCommission",self.DailyTaskPic["CommisionStartReady"],0.95)
+                self.TryInnerJump("DoCommission",self.DailyTaskPic["CommissionAllFinished"],0.95)
+                if MSmState.bMainCharacter == True:
+                    self.TryInnerJumpByPic(self.DailyTaskPic["GetMoreReward"], self.DailyTaskPic["BuyAddition"], 0.5, 0.9)
+                    self.TryLeaveJumpByPic(self.DailyTaskPic["BuyAddition"], self.DailyTaskPic["BuyAddition"], 0.5, 0.9) 
+            self.TryLeaveJump("CloseCommissionMain",self.DailyTaskPic["CommissionMain"])
+            self.TryLeaveJump("OpenSystemMenu",self.DailyTaskPic["SysOpeningIdImage"])
 
-        #self.TryInnerJumpByPic(self.DailyTaskPic["MysticAreaUnselect"], self.DailyTaskPic["MysticAreaSelect"], 0.5, 0.98)
-                
-        #self.TryInnerJumpByPic(self.DailyTaskPic["MysticAreaUnselect0"], self.DailyTaskPic["MysticAreaSelect0"], 0.5, 0.98, "MysticAreaSelect",cv2.TM_CCORR_NORMED)
-            
-        #开始跑日常任务
-        self.TryInnerJumpByPic(self.DailyTaskPic["TaskClose"], self.DailyTaskPic["TaskOpen"], 0.5, 0.98, "TaskOpen")
-
-        self.TryInnerJumpByPic(self.DailyTaskPic["BossTaskOpen"], self.DailyTaskPic["BossTaskClose"], 0.5, 0.9, "BossTaskClose")  
-
-        DailyTaskHitInfo = self.GetHitInfo(self.DailyTaskPic["TaskTinyIcon"])
-        curloop = 0
-        StillHasTask = DailyTaskHitInfo is not None
-        bCanFastTransfer = False
-        while StillHasTask :
-            curloop = curloop + 1
-            if curloop > 180: #超过半小时
-                raise RuntimeError("DailyTask Loop Timeout")
-            IsRunning = self.GetAutoTaskRunningState()
-            
-            if IsRunning == False and DailyTaskHitInfo is not None:
-                self.DoHit(DailyTaskHitInfo[0], DailyTaskHitInfo[1])
-                sleep(2)
-            DailyTaskSub = self.GetHitInfo(self.DailyTaskPic["DailyTaskSub"], 0.5, 0.95) 
-            if DailyTaskSub is not None:
-                for i in range(np.random.randint(2,4)):
-                    self.DoHit([333,425], [30,10]) #尝试快速完成日常任务
-                    sleep(0.5)
-            # FastFinished = self.GetHitInfo(self.DailyTaskPic["FastFinished"], 0.5, 0.95) 
-            # if FastFinished is not None:
-                   
-            #     for i in range(6): #防止切图黑屏的时候误判
-            #         self.TryLeaveJumpByPic(self.DailyTaskPic["FastFinished"], self.DailyTaskPic["FastFinished"], 0.5, 0.95,"FastFinished")
-            #         sleep(1)
-            #     bCanFastTransfer = True
-            #     sleep(15)
-            # else:
-            self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9,"ContinueProcess") 
-
-            # if IsRunning and bCanFastTransfer:
-            #     for i in range(6): #防止切图黑屏的时候误判
-            #         self.TryLeaveJumpByPic(self.DailyTaskPic["FastTransfer"], self.DailyTaskPic["FastTransfer"], 0.5, 0.9, "FastTransfer") 
-            #     bCanFastTransfer = False
-            if self.IsPicMatching(self.DailyTaskPic["Confirm"], 0.9):
-                self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9) 
-            
-            self.TryLeaveJumpByPic(self.DailyTaskPic["ContinueProcess"], self.DailyTaskPic["ContinueProcess"], 0.5, 0.9) 
-            self.TryLeaveJumpByPic(self.DailyTaskPic["MoveToVillage"], self.DailyTaskPic["MoveToVillage"], 0.5, 0.95)   
-            GetAdditonHitInfo = self.GetHitInfo(self.DailyTaskPic["GetAddition"], 0.5, 0.95)
-            if GetAdditonHitInfo is None:
-                self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.9) 
-            StillHasTask = False
-            for i in range(10):
-                DailyTaskHitInfo = self.GetHitInfo(self.DailyTaskPic["TaskTinyIcon"])
-                StillHasTask =  StillHasTask or  DailyTaskHitInfo is not None   
         
-        sleep(15) #等待自动回村
-        if MSmState.bMainCharacter == True:
-            self.TryLeaveJumpByPic(self.DailyTaskPic["GetAddition"], self.DailyTaskPic["GetAddition"], 0.5, 0.95)   
-            self.TryLeaveJumpByPic(self.DailyTaskPic["BuyAddition"], self.DailyTaskPic["BuyAddition"], 0.5, 0.95) 
-        else:
-            self.TryLeaveJumpByPic(self.DailyTaskPic["Confirm"], self.DailyTaskPic["Confirm"], 0.5, 0.85) 
         return True
 
 class MSmState_TeamCommon(MSmState):
@@ -1854,7 +1800,7 @@ class MSmState_PostProcess(MSmState):
 if __name__ == "__main__":
     # ============ 测试配置 ============
     # 在这里修改要测试的状态名称
-    TEST_STATE = "FastJump"  #GameModeDefault 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander FastJump CharacterSelect  等
+    TEST_STATE = "DailyTask"  #GameModeDefault 例如:Expedition  DailyTask, PostProcess, Material, Elite, Wander FastJump CharacterSelect  等
     # =================================
     
     from win32gui import FindWindow, FindWindowEx

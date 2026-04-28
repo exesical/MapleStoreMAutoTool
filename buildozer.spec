@@ -7,7 +7,7 @@ title = 冒险岛M自动助手
 package.name = maplestoremauto
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.example
+package.domain = maple.auto
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -16,7 +16,7 @@ source.dir = .
 source.include_exts = py,png,jpg,jpeg,json
 
 # (list) List of inclusions using pattern matching
-source.include_patterns = Data/*,*.json,*.png
+source.include_patterns = Data/**/*,*.json,*.png
 
 # (str) Application versioning (method 1)
 version = 1.0.0
