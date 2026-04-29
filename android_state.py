@@ -16,6 +16,7 @@ from os import walk
 from re import search
 from time import sleep
 from numpy import uint8
+from datetime import date
 
 # ============================================================
 # 路径工具（兼容 Android APK 与开发环境）
@@ -381,7 +382,8 @@ class AndroidMSmState(object):
     def SaveScreenShot(self, Prefix=""):
         if self.ScreenShotImageRGB is None:
             return
-        d = os.path.join(APP_PATH, f"{self.Name}_AutoSave")
+        today_str = date.today().strftime('%Y-%m-%d')
+        d = os.path.join(APP_PATH, f"{self.Name}_AutoSave", today_str)
         os.makedirs(d, exist_ok=True)
         fn = os.path.join(d, f"{Prefix}{AndroidMSmState.CharacterIndex}.png")
         cv2.imwrite(fn, self.ScreenShotImageRGB)
@@ -830,6 +832,7 @@ class AndroidMSmState_Material(AndroidMSmState):
         self.DoHitByName("GotoMateria")
         for begin_pic in self.MaterialBegin:
             self.TryInnerJumpByPic(begin_pic, self.ExitIdImage, 0.5, 0.8, "Processing")
+        self.SaveScreenShot()
         return True
 
 
@@ -889,6 +892,7 @@ class AndroidMSmState_Elite(AndroidMSmState_TeamCommon):
         for ep in self.EnterPics:
             self.TryInnerJumpByPic(ep, self.ExitIdImage, 0.5, 0.8, "EnterElite")
         self.WaitingForAutoFightingFinished()
+        self.SaveScreenShot()
         return True
 
 
@@ -923,6 +927,7 @@ class AndroidMSmState_MonsterPark(AndroidMSmState):
 
     def Processing(self):
         self.TryInnerJump("EnterMonsterPark", self.ExitIdImage)
+        self.SaveScreenShot()
         self.WaitingForAutoFightingFinished()
         return True
 
@@ -934,6 +939,7 @@ class AndroidMSmState_Tangyun(AndroidMSmState):
 
     def Processing(self):
         self.TryInnerJump("EnterTangyun", self.ExitIdImage)
+        self.SaveScreenShot()
         self.WaitingForAutoFightingFinished()
         return True
 
@@ -995,12 +1001,15 @@ class AndroidMSmState_PostProcess(AndroidMSmState):
         if self.bWeeklyReward:
             for rp in self.WeeklyRewardPics:
                 self.TryInnerJumpByPic(rp, self.ExitIdImage, 0.5, 0.8, "WeeklyReward")
+            self.SaveScreenShot("WeeklyReward_")
         if self.bAutoChange:
             for cp in self.AutoChangePics:
                 self.TryInnerJumpByPic(cp, self.ExitIdImage, 0.5, 0.8, "AutoChange")
+            self.SaveScreenShot("Charge_")
         if self.bOrganizePackage:
             for op in self.OrganizePackagePics:
                 self.TryInnerJumpByPic(op, self.ExitIdImage, 0.5, 0.8, "OrganizePackage")
+            self.SaveScreenShot("Package_")
         if self.bSkipCommission:
             self.TryInnerJump("SkipCommission", self.ExitIdImage)
         if self.bAdditionalMaterial:
@@ -1032,6 +1041,22 @@ def load_json_android(filename):
     return []
 
 
+def clean_old_autosave_folders():
+    """清理所有非当天的 _AutoSave 子文件夹（Android版）"""
+    today_str = date.today().strftime('%Y-%m-%d')
+    for cur_dir, sub_dirs, _ in walk(APP_PATH):
+        for sub_dir in sub_dirs:
+            if sub_dir.endswith('_AutoSave'):
+                auto_save_path = os.path.join(cur_dir, sub_dir)
+                for date_dir in os.listdir(auto_save_path):
+                    date_dir_path = os.path.join(auto_save_path, date_dir)
+                    if os.path.isdir(date_dir_path) and date_dir != today_str:
+                        import shutil
+                        shutil.rmtree(date_dir_path)
+                        print(f"[CleanOldAutoSave] 已删除过期截图: {date_dir_path}")
+        break  # 只扫描根目录
+
+
 def run_android_automation(task_group_index=0, character_count=5,
                            vice_character_count=0,
                            b_post_process_default=True,
@@ -1060,6 +1085,9 @@ def run_android_automation(task_group_index=0, character_count=5,
             progress_callback(v)
 
     log("=== 冒险岛M 安卓自动化启动 ===")
+
+    # ---- 清理过期的 AutoSave 截图 ----
+    clean_old_autosave_folders()
 
     # ---- 构造状态表 ----
     StateTable = {}
